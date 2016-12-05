@@ -9,6 +9,7 @@ var moment = require('moment');
 var ent = require('ent');
 var cheerio = require('cheerio');
 var sanitizeHtml = require('sanitize-html');
+var htmlToText = require('html-to-text');
 var parseCSV = require('csv-parse');
 var async = require('async');
 var md5 = require('MD5');
@@ -318,7 +319,7 @@ function sessionFromJSON(json, id_prefix) {
 	var session = {
 		"id": mkID(id_prefix + json["event_id"]),
 		"title": json["title"],
-		"description": json["abstract"],
+		"description": htmlToText.fromString(json["abstract"], { wordwrap: false }),
 		"url": sessionURL,
 		"begin": null,
 		"end": null,
