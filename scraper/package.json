@@ -4,7 +4,7 @@
   "version": "0.0.4",
   "description": "retrieve and convert dumps from various conferences to importable json",
   "dependencies": {
-    "md5": "1.2.1",
+    "md5": "2.2.1",
     "async": "0.9.0",
     "cheerio": "0.18.0",
     "colors": "^1.1.2",

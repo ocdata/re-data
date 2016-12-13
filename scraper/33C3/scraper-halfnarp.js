@@ -21,6 +21,7 @@ var log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 var json_requester = require('../lib/json_requester');
 
 var halfnarp_schedule_url = "http://halfnarp.events.ccc.de/-/talkpreferences";
+var workshops_halfnarp_schedule_url = "http://data.c3voc.de/33C3/workshops.halfnarp.json";
 
 // for debugging we can just pretend rp14 was today
 var originalStartDate = new Date(Date.UTC(2016, 7, 13, 10, 15, 0, 0));
@@ -277,7 +278,8 @@ var allDays = {
 var allRooms = {};
 var allSpeakers = {};
 var allTracks = {
-	'other': { id:'other', label_de:'Other', label_en:'Other', color:[101.0, 101.0, 101.0, 1.0] }
+	'other': { id:'other', label_de:'Other', label_en:'Other', color:[101.0, 101.0, 101.0, 1.0] },
+    'self-organized-sessions': {id: 'self-organized-sessions', label_en: "Self-Organized Sessions", label_de: "Self-Organized Sessions", color:grey } 
 };
 var allSpeakers = {};
 
@@ -306,28 +308,38 @@ function normalizeXMLDayDateKey(date) {
 	return date;	
 };
 
-function sessionFromJSON(json, id_prefix) {
-	var sessionURL = "http://events.ccc.de/congress/2016/Fahrplan/events/" + json["event_id"] + ".html";
+function sessionFromJSON(json, id_prefix, linkMakerFunction) {
+    var linkFunction = linkMakerFunction;
+    if (linkFunction == null) {
+        linkFunction = function (session) {
+            return "http://events.ccc.de/congress/2016/Fahrplan/events/" + json["event_id"] + ".html";            
+        };
+    }
 	
 	var speakers = speakerFromString(json["speaker_names"]).map(function (speaker) {
 		return {
-				"id": speaker.id,
+				"id": id_prefix + speaker.id,
 				"name": speaker.name
 		};
 	});
+    
+    var lang = allLanguages[json["language"]];
+    if (lang == undefined) {
+        lang = allLanguages["de"];
+    }
 	
 	var session = {
 		"id": mkID(id_prefix + json["event_id"]),
 		"title": json["title"],
 		"description": htmlToText.fromString(json["abstract"], { wordwrap: false }),
-		"url": sessionURL,
+		"url": null,
 		"begin": null,
 		"end": null,
 		"duration": json["duration"],
 		"location": null,
 		"track": trackFromJSON(json), // fixme
 		"format": allFormats['talk'],
-		"lang": allLanguages[json["language"]],
+		"lang": lang,
 		"level": allLevels['intermediate'],
 		"speakers": speakers,
 		"enclosures": [],
@@ -349,6 +361,8 @@ function sessionFromJSON(json, id_prefix) {
 		});
 	}
 	
+    session["url"] = linkFunction(session);
+    
 	return session;
 };
 
@@ -403,9 +417,15 @@ function trackFromJSON(json) {
 function speakerFromString(string) {
 	var speakers = [];
 	
-	var names = string.split(",").map(function (item) {
-		return item.trim();
-	});
+    var names = []
+    
+    if (string != undefined) {
+    	names = string.split(",").map(function (item) {
+    		return item.trim();
+    	});    
+    }
+    
+	
 	
 	names.forEach(function (speakerName) {
 		var speakerID = mkID(speakerName.trim());
@@ -452,7 +472,7 @@ exports.scrape = function (callback) {
 					
 					
 					result.halfnarp.forEach(function (item, index) {				
-						var session = sessionFromJSON(item, '');
+						var session = sessionFromJSON(item, '', null);
 						
 						// if session could be parsed add it
 						if (session != null) {
@@ -462,7 +482,30 @@ exports.scrape = function (callback) {
 					
 					callback(null, 'halfnarp');
 				});
-			}
+			},
+			workshops: function (callback) {
+				json_requester.get({
+					urls: {workshops: workshops_halfnarp_schedule_url}
+				},
+				function (result) {
+					
+					
+					result.workshops.forEach(function (item, index) {				
+						var session = sessionFromJSON(item, 'workshop-', function (session) {
+						    return "https://events.ccc.de/congress/2016/wiki/Session:" + encodeURIComponent(session.title);
+						});
+						
+						// if session could be parsed add it
+						if (session != null) {
+                            // Add to workshop track
+                            session["track"] = allTracks["self-organized-sessions"];
+							addEntry('session', session);
+						}
+					});
+					
+					callback(null, 'workshops');
+				});
+			}            
 		},
 		function (err, results) {
 			if (!err) {
