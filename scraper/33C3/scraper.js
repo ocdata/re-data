@@ -689,12 +689,19 @@ function normalizeXMLDayDateKey(date, begin) {
 	
 }
 
-function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, streamMap, idPrefix) {
+function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction) {
 	var links = [];
 	var id = mkID(event["id"]);
 	if (typeof(idPrefix) == "string") {
 		id = mkID(event["id"], idPrefix);
 	}
+    var linkFunction = linkMakerFunction;
+    if (linkFunction == null) {
+        linkFunction = function (session) {
+			if (!event["id"]) return "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/";
+            return "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/" + event["id"] + ".html";            
+        };
+    }	
 	
 	event.links.forEach(function (link) {
 		var url = null;
@@ -760,7 +767,6 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	var session = {
 		"id": id, // Do not use GUID so we keep in line with Halfnarp IDs
 		"title": event.title.toString(),
-		"url": urlBase + event.id + ".html",
 		"abstract": sanitizeHtml(event.abstract.toString(), {allowedTags: []}),
 		"description": sanitizeHtml(event.description.toString(), {allowedTags: []}),
 		"begin": begin,
@@ -825,13 +831,13 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	    }
     }
     
-
+	session.url = linkFunction(session);
 	
 	return session;
 };
 
 
-function handleResult(events, speakers, eventRecordings, urlBase, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix) {
+function handleResult(events, speakers, eventRecordings, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix, linkMakerFunction) {
 	if (locationNamePrefix == null) {
 		locationNamePrefix = "";
 	}
@@ -906,7 +912,7 @@ function handleResult(events, speakers, eventRecordings, urlBase, locationNamePr
    			 
 			 	// Event
 				// -----
-				var eventJSON = parseEvent(event, day, roomJSON, urlBase, locationNamePrefix, trackJSON, streamMap, idPrefix);
+				var eventJSON = parseEvent(event, day, roomJSON, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction);
                 // if event could not be parse skip it
 				if (eventJSON == null) return; 
                 
@@ -1296,12 +1302,12 @@ exports.scrape = function (callback) {
                                 handleResult(additional_schedule,
                                              speakers,
                                              eventRecordingJSONs,
-                                             "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/",
                                              "",
                                              defaultTrack,
                                              "https://fahrplan.events.ccc.de/congress/2016/Fahrplan",
-                                             [],
-											 "workshop"); // no voc streams for wiki
+                                             [], // no voc streams for wiki
+											 "workshop",
+											 function (session) { return "https://events.ccc.de/congress/2016/wiki/Session:" + encodeURIComponent(session.title); }); 
                                
                                 // // Sendezentrum Frap
                                 // handleResult(sendezentrum_schedule,
@@ -1319,13 +1325,13 @@ exports.scrape = function (callback) {
                                 // 33C3 Frap
                                 handleResult(schedule, 
                                              speakers, 
-                                             eventRecordingJSONs, 
-                                             "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/", 
+                                             eventRecordingJSONs,  
                                              "",
                                              defaultTrack,
                                              "https://fahrplan.events.ccc.de/congress/2015/Fahrplan",
                                              streamMap,
-										     null);
+										     null,
+ 										 	 null);
 
 
                                 // Handle CSV data
