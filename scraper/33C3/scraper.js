@@ -731,9 +731,6 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	}
 
 	var dayKey = normalizeXMLDayDateKey(day["date"], begin);
-	if (idPrefix == "workshop") {	
-		console.log("day: ", dayKey, "begin: ", begin, "title", event.title);	
-	}
 	var eventTypeId = event.type.toString();
 	if (eventTypeId == 'lecture') {
 		eventTypeId = 'talk';
@@ -879,10 +876,8 @@ function handleResult(events, speakers, eventRecordings, urlBase, locationNamePr
 		// ---
    		var dayJSON = parseDay(day);
 		if (dayJSON) {
-
 			var key = normalizeXMLDayDateKey(dayJSON.date);
 			allDays[key] = dayJSON;
-			console.warn("day JSON ", dayJSON, " for key ", key);			
 		}
 	});
 	events.schedule.conference.days.forEach(function(day) {
