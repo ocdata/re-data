@@ -1,7 +1,7 @@
 /* get node modules */
 var fs = require('fs');
 var path = require('path');
-var eventId = "32c3";
+var eventId = "33c3";
 
 /* get npm modules */
 var scrapyard = require('scrapyard');
@@ -20,15 +20,16 @@ var icalendar = require('icalendar');
 var log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 var json_requester = require('../lib/json_requester');
 
-var additional_schedule_url = "http://data.conference.bits.io/data/32c3/voc/workshops.schedule.json";
-var sendezentrum_schedule_url = "https://frab.das-sendezentrum.de/de/32c3/public/schedule.json";
-var sendezentrum_speaker_url = "https://frab.das-sendezentrum.de/de/32c3/public/speakers.json";
-var schedule_url = "http://data.conference.bits.io/data/32c3/schedule.json"; //"https://events.ccc.de/congress/2015/Fahrplan/schedule.json";
-var speakers_url = "http://data.conference.bits.io/data/32c3/speakers-frap.json"; // "https://events.ccc.de/congress/2015/Fahrplan/speakers.json";
+var additional_schedule_url = "http://data.c3voc.de/33C3/workshops.schedule.json";
+var sendezentrum_schedule_url = "https://frab.das-sendezentrum.de/de/33c3/public/schedule.json";
+var sendezentrum_speaker_url = "https://frab.das-sendezentrum.de/de/33c3/public/speakers.json";
+var schedule_url = "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
+var speakers_url =  "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
+
 var voc_streams_api_url = "https://streaming.media.ccc.de/streams/v1.json";
-var poi_titles_url = "https://github.com/NoMoKeTo/c3nav/raw/master/src/projects/32c3/titles.json";
-// var pois = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/32c3/pois.json";
-var poi_graph_url = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/32c3/graph.json";
+var poi_titles_url = "https://github.com/NoMoKeTo/c3nav/raw/master/src/projects/33c3/titles.json";
+// var pois = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/33c3/pois.json";
+var poi_graph_url = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/33c3/graph.json";
 
 // CSV data
 var lounge_session_csv_data = fs.readFileSync(__dirname + "/party_lounge.csv");
@@ -55,47 +56,47 @@ var dayDayChange = 0;
 // N ∈ [1;5], L ∈ {native, translated}, Q ∈ {hd, sd, slides}. 
 
 var sortOrderOfLocations = [
-    '32c3-hall-1',
-    '32c3-hall-2',
-    '32c3-hall-g',
-    '32c3-hall-6',
-    '32c3-b-hne',
-    '32c3-podcaster-tisch',    
-    "32c3-hall-a-1",
-    "32c3-hall-a-2",
-    "32c3-hall-b",
-    "32c3-hall-c-1",
-    "32c3-hall-c-2",
-    "32c3-hall-c-3",
-    "32c3-hall-c-4",
-    "32c3-hall-f",        
-    "32c3-hall-13",
-    "32c3-hall-14",
-    '32c3-party-lounge',    
-    '32c3-anti-error-lounge-loc',
-    '32c3-dome-loc'        
+    '33c3-saal-1',
+    '33c3-saal-2',
+    '33c3-saal-g',
+    '33c3-saal-6',
+    '33c3-b-hne',
+    '33c3-podcaster-tisch',    
+    "33c3-hall-a-1",
+    "33c3-hall-a-2",
+    "33c3-hall-b",
+    "33c3-hall-c-1",
+    "33c3-hall-c-2",
+    "33c3-hall-c-3",
+    "33c3-hall-c-4",
+    "33c3-hall-f",        
+    "33c3-hall-13",
+    "33c3-hall-14",
+    '33c3-party-lounge',    
+    '33c3-anti-error-lounge-loc',
+    '33c3-dome-loc'        
 ];
 
 // to map VOC API output to our rooms
 var vocSlugToLocatonID = {
-    "sendezentrum": "32c3-b-hne",
-    "hall1": '32c3-hall-1',
-    "hall2": '32c3-hall-2',
-    "hallg": '32c3-hall-g',
-    "hall6": '32c3-hall-6'
+    "sendezentrum": "33c3-b-hne",
+    "hall1": '33c3-hall-1',
+    "hall2": '33c3-hall-2',
+    "hallg": '33c3-hall-g',
+    "hall6": '33c3-hall-6'
 };
 
 var locationNameChanges = {
-    "32c3-b-hne": "Sendezentrum"
+    "33c3-b-hne": "Sendezentrum"
 };
 
 var poi2locationMapping = {
-    "32c3-h1": "32c3-hall-1",
-    "32c3-h2": "32c3-hall-2",    
-    "32c3-hg": "32c3-hall-g",        
-    "32c3-hg": "32c3-hall-g",
-    "32c3-lounge":  "32c3-party-lounge",
-    "32c3-poi-anti-error-lounge": "anti-error-lounge-loc"
+    "33c3-h1": "33c3-hall-1",
+    "33c3-h2": "33c3-hall-2",    
+    "33c3-hg": "33c3-hall-g",        
+    "33c3-hg": "33c3-hall-g",
+    "33c3-lounge":  "33c3-party-lounge",
+    "33c3-poi-anti-error-lounge": "anti-error-lounge-loc"
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1832": "camp15-spacevillage",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1783": "camp15-foodhackingbase",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1779": "camp15-amateur-radio"
@@ -130,13 +131,13 @@ var additionalPOIs = [
         "id": mkID("poi-sendezentrum"),
         "category": "session-location",
             "location": {
-                "id": "32c3-b-hne",
+                "id": "33c3-b-hne",
                 "label_de": "Sendezentrum",
                 "label_en": "Sendezentrum"
             },
         "hidden": false,
         "positions": [
-            {"map": "32c3-map-level1",
+            {"map": "33c3-map-level1",
              "x": 2969.47265625,
              "y": 1690.3660714285713}
              
@@ -152,7 +153,7 @@ var additionalPOIs = [
         "category": "service",
         "hidden": false,
         "positions": [
-            {"map": "32c3-map-level1",
+            {"map": "33c3-map-level1",
              "x": 3620.558035714286,
              "y": 1777.3660714285713
             }
@@ -168,7 +169,7 @@ var additionalPOIs = [
         "category": "entertainment",
         "hidden": false,
         "positions": [
-            {"map": "32c3-map-level4",
+            {"map": "33c3-map-level4",
              "x": 2471,
              "y": 2335
             }
@@ -184,7 +185,7 @@ var additionalPOIs = [
         "category": "community",
         "hidden": false,
         "positions": [
-            {"map": "32c3-map-level4",
+            {"map": "33c3-map-level4",
              "x": 2391,
              "y": 2535
             }
@@ -202,7 +203,7 @@ var streamURLs = {
 };
 
 var testVideoURLs = {
-    // "32c3-7415": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4" // Talk:Wie Jugendschutzprogramme nicht nur die Jugend schädigen Video: Das Transparenzportal Hamburg
+    // "33c3-7415": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4" // Talk:Wie Jugendschutzprogramme nicht nur die Jugend schädigen Video: Das Transparenzportal Hamburg
 };
 
 // Security #5057af blue
@@ -225,7 +226,7 @@ var green   = [ 69.0, 185.0, 100.0, 1.0];
 
 // non-official
 var red     = [118.0,  26.0,  61.0, 1.0];
-var grey    = [ 97.0,  97.0,  97.0, 1.0];
+var grey    = [110.0,  110.0,  110.0, 1.0];
 var black   = [  0.0,   0.0,   0.0, 1.0];
 var cream   = [135.0,  81.0,  86.0, 1.0]; 
 
@@ -420,6 +421,11 @@ function mkID(string) {
 	return eventId + "-" + string.toString().replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
 }
 
+function mkID(string, prefix) {
+	if (prefix == undefined) return eventId + "-" + string.toString().replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+	return eventId + "-" + prefix + "-" + string.toString().replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+}
+
 function parseDay(dayXML) {
 	var date = dayXML.date;
     // console.log("parsing: ", dayXML);
@@ -434,29 +440,34 @@ function parseDay(dayXML) {
 	var dateLabelDe = date;
 	var dateLabelEn = date;
 
+	var index = 0;
 	var monthDay = parseDate.getUTCDate();
 	switch (monthDay) {
 	case 27:
+		index = 1;
 		dateLabelDe = "Tag 1";
 		dateLabelEn = "Day 1";		
 		break;
 	case 28:
+		index = 2;		
 		dateLabelDe = "Tag 2";
 		dateLabelEn = "Day 2";		
 		break;
 	case 29:
+		index = 3;		
 		dateLabelDe = "Tag 3";
 		dateLabelEn = "Day 3";		
 		break;
 	case 30:
+		index = 4;		
 		dateLabelDe = "Tag 4";
 		dateLabelEn = "Day 4";		
 		break;						
 	default:
-		
+		return null;
 	}
 	
-	var id = mkID(dayXML.index);
+	var id = mkID(index);
 	
 	var day = {
 	    "id": id,
@@ -647,20 +658,27 @@ function normalizeXMLDayDateKey(date, begin) {
 	
     // if this is for a session we sanatize the date in case of strange input
     if (begin) {
-        if (begin.getUTCDate() != parseDate.getUTCDate() ||
-            begin.getUTCMonth() != parseDate.getUTCMonth() ||
-            begin.getUTCDate() != parseDate.getUTCDate()) 
-        {
+        // if (begin.getUTCDate() != parseDate.getUTCDate() ||
+        //     begin.getUTCMonth() != parseDate.getUTCMonth() ||
+        //     begin.getUTCDate() != parseDate.getUTCDate())
+        // {
             // TODO: get day begin as input
             if (begin.getHours() >= 9) {
                 // this is ok only if the session is very early, so we return the date from begin
                 var realBegin = "" + begin.getUTCFullYear() + "-" + (begin.getUTCMonth() + 1)  + "-" + begin.getUTCDate();                
 
-                log.warn("Given 'day' date and 'begin' date of the session don't match and this is not an early morning session! date says:", parseDate, " vs begin:", begin, " returning ", realBegin);
+                // log.warn("Given 'day' date and 'begin' date of the session don't match and this is not an early morning session! date says:", parseDate, " vs begin:", begin, " returning ", realBegin);
 
                 return realBegin;
+            } else if (begin.getHours() >= 5) {
+                // this is ok only if the session is very early, so we return the date from begin
+                var realBegin = "" + begin.getUTCFullYear() + "-" + (begin.getUTCMonth() + 1)  + "-" + (begin.getUTCDate() - 1);                
+
+                log.warn("Session is to early, returning ", realBegin, " as begin date instead of ", parseDate, " begin: ", begin);
+
+                return realBegin;            	
             }
-        }
+        // }
     }
     
 	// console.log("normalized " + date );
@@ -671,8 +689,12 @@ function normalizeXMLDayDateKey(date, begin) {
 	
 }
 
-function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, streamMap) {
+function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, streamMap, idPrefix) {
 	var links = [];
+	var id = mkID(event["id"]);
+	if (typeof(idPrefix) == "string") {
+		id = mkID(event["id"], idPrefix);
+	}
 	
 	event.links.forEach(function (link) {
 		var url = null;
@@ -697,8 +719,21 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	});
 
 	var begin = parseDate(event.date);
+
+	// Make sure day change is at 5 in the morning
+	var hourOffset = 1;
+	var hours = begin.getUTCHours() + hourOffset;
+	
+	var time = new Date(2016, 11, 27);
+	if (begin.getTime() < time.getTime()) {
+		console.log("No valid begin: " + begin);
+		return null;
+	}
+
 	var dayKey = normalizeXMLDayDateKey(day["date"], begin);
-		
+	if (idPrefix == "workshop") {	
+		console.log("day: ", dayKey, "begin: ", begin, "title", event.title);	
+	}
 	var eventTypeId = event.type.toString();
 	if (eventTypeId == 'lecture') {
 		eventTypeId = 'talk';
@@ -726,7 +761,7 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	}		
 	
 	var session = {
-		"id": mkID(event["id"]), // Do not use GUID so we keep in line with Halfnarp IDs
+		"id": id, // Do not use GUID so we keep in line with Halfnarp IDs
 		"title": event.title.toString(),
 		"url": urlBase + event.id + ".html",
 		"abstract": sanitizeHtml(event.abstract.toString(), {allowedTags: []}),
@@ -737,7 +772,7 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 		"day": day,
 		"format": allFormats[eventTypeId],
 		"level": allLevels['advanced'],
-		"lang": allLanguages[event.language.toString() ? event.language.toString() : 'en'],
+		"lang": allLanguages[event.language.toString() != null ? event.language.toString() : 'en'],
 		"speakers": [], // fill me later
 		"enclosures": [], // fill me later
 		"links": links
@@ -754,6 +789,10 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	if (!session.format) {
 		log.warn("Session " + session.id + " (" + session.title + ") has no format")
 		session["format"] = allFormats['talk'];
+	}
+	
+	if (!session.lang){
+		session.lang = allLanguages['en'];
 	}
 	
 	if (event.subtitle.toString() != "") {
@@ -789,11 +828,13 @@ function parseEvent(event, day, room, urlBase, locationNamePrefix, trackJSON, st
 	    }
     }
     
+
+	
 	return session;
 };
 
 
-function handleResult(events, speakers, eventRecordings, urlBase, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap) {
+function handleResult(events, speakers, eventRecordings, urlBase, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix) {
 	if (locationNamePrefix == null) {
 		locationNamePrefix = "";
 	}
@@ -837,7 +878,12 @@ function handleResult(events, speakers, eventRecordings, urlBase, locationNamePr
 		// Day
 		// ---
    		var dayJSON = parseDay(day);
-		allDays[normalizeXMLDayDateKey(dayJSON.date)] = dayJSON;
+		if (dayJSON) {
+
+			var key = normalizeXMLDayDateKey(dayJSON.date);
+			allDays[key] = dayJSON;
+			console.warn("day JSON ", dayJSON, " for key ", key);			
+		}
 	});
 	events.schedule.conference.days.forEach(function(day) {
    	 	var roomIndex = 0;
@@ -865,7 +911,7 @@ function handleResult(events, speakers, eventRecordings, urlBase, locationNamePr
    			 
 			 	// Event
 				// -----
-				var eventJSON = parseEvent(event, day, roomJSON, urlBase, locationNamePrefix, trackJSON, streamMap);
+				var eventJSON = parseEvent(event, day, roomJSON, urlBase, locationNamePrefix, trackJSON, streamMap, idPrefix);
                 // if event could not be parse skip it
 				if (eventJSON == null) return; 
                 
@@ -1148,7 +1194,7 @@ exports.scrape = function (callback) {
 		{
 			lectures: function (callback) {
 				json_requester.get({
-					urls: {conference: "http://api.media.ccc.de/public/conferences/78"}
+					urls: {conference: "https://api.media.ccc.de/public/conferences/78"}
 				},
 				function (result) {
 					if (result.conference.events) {
@@ -1156,16 +1202,16 @@ exports.scrape = function (callback) {
                             speakers: speakers_url,
                             schedule: schedule_url,
                             additional_schedule: additional_schedule_url,
-                            sendezentrum_schedule: sendezentrum_schedule_url,
-                            sendezentrum_speakers: sendezentrum_speaker_url,
-                            voc_streams: voc_streams_api_url,
-                            poi_graph: poi_graph_url,
-                            poi_titles: poi_titles_url
+                            // sendezentrum_schedule: sendezentrum_schedule_url,
+                            // sendezentrum_speakers: sendezentrum_speaker_url,
+                            // voc_streams: voc_streams_api_url,
+                            // poi_graph: poi_graph_url,
+                            // poi_titles: poi_titles_url
 						};
                         
                         // DISABLE VOC FOR NOW
                         result.conference.events.forEach(function (event) {
-                            videoAPICallURLs[event.guid] = event.url;
+                            // videoAPICallURLs[event.guid] = event.url;
                         });
 
 						json_requester.get({urls: videoAPICallURLs},
@@ -1175,21 +1221,21 @@ exports.scrape = function (callback) {
                                 var speakers = result.speakers.schedule_speakers.speakers;
                                 var schedule = result.schedule;
 
-                                // Wiki Events
+                                // // Wiki Events
                                 var additional_schedule = result.additional_schedule;
-
-                                // Sendezentrum Events
-                                var sendezentrum_schedule = result.sendezentrum_schedule;
-                                var sendezentrum_speakers = result.sendezentrum_speakers.schedule_speakers.speakers;
-
-                                // VOC streams
-                                var voc_streams = result.voc_streams;
                                 
-                                // POIs 
-                                var poi_graph = result.poi_graph;
-                                var poi_titles = result.poi_titles;
-                                
-                                handlePOIs(poi_graph, poi_titles);
+                                // // Sendezentrum Events
+                                // var sendezentrum_schedule = result.sendezentrum_schedule;
+                                // var sendezentrum_speakers = result.sendezentrum_speakers.schedule_speakers.speakers;
+                                //
+                                // // VOC streams
+                                // var voc_streams = result.voc_streams;
+                                //
+                                // // POIs
+                                // var poi_graph = result.poi_graph;
+                                // var poi_titles = result.poi_titles;
+                                //
+                                // handlePOIs(poi_graph, poi_titles);
                                 
 								var allSpeakers = {};
 								
@@ -1204,21 +1250,21 @@ exports.scrape = function (callback) {
                                 
 								var eventRecordingJSONs = toArray(result);
 
-								eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
-									var recording = er.recordings.filter(function (rec, index, all) {
-										return rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd";
-									});
-											
-											
-									
-									return {
-                                        "guid": er.guid,
-                                        "title": er.title,
-										"link": er.link,
-										"thumb": er.thumb_url,
-										"recording": recording.length > 0 ? recording[0] : null
-									};
-								});
+								// eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
+								// 	var recording = er.recordings.filter(function (rec, index, all) {
+								// 		return rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd";
+								// 	});
+								//
+								//
+								//
+								// 	return {
+								//                                         "guid": er.guid,
+								//                                         "title": er.title,
+								// 		"link": er.link,
+								// 		"thumb": er.thumb_url,
+								// 		"recording": recording.length > 0 ? recording[0] : null
+								// 	};
+								// });
 								
                                 var defaultTrack = {"id": mkID("other"),
                                                     "color": [97.0,97.0,97.0,1.0], // grey
@@ -1226,91 +1272,106 @@ exports.scrape = function (callback) {
                                                     "label_en": "Other"};
 
                                 var streamMap = {};
-                                voc_streams.forEach(function (group) {
-                                    if (group["conference"] == eventId.toUpperCase()) {
-                                        if (group["group"] == "Lecture Rooms" || group["group"] == "Live Podcasts") {
-                                            group.rooms.forEach(function (room) {
-                                                    console.log(room.schedulename);
-                                                    room.streams.forEach(function (streamInfo) {
-                                                        if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
-                                                            var info = {
-                                                                "url": streamInfo.urls.hls.url,
-                                                                "type": "livestream",
-                                                                "mimetype": "video/mp4"
-                                                            };
-                                                            
-                                                            var roomID = vocSlugToLocatonID[room.slug];
-                                                            if (roomID) {
-                                                                streamMap[roomID] = info;                                                                
-                                                            }
-
-                                                        }
-                                                    });
-                                            });
-                                        }
-                                    } 
-                                });
+                                // voc_streams.forEach(function (group) {
+                                //     if (group["conference"] == eventId.toUpperCase()) {
+                                //         if (group["group"] == "Lecture Rooms" || group["group"] == "Live Podcasts") {
+                                //             group.rooms.forEach(function (room) {
+                                //                     console.log(room.schedulename);
+                                //                     room.streams.forEach(function (streamInfo) {
+                                //                         if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
+                                //                             var info = {
+                                //                                 "url": streamInfo.urls.hls.url,
+                                //                                 "type": "livestream",
+                                //                                 "mimetype": "video/mp4"
+                                //                             };
+                                //
+                                //                             var roomID = vocSlugToLocatonID[room.slug];
+                                //                             if (roomID) {
+                                //                                 streamMap[roomID] = info;
+                                //                             }
+                                //
+                                //                         }
+                                //                     });
+                                //             });
+                                //         }
+                                //     }
+                                // });
 
                                 // Extra Data from Wiki
-                                handleResult(additional_schedule, 
-                                             speakers, 
-                                             eventRecordingJSONs, 
-                                             "https://events.ccc.de/congress/2015/Fahrplan/events/", 
+                                handleResult(additional_schedule,
+                                             speakers,
+                                             eventRecordingJSONs,
+                                             "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/",
                                              "",
                                              defaultTrack,
-                                             "https://events.ccc.de/congress/2015/Fahrplan",
-                                             []); // no voc streams for wiki
-                                
-                                // Sendezentrum Frap
-                                handleResult(sendezentrum_schedule, 
-                                             sendezentrum_speakers, 
-                                             eventRecordingJSONs, 
-                                             "https://frab.das-sendezentrum.de/de/32c3/public/events/", 
-                                             "",
-                                             {"id": mkID("sendezentrum"),
-                                              "color": red, 
-                                              "label_de": "Podcast",
-                                              "label_en": "Podcast"},
-                                             "https://frab.das-sendezentrum.de/",
-                                             streamMap);
+                                             "https://fahrplan.events.ccc.de/congress/2016/Fahrplan",
+                                             [],
+											 "workshop"); // no voc streams for wiki
+                               
+                                // // Sendezentrum Frap
+                                // handleResult(sendezentrum_schedule,
+                                //              sendezentrum_speakers,
+                                //              eventRecordingJSONs,
+                                //              "https://frab.das-sendezentrum.de/de/33c3/public/events/",
+                                //              "",
+                                //              {"id": mkID("sendezentrum"),
+                                //               "color": red,
+                                //               "label_de": "Podcast",
+                                //               "label_en": "Podcast"},
+                                //              "https://frab.das-sendezentrum.de/",
+                                //              streamMap);
 								
-                                // 32C3 Frap
+                                // 33C3 Frap
                                 handleResult(schedule, 
                                              speakers, 
                                              eventRecordingJSONs, 
-                                             "https://events.ccc.de/congress/2015/Fahrplan/events/", 
+                                             "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/", 
                                              "",
                                              defaultTrack,
-                                             "https://events.ccc.de/congress/2015/Fahrplan",
-                                             streamMap);
+                                             "https://fahrplan.events.ccc.de/congress/2015/Fahrplan",
+                                             streamMap,
+										     null);
 
 
                                 // Handle CSV data
                                             
-                                var shareURL = "https://events.ccc.de/congress/2015/Fahrplan";
+                                var shareURL = "https://fahrplan.events.ccc.de/congress/2016/Fahrplan";
                                 var defaultLoungeTrack = allTracks[mkID("entertainment")];
                                 
-                                handleCSVResult(anti_error_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
-                                    
-                                    handleCSVResult(lounge_session_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
-
-                                        handleCSVResult(dome_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {                                    
-                                            /// AFTER THIS POINT NO SESSIONS SHOULD BE ADDED
-								            
-                                            var allSessions = data.filter(function (i) {
-        								    	return i.type == "session";
-        								    });
-                                            
-                                            
-                                            
-                                            
-                                            // Generate iCal Feeds
-        								    generateIcalData(allSessions);
-                                            
-        								    callback(null, 'lectures');	
-                                        });  
-                                    });  
-                                });                          			
+								
+                                var allSessions = data.filter(function (i) {
+							    	return i.type == "session";
+							    });
+                                
+                                
+                                
+                                
+                                // Generate iCal Feeds
+							    generateIcalData(allSessions);
+                                
+							    callback(null, 'lectures');	
+								
+                                // handleCSVResult(anti_error_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
+//
+//                                     handleCSVResult(lounge_session_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
+//
+//                                         handleCSVResult(dome_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
+//                                             /// AFTER THIS POINT NO SESSIONS SHOULD BE ADDED
+//
+//                                             var allSessions = data.filter(function (i) {
+//         								    	return i.type == "session";
+//         								    });
+//
+//
+//
+//
+//                                             // Generate iCal Feeds
+//         								    generateIcalData(allSessions);
+//
+//         								    callback(null, 'lectures');
+//                                         });
+//                                     });
+//                                 });                        			
 							});						
 					}
 				})
