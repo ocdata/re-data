@@ -87,7 +87,8 @@ var vocSlugToLocatonID = {
 };
 
 var locationNameChanges = {
-    "33c3-b-hne": "Sendezentrum"
+    "33c3-sendezentrumsb-hne": "Sendezentrum",
+    "33c3-podcastingtisch": "Podcasttisch"
 };
 
 var poi2locationMapping = {
