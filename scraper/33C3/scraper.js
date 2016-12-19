@@ -592,10 +592,8 @@ function generateIcalData(allSessions) {
 		ical.addComponent(event);
 	});
 
-	// console.log(ical.toString());
 	var filepath = __dirname + "/../../web/data/" + eventId + "/sessions.ics";
 	filepath = path.normalize(filepath);
-    // console.log("PATH>>> ", path);
 	fs.writeFile(filepath, ical.toString(), function (err) {
 	});
 };
@@ -604,28 +602,40 @@ function parseDate(dateString) {
 	var date = new Date(dateString);
 	var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
 	date.setTime(newMillis);
-    // if (date.getUTCMonth() != 12) {
-    //     console.warn("WRONG DATE MONTH: ", date, " from date string ", dateString);
-    //     date.setUTCMonth(7);
-    //
-    // }
+
 	return date;
 };
 
 function parseEnd(dateString, durationString) {
-	var date = new Date(dateString);
-	var time = date.getTime() / 1000;
+    var dayChange = 4
+	var eventDate = new Date(dateString);
+	var time = eventDate.getTime() / 1000;
 	var match = durationString.toString().match(/(\d?\d):(\d\d)/);
 	var hours = new Number(match[1]);
 	var minutes = new Number(match[2]);
 	var seconds = time + (minutes * 60.0) + (hours * 60.0 * 60.0);
-	date = new Date(seconds * 1000); 
+    var date = new Date(seconds * 1000); 
 	var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
 	date.setTime(newMillis);
-    // if (date.getUTCMonth() != 7) {
-    //     console.warn("WRONG DATE MONTH: ", date, " from date string ", dateString);
-    //     date.setUTCMonth(7);
-    // }
+
+    if (date.getTime() <= eventDate.getTime()) {
+        date.setTime(eventDate.getTime() + (1000 * 3600));
+    }
+    
+    // if the event starts on day 1 but ends on day 2 after day change, 
+    // cap it to day change
+    if (eventDate.getUTCDate() < date.getUTCDate() &&
+        date.getUTCHours() > dayChange )
+    {
+        date.setUTCHours(dayChange - 1);
+        date.setUTCDate(eventDate.getUTCDate() + 1);
+    }
+    
+    // if the event starts before day change but ends after, normalize it's end 
+    // to day change
+    if (eventDate.getUTCHours() <= dayChange && date.getUTCHours() > dayChange) {
+        date.setUTCHours(dayChange - 1);
+    }
 	
 	return date;	
 }
@@ -763,6 +773,11 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		locationNameDe = locationNamePrefix + locationNameDe;
 		locationNameEn = locationNamePrefix + locationNameEn;		
 	}		
+    
+    if (event.id.toString() == "1103") {
+        console.log("Event: ", event);
+        
+    }
 	
 	var session = {
 		"id": id, // Do not use GUID so we keep in line with Halfnarp IDs
