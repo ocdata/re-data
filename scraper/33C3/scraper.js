@@ -60,8 +60,8 @@ var sortOrderOfLocations = [
     '33c3-saal-2',
     '33c3-saal-g',
     '33c3-saal-6',
-    '33c3-b-hne',
-    '33c3-podcaster-tisch',    
+    '33c3-sendezentrumsb-hne',
+    '33c3-podcastingtisch',    
     "33c3-hall-a-1",
     "33c3-hall-a-2",
     "33c3-hall-b",
@@ -697,7 +697,7 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 	}
     var linkFunction = linkMakerFunction;
     if (linkFunction == null) {
-        linkFunction = function (session) {
+        linkFunction = function (session, sourceJSON) {
 			if (!event["id"]) return "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/";
             return "https://fahrplan.events.ccc.de/congress/2016/Fahrplan/events/" + event["id"] + ".html";            
         };
@@ -831,7 +831,7 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 	    }
     }
     
-	session.url = linkFunction(session);
+	session.url = linkFunction(session, event);
 	
 	return session;
 };
@@ -1203,8 +1203,8 @@ exports.scrape = function (callback) {
                             speakers: speakers_url,
                             schedule: schedule_url,
                             additional_schedule: additional_schedule_url,
-                            // sendezentrum_schedule: sendezentrum_schedule_url,
-                            // sendezentrum_speakers: sendezentrum_speaker_url,
+                            sendezentrum_schedule: sendezentrum_schedule_url,
+                            sendezentrum_speakers: sendezentrum_speaker_url,
                             // voc_streams: voc_streams_api_url,
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
@@ -1226,9 +1226,9 @@ exports.scrape = function (callback) {
                                 var additional_schedule = result.additional_schedule;
                                 
                                 // // Sendezentrum Events
-                                // var sendezentrum_schedule = result.sendezentrum_schedule;
-                                // var sendezentrum_speakers = result.sendezentrum_speakers.schedule_speakers.speakers;
-                                //
+                                var sendezentrum_schedule = result.sendezentrum_schedule;
+                                var sendezentrum_speakers = result.sendezentrum_speakers.schedule_speakers.speakers;
+
                                 // // VOC streams
                                 // var voc_streams = result.voc_streams;
                                 //
@@ -1307,20 +1307,22 @@ exports.scrape = function (callback) {
                                              "https://fahrplan.events.ccc.de/congress/2016/Fahrplan",
                                              [], // no voc streams for wiki
 											 "workshop",
-											 function (session) { return "https://events.ccc.de/congress/2016/wiki/Session:" + encodeURIComponent(session.title); }); 
+											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2016/wiki/Session:" + encodeURIComponent(session.title); }); 
                                
                                 // // Sendezentrum Frap
-                                // handleResult(sendezentrum_schedule,
-                                //              sendezentrum_speakers,
-                                //              eventRecordingJSONs,
-                                //              "https://frab.das-sendezentrum.de/de/33c3/public/events/",
-                                //              "",
-                                //              {"id": mkID("sendezentrum"),
-                                //               "color": red,
-                                //               "label_de": "Podcast",
-                                //               "label_en": "Podcast"},
-                                //              "https://frab.das-sendezentrum.de/",
-                                //              streamMap);
+											 var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
+                                              "color": red,
+                                              "label_de": "Podcast",
+                                              "label_en": "Podcast"};
+                                handleResult(sendezentrum_schedule,
+                                             sendezentrum_speakers,
+                                             eventRecordingJSONs,
+                                             "",
+                                             podcastDefaultTrack,
+                                             "https://frab.das-sendezentrum.de/",
+                                             streamMap,
+										 	 "podcast",
+										 	 function (session, sourceJSON) { return "https://frab.das-sendezentrum.de/de/33c3/public/events/" + sourceJSON.id });
 								
                                 // 33C3 Frap
                                 handleResult(schedule, 
