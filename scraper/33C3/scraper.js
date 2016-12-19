@@ -338,55 +338,55 @@ var allMaps = {
                     "height": 4320}
                 },
 	    "pois": []
-	}//,
-	// 'map-level3': {
-	// 	'event': eventId,
-	// 	'id': eventId + "-map-" + "level3",
-	// 	'type': "map",
-	// 	'label_de': "Congress Center Hamburg",
-	// 	'label_en': "Congress Center Hamburg",
-	// 	'floor_label_de': "3. Obergeschoß",
-	// 	'floor_label_en': "3rd floor",
-	// 	"is_outdoor": false,
-	// 	"is_indoor": true,
-	// 	"floor": 3,
-	// 	"order_index": 3,
-	// 	"area": {"width": 1000.0,
-	// 	         "height": 530.0},
-	// 	"tiles": {
-	//                     "base_url": "http://data.conference.bits.io/maps/31c3/floor3",
-	//                     "large_image_url": "http://data.conference.bits.io/maps/31c3/floor3/mini.png",
-	//                     "tile_size": 512,
-	//                     "tile_file_extension": "png",
-	//            "size": {"width": 5940,
-	//                     "height": 4320}
-	//                 },
-	//     "pois": []
-	// },
-	// 'map-level4': {
-	// 	'event': eventId,
-	// 	'id': eventId + "-map-" + "level4",
-	// 	'type': "map",
-	// 	'label_de': "Congress Center Hamburg",
-	// 	'label_en': "Congress Center Hamburg",
-	// 	'floor_label_de': "4. Obergeschoß",
-	// 	'floor_label_en': "4th floor",
-	// 	"is_outdoor": false,
-	// 	"is_indoor": true,
-	// 	"floor": 4,
-	// 	"order_index": 4,
-	// 	"area": {"width": 1000.0,
-	// 	         "height": 530.0},
-	// 	"tiles": {
-	//                     "base_url": "http://data.conference.bits.io/maps/31c3/floor4",
-	//                     "large_image_url": "http://data.conference.bits.io/maps/31c3/floor4/mini.png",
-	//                     "tile_size": 512,
-	//                     "tile_file_extension": "png",
-	//            "size": {"width": 5940,
-	//                     "height": 4320}
-	//                 },
-	//     "pois": []
-	// }		
+	},
+	'map-level3': {
+        'event': eventId,
+        'id': eventId + "-map-" + "level3",
+        'type': "map",
+        'label_de': "Congress Center Hamburg",
+        'label_en': "Congress Center Hamburg",
+        'floor_label_de': "3. Obergeschoß",
+        'floor_label_en': "3rd floor",
+        "is_outdoor": false,
+        "is_indoor": true,
+        "floor": 3,
+        "order_index": 3,
+        "area": {"width": 1000.0,
+                 "height": 530.0},
+        "tiles": {
+                        "base_url": "http://data.conference.bits.io/maps/33c3/floor3",
+                        "large_image_url": "http://data.conference.bits.io/maps/33c3/floor3/mini.png",
+                        "tile_size": 512,
+                        "tile_file_extension": "png",
+               "size": {"width": 5940,
+                        "height": 4320}
+                    },
+        "pois": []
+    },
+    'map-level4': {
+        'event': eventId,
+        'id': eventId + "-map-" + "level4",
+        'type': "map",
+        'label_de': "Congress Center Hamburg",
+        'label_en': "Congress Center Hamburg",
+        'floor_label_de': "4. Obergeschoß",
+        'floor_label_en': "4th floor",
+        "is_outdoor": false,
+        "is_indoor": true,
+        "floor": 4,
+        "order_index": 4,
+        "area": {"width": 1000.0,
+                 "height": 530.0},
+        "tiles": {
+                        "base_url": "http://data.conference.bits.io/maps/33c3/floor4",
+                        "large_image_url": "http://data.conference.bits.io/maps/33c3/floor4/mini.png",
+                        "tile_size": 512,
+                        "tile_file_extension": "png",
+               "size": {"width": 5940,
+                        "height": 4320}
+                    },
+        "pois": []
+    }
 };
 
 
