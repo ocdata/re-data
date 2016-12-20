@@ -718,15 +718,18 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		var url = null;
 		var title = null;
 		if (typeof(link) === "string") {
-			url = link;
-			title = link;
+            url = link;
+            title = link;
 		} else if (typeof(link) === "object" && link["title"] && link["url"]) {
 			title = link["title"];
 			url = link["url"];
 		}
-		if (url.indexOf("//") == 0) {
+		if (typeof(url) == "string" && url.indexOf("//") == 0) {
 			url = "http:" + url;
 		}
+        if (typeof(url) == "string" && !url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }        
 		
 		links.push({
 			"title": title,
