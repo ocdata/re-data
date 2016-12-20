@@ -727,7 +727,7 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		if (typeof(url) == "string" && url.indexOf("//") == 0) {
 			url = "http:" + url;
 		}
-        if (typeof(url) == "string" && !url.startsWith("http://") && !url.startsWith("https://")) {
+        if (typeof(url) == "string" && !(url.indexOf("http://") == 0) && !(url.indexOf("https://") == 0)) {
             url = "http://" + url;
         }        
 		
