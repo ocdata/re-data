@@ -33,7 +33,7 @@ var poi_graph_url = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src
 
 // CSV data
 var lounge_session_csv_data = fs.readFileSync(__dirname + "/party_lounge.csv");
-var anti_error_lounge_csv_data = fs.readFileSync(__dirname + "/anti_error.csv");
+var chill_out_lounge_csv_data = fs.readFileSync(__dirname + "/33c3_4Floor_ChillOut_LineUp.csv");
 
 var dome_lounge_csv_data = fs.readFileSync(__dirname + "/dome.csv");
  //"https://gist.githubusercontent.com/MaZderMind/d5737ab867ade7888cb4/raw/bb02a27ca758e1ca3de96b1bf3f811541436ab9d/streams-v1.json" 
@@ -97,7 +97,7 @@ var poi2locationMapping = {
     "33c3-hg": "33c3-hall-g",        
     "33c3-hg": "33c3-hall-g",
     "33c3-lounge":  "33c3-party-lounge",
-    "33c3-poi-anti-error-lounge": "anti-error-lounge-loc"
+    "33c3-poi-anti-error-lounge": "33c3-anti-error-lounge-loc"
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1832": "camp15-spacevillage",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1783": "camp15-foodhackingbase",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1779": "camp15-amateur-radio"
@@ -113,8 +113,8 @@ var additionalLocations = [
     },
     {
         "id": mkID("anti-error-lounge-loc"),
-        "label_de": "Anti Error Lounge",
-        "label_en": "Anti Error Lounge",
+        "label_de": "Chillout Lounge",
+        "label_en": "Chillout Lounge",
         "is_stage": false
     },
     {
@@ -146,55 +146,55 @@ var additionalPOIs = [
         "links": [],
         "priority": 100,
         "type": "poi"
-    },
-    {
-        "label_de": "POC",
-        "label_en": "POC",
-        "id": mkID("poi-poc"),
-        "category": "service",
-        "hidden": false,
-        "positions": [
-            {"map": "33c3-map-level1",
-             "x": 3620.558035714286,
-             "y": 1777.3660714285713
-            }
-        ],
-        "links": [],
-        "priority": 100,
-        "type": "poi"
-    },
-    {
-        "label_de": "Anti-Error Lounge",
-        "label_en": "Anti-Error Lounge",
-        "id": mkID("poi-anti-error-lounge"),
-        "category": "entertainment",
-        "hidden": false,
-        "positions": [
-            {"map": "33c3-map-level4",
-             "x": 2471,
-             "y": 2335
-            }
-        ],
-        "links": [],
-        "priority": 100,
-        "type": "poi"
-    },
-    {
-        "label_de": "Unbezahlbar",
-        "label_en": "Unbezahlbar",
-        "id": mkID("unbezahlbar"),
-        "category": "community",
-        "hidden": false,
-        "positions": [
-            {"map": "33c3-map-level4",
-             "x": 2391,
-             "y": 2535
-            }
-        ],
-        "links": [],
-        "priority": 100,
-        "type": "poi"
-    }          	
+    }//,
+    // {
+  //       "label_de": "POC",
+  //       "label_en": "POC",
+  //       "id": mkID("poi-poc"),
+  //       "category": "service",
+  //       "hidden": false,
+  //       "positions": [
+  //           {"map": "33c3-map-level1",
+  //            "x": 3620.558035714286,
+  //            "y": 1777.3660714285713
+  //           }
+  //       ],
+  //       "links": [],
+  //       "priority": 100,
+  //       "type": "poi"
+  //   },
+  //   {
+  //       "label_de": "Anti-Error Lounge",
+  //       "label_en": "Anti-Error Lounge",
+  //       "id": mkID("poi-anti-error-lounge"),
+  //       "category": "entertainment",
+  //       "hidden": false,
+  //       "positions": [
+  //           {"map": "33c3-map-level4",
+  //            "x": 2471,
+  //            "y": 2335
+  //           }
+  //       ],
+  //       "links": [],
+  //       "priority": 100,
+  //       "type": "poi"
+  //   },
+  //   {
+  //       "label_de": "Unbezahlbar",
+  //       "label_en": "Unbezahlbar",
+  //       "id": mkID("unbezahlbar"),
+  //       "category": "community",
+  //       "hidden": false,
+  //       "positions": [
+  //           {"map": "33c3-map-level4",
+  //            "x": 2391,
+  //            "y": 2535
+  //           }
+  //       ],
+  //       "links": [],
+  //       "priority": 100,
+  //       "type": "poi"
+  //   }         	
 ];
 
 
@@ -1047,15 +1047,35 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
                            } else {
                                // console.log(output); 
                                output.forEach(function (row) {
-                                   if (!row.day || !row.start_day || !row.end_day || row.day.length == 0 ) { return; };
+                                   if (!row.tag || !row.beginn || !row.ende || row.tag.length == 0 ) { 
+									   console.warn("Skiping invalid CSV row: ", row); 
+									   return; 
+								   };
                                    
                                    
-                                   var beginDateStr = "" + row.start_day + "T" + row.start_time + "+01:00";
+								   var components = row.tag.split(".");
+								   if (components.length != 3) { console.error("Could not parse date from CSV: ", row.tag); return; };
+								   
+								   var day = components[0];
+								   var month = components[1];
+								   var year = "20" + components[2];  
+								   var isoDay = [year,month,day].join("-");
+								   
+                                   var beginDateStr = isoDay + "T" + row.beginn + "+01:00";
                                    var beginDate = parseDate(beginDateStr);
-                                   var endDateStr = "" + row.end_day + "T" + row.end_time + "+0100";
+								   
+                                   var endDateStr = isoDay + "T" + row.beginn + "+0100";
                                    var endDate = new Date(endDateStr);
-                                                                          
-                                       
+								   // if (beginDate.getUTCHours() + 1 < 4) {
+								   // 									   									   endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
+								   // 									   endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
+								   // }
+								   
+								   // if the end date is before the begin date move it a day ahead
+								   if (endDate.getTime() < beginDate.getTime()) {
+									   endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
+								   }
+								   
                                    var duration = (endDate.getTime() - beginDate.getTime()) / 1000;
                                    var durMin = duration / 60.0;
                                    var durHour = Math.floor(durMin / 60);   
@@ -1065,15 +1085,51 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
                                    var leftDurMinStr = leftDurMin < 10 ? "0" + leftDurMin : leftDurMin;
                                    var durStr = durHourStr + ":" + leftDurMinStr;
                                    var end = parseEnd(beginDateStr, durStr);
-                                   console.log(row.artist, " left ", durStr);                                   
-                                   var title = row.artist;
-                                   var locationJSON = allRooms[row.location];
+								   
+								   var artistURLFunction = function (potentialURL) {
+									   if (potentialURL && 
+										   typeof(potentialURL) == 'string' &&
+										   potentialURL.length > 0 && 
+										   potentialURL.indexOf("http") == 0 && 
+										   row.dj_url_1.indexOf("://") != -1) 
+										 {
+										   return potentialURL;
+									   } else {
+										   return null;
+									   }
+								   };
+								   
+								   var artists = [];
+								   var artistURLs = [];
+								   if (!row.dj_name_1) {
+									   console.warn("Skipping row without DJ name");
+									   return;
+								   } else {
+									   artists.push(row.dj_name_1);
+									   artistURLs.push(artistURLFunction(row.dj_url_1));
+								   }
+								   
+								   if (row.dj_name_2 && row.dj_name_2.length > 0) {
+									   artists.push(row.dj_name_2);
+									   artistURLs.push(artistURLFunction(row.dj_url_2));
+								   }
+								   
+								   if (row.dj_name_3 && row.dj_name_3.length > 0) {
+									   artists.push(row.dj_name_3);
+									   artistURLs.push(artistURLFunction(row.dj_url_3));
+								   }								   
+								   
+                                   var title = artists.join(", ");								   
+                                   console.log(title, " left ", durStr);                                   
+
+								   // FIXME: Use location
+                                   var locationJSON = allRooms[mkID("anti-error-lounge-loc")];
                                    var trackJSON = defaultTrack;
                                    var format = allFormats["talk"];
-                                   var langJSON = allLanguages["de"];
+                                   var langJSON = allLanguages["en"];
                                    var levelJSON = allLevels["beginner"];
                                    
-                                   var day = allDays[row.day];
+                                   var day = allDays[isoDay];
                                    
                                	   var session = {
                                	   	"id": mkID("lounges-" + title),
@@ -1094,10 +1150,15 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
                                     "location": locationJSON
                                	   };
                                 
-                                   if (row.link && row.link.length > 0 && row.link.indexOf("http") == 0) {
-                                       session.links.push({"title": row.link, "url": row.link, "type": "session-link"})
-                                   }
-                                
+								   for (var i = 0; i < artistURLs.length; i++) {
+									   var url = artistURLs[i];
+									   var artist = artists[i];				   
+									  if (typeof(url) == "string") {
+ 
+									   	 session.links.push({"title": artist, "url": url, "type": "session-link"})
+									  }
+								   }
+								
                                    addEntry('session', session);
                                
                                                                  
@@ -1223,7 +1284,7 @@ exports.scrape = function (callback) {
                             schedule: schedule_url,
                             additional_schedule: additional_schedule_url,
                             sendezentrum_schedule: sendezentrum_schedule_url,
-                            sendezentrum_speakers: sendezentrum_speaker_url,
+                            sendezentrum_speakers: sendezentrum_speaker_url
                             // voc_streams: voc_streams_api_url,
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
@@ -1248,6 +1309,9 @@ exports.scrape = function (callback) {
                                 var sendezentrum_schedule = result.sendezentrum_schedule;
                                 var sendezentrum_speakers = result.sendezentrum_speakers.schedule_speakers.speakers;
 
+								// Chillout Lounge
+								var chillout_lounge_lineup = result.chillout_lounge;
+
                                 // // VOC streams
                                 // var voc_streams = result.voc_streams;
                                 //
@@ -1267,6 +1331,7 @@ exports.scrape = function (callback) {
                                 delete result.sendezentrum_speakers;
                                 delete result.poi_titles;
                                 delete result.poi_graph;
+                                delete result.chillout_lounge;								
                                 
 								var eventRecordingJSONs = toArray(result);
 
@@ -1328,11 +1393,11 @@ exports.scrape = function (callback) {
 											 "workshop",
 											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2016/wiki/Session:" + encodeURIComponent(session.title); }); 
                                
-                                // // Sendezentrum Frap
-											 var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
-                                              "color": red,
-                                              "label_de": "Podcast",
-                                              "label_en": "Podcast"};
+                                // Sendezentrum Frap
+								var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
+                                				  			"color": red,
+												  			"label_de": "Podcast",
+												  			"label_en": "Podcast"};
                                 handleResult(sendezentrum_schedule,
                                              sendezentrum_speakers,
                                              eventRecordingJSONs,
@@ -1341,7 +1406,8 @@ exports.scrape = function (callback) {
                                              "https://frab.das-sendezentrum.de/",
                                              streamMap,
 										 	 "podcast",
-										 	 function (session, sourceJSON) { return "https://frab.das-sendezentrum.de/de/33c3/public/events/" + sourceJSON.id });
+										 	 function (session, sourceJSON) { return "https://frab.das-sendezentrum.de/de/33c3/public/events/" + sourceJSON.id; });
+								
 								
                                 // 33C3 Frap
                                 handleResult(schedule, 
@@ -1358,7 +1424,6 @@ exports.scrape = function (callback) {
                                 // Handle CSV data
                                             
                                 var shareURL = "https://fahrplan.events.ccc.de/congress/2016/Fahrplan";
-                                var defaultLoungeTrack = allTracks[mkID("entertainment")];
                                 
 								
                                 var allSessions = data.filter(function (i) {
@@ -1370,28 +1435,30 @@ exports.scrape = function (callback) {
                                 
                                 // Generate iCal Feeds
 							    generateIcalData(allSessions);
-                                
-							    callback(null, 'lectures');	
 								
+								var defaultLoungeTrack = allTracks[mkID('entertainment')];
+                                							    //
+							    // callback(null, 'lectures');
+							    //
                                 // handleCSVResult(anti_error_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
 //
 //                                     handleCSVResult(lounge_session_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
 //
-//                                         handleCSVResult(dome_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
-//                                             /// AFTER THIS POINT NO SESSIONS SHOULD BE ADDED
-//
-//                                             var allSessions = data.filter(function (i) {
-//         								    	return i.type == "session";
-//         								    });
-//
-//
-//
-//
-//                                             // Generate iCal Feeds
-//         								    generateIcalData(allSessions);
-//
-//         								    callback(null, 'lectures');
-//                                         });
+                                        handleCSVResult(chill_out_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
+                                            /// AFTER THIS POINT NO SESSIONS SHOULD BE ADDED
+
+                                            var allSessions = data.filter(function (i) {
+        								    	return i.type == "session";
+        								    });
+
+
+
+
+                                            // Generate iCal Feeds
+        								    generateIcalData(allSessions);
+
+        								    callback(null, 'lectures');
+                                        });
 //                                     });
 //                                 });                        			
 							});						
