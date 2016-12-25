@@ -1035,7 +1035,7 @@ function handlePOIs(graph, titles) {
     alsoAdd("poi", allPois);
 }
 
-function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
+function handleCSVResult(csvData, defaultTrack, shareURL, locationIdentifier, callback) {
     parseCSV(csvData, {"delimiter": ";", 
                        "auto_parse": false,
                        "auto_parse_date": false,    
@@ -1046,6 +1046,8 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
                                log.error("CSV Parse Error: ", err);
                            } else {
                                // console.log(output); 
+							   
+							   var index = 0;
                                output.forEach(function (row) {
                                    if (!row.tag || !row.beginn || !row.ende || row.tag.length == 0 ) { 
 									   console.warn("Skiping invalid CSV row: ", row); 
@@ -1066,10 +1068,13 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
 								   
                                    var endDateStr = isoDay + "T" + row.beginn + "+0100";
                                    var endDate = new Date(endDateStr);
-								   // if (beginDate.getUTCHours() + 1 < 4) {
-								   // 									   									   endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
-								   // 									   endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
-								   // }
+								   
+								   var localHours = beginDate.getUTCHours() + 1;
+								   if (localHours == 24) localHours = 0;
+								   if (localHours <= 4) {
+									   var day = beginDate.getUTCDate() - 1;
+									   isoDay = [year,month, day].join("-");
+								   }
 								   
 								   // if the end date is before the begin date move it a day ahead
 								   if (endDate.getTime() < beginDate.getTime()) {
@@ -1120,19 +1125,19 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
 								   }								   
 								   
                                    var title = artists.join(", ");								   
-                                   console.log(title, " left ", durStr);                                   
+                                   console.log(title, " on day ", isoDay, " for begin ", beginDate);                                   
 
-								   // FIXME: Use location
-                                   var locationJSON = allRooms[mkID("anti-error-lounge-loc")];
+                                   var locationJSON = allRooms[locationIdentifier];
                                    var trackJSON = defaultTrack;
                                    var format = allFormats["talk"];
                                    var langJSON = allLanguages["en"];
                                    var levelJSON = allLevels["beginner"];
-                                   
+
                                    var day = allDays[isoDay];
-                                   
+                                   if (!day) return;
+								   
                                	   var session = {
-                               	   	"id": mkID("lounges-" + title),
+                               	   	"id": mkID("lounges-" + locationIdentifier + "-" + index),
                                	   	"title": title,
                                	   	"url": shareURL,
                                	   	"abstract": "",
@@ -1161,7 +1166,7 @@ function handleCSVResult(csvData, defaultTrack, shareURL, callback) {
 								
                                    addEntry('session', session);
                                
-                                                                 
+								   index++;
                                });
                            }
 
@@ -1444,7 +1449,7 @@ exports.scrape = function (callback) {
 //
 //                                     handleCSVResult(lounge_session_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
 //
-                                        handleCSVResult(chill_out_lounge_csv_data, defaultLoungeTrack, shareURL, function (err, sessions) {
+                                        handleCSVResult(chill_out_lounge_csv_data, defaultLoungeTrack, shareURL, mkID("anti-error-lounge-loc"), function (err, sessions) {
                                             /// AFTER THIS POINT NO SESSIONS SHOULD BE ADDED
 
                                             var allSessions = data.filter(function (i) {
