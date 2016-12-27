@@ -815,9 +815,9 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		
 		var locationId = session["location"]["id"];
 		var willBeRecorded = undefined;
-		if (event["do_not_record"]) {
+		if (event["do_not_record"] == true) {
 			willBeRecorded = false;
-		} else if (Object.keys(vocSlugToLocatonID).indexOf(locationId) != -1) {
+		} else if (Object.values(vocSlugToLocatonID).indexOf(locationId) != -1) {
 			willBeRecorded = true;
 		}
 		
