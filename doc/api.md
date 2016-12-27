@@ -191,6 +191,8 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 		{ "id": "rp13-speaker-81", "name": "Sascha Lobo" }
 		//...
 	],
+	"will_be_recorded": true,
+	"cancelled": false,	
 	"enclosures": [
 		{
 			"url": "http://example.com/files/live.m3u8",
@@ -237,6 +239,8 @@ Sessions also have two special fields: enclosures and links:
 Optional fields:
 
 - `subtitle`
+- `will_be_recorded`, assume `false` if missing
+- `cancelled`, assume `false` if missing
 
 ### Enclosures
 
