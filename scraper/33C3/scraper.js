@@ -1296,7 +1296,7 @@ exports.scrape = function (callback) {
 		{
 			lectures: function (callback) {
 				json_requester.get({
-					urls: {conference: "https://api.media.ccc.de/public/conferences/78"}
+					urls: {conference: "https://api.media.ccc.de/public/conferences/101"}
 				},
 				function (result) {
 					if (result.conference.events) {
@@ -1311,9 +1311,8 @@ exports.scrape = function (callback) {
                             // poi_titles: poi_titles_url
 						};
                         
-                        // DISABLE VOC FOR NOW
                         result.conference.events.forEach(function (event) {
-                            // videoAPICallURLs[event.guid] = event.url;
+                            videoAPICallURLs[event.guid] = event.url;
                         });
 
 						json_requester.get({urls: videoAPICallURLs},
@@ -1356,21 +1355,19 @@ exports.scrape = function (callback) {
                                 
 								var eventRecordingJSONs = toArray(result);
 
-								// eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
-								// 	var recording = er.recordings.filter(function (rec, index, all) {
-								// 		return rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd";
-								// 	});
-								//
-								//
-								//
-								// 	return {
-								//                                         "guid": er.guid,
-								//                                         "title": er.title,
-								// 		"link": er.link,
-								// 		"thumb": er.thumb_url,
-								// 		"recording": recording.length > 0 ? recording[0] : null
-								// 	};
-								// });
+								eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
+									var recording = er.recordings.filter(function (rec, index, all) {
+										return rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd";
+									});
+
+									return {
+								                                        "guid": er.guid,
+								                                        "title": er.title,
+										"link": er.link,
+										"thumb": er.thumb_url,
+										"recording": recording.length > 0 ? recording[0] : null
+									};
+								});
 								
                                 var defaultTrack = {"id": mkID("other"),
                                                     "color": [97.0,97.0,97.0,1.0], // grey
@@ -1400,6 +1397,25 @@ exports.scrape = function (callback) {
                                                     });
                                             });
                                         }
+										if (groupName == "Live Music") {
+                                            group.rooms.forEach(function (room) {
+                                                    room.streams.forEach(function (streamInfo) {
+                                                        if (streamInfo.type == "music" && (streamInfo.slug == "music-native") && streamInfo.urls.mp3) {
+                                                            var info = {
+                                                                "url": streamInfo.urls.mp3.url,
+                                                                "type": "livestream",
+                                                                "mimetype": "audio/mp3"
+                                                            };
+
+                                                            var roomID = vocSlugToLocatonID[room.slug];
+                                                            if (roomID) {
+                                                                streamMap[roomID] = info;
+                                                            }
+
+                                                        }
+                                                    });
+                                            });
+										}
                                     }
                                 });
 
