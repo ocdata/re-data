@@ -813,11 +813,17 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
             "label_en": allRooms[room.id]["label_en"]
         };
 		
+		var recordingLocationIds= [];
+		
+		
+		
+		
+		
 		var locationId = session["location"]["id"];
 		var willBeRecorded = undefined;
 		if (event["do_not_record"] == true) {
 			willBeRecorded = false;
-		} else if (Object.values(vocSlugToLocatonID).indexOf(locationId) != -1) {
+		} else if (toArray(vocSlugToLocatonID).indexOf(locationId) != -1) {
 			willBeRecorded = true;
 		}
 		
@@ -1066,7 +1072,6 @@ function handleCSVResult(csvData, defaultTrack, shareURL, locationIdentifier, ca
 							   var index = 0;
                                output.forEach(function (row) {
                                    if (!row.tag || !row.beginn || !row.ende || row.tag.length == 0 ) { 
-									   console.warn("Skiping invalid CSV row: ", row); 
 									   return; 
 								   };
                                    
