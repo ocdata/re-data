@@ -1386,7 +1386,10 @@ exports.scrape = function (callback) {
                                         if (groupName == "Live") {
                                             group.rooms.forEach(function (room) {
                                                     room.streams.forEach(function (streamInfo) {
-                                                        if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
+                                                        if (streamInfo.type == "video" && 
+															(streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && 
+															streamInfo.urls.hls &&
+													        !streamInfo.isTranslated) {
                                                             var info = {
                                                                 "url": streamInfo.urls.hls.url,
                                                                 "type": "livestream",
