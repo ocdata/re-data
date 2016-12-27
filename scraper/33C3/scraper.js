@@ -1364,7 +1364,7 @@ exports.scrape = function (callback) {
                                 var streamMap = {};
                                 voc_streams.forEach(function (group) {
                                     if (group["conference"] == eventId.toUpperCase()) {
-                                        if (group["group"] == "Lecture Rooms" || group["group"] == "Live Podcasts") {
+                                        if (group["group"] == "Live") {
                                             group.rooms.forEach(function (room) {
                                                     console.log(room.schedulename);
                                                     room.streams.forEach(function (streamInfo) {
