@@ -800,12 +800,28 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		"links": links
 	};
 	
+	if (session.title.match(/\bcancelled\b/i) || session.title.match(/\babgesagt\b/i)) {
+		session["cancelled"] = true;
+	} else {
+		session["cancelled"] = false;
+	}
+	
     if (allRooms[room.id] != undefined && allRooms[room.id]["id"] != mkID("")) {
         session["location"] = {
             "id": allRooms[room.id]["id"],
             "label_de": allRooms[room.id]["label_de"],
             "label_en": allRooms[room.id]["label_en"]
         };
+		
+		var locationId = session["location"]["id"];
+		var willBeRecorded = undefined;
+		if (event["do_not_record"]) {
+			willBeRecorded = false;
+		} else if (Object.keys(vocSlugToLocatonID).indexOf(locationId) != -1) {
+			willBeRecorded = true;
+		}
+		
+		session["will_be_recorded"] = willBeRecorded;
     }
 
 	if (!session.format) {
@@ -1364,9 +1380,9 @@ exports.scrape = function (callback) {
                                 var streamMap = {};
                                 voc_streams.forEach(function (group) {
                                     if (group["conference"] == eventId.toUpperCase()) {
-                                        if (group["group"] == "Live") {
+										var groupName = group["group"];
+                                        if (groupName == "Live") {
                                             group.rooms.forEach(function (room) {
-                                                    console.log(room.schedulename);
                                                     room.streams.forEach(function (streamInfo) {
                                                         if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
                                                             var info = {
