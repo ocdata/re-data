@@ -79,11 +79,11 @@ var sortOrderOfLocations = [
 
 // to map VOC API output to our rooms
 var vocSlugToLocatonID = {
-    "sendezentrum": "33c3-b-hne",
-    "hall1": '33c3-hall-1',
-    "hall2": '33c3-hall-2',
-    "hallg": '33c3-hall-g',
-    "hall6": '33c3-hall-6'
+    "sendezentrum": mkID("sendezentrumsb-hne"),
+    "hall1": mkID("saal-1"),
+    "hall2": mkID("saal-2"),
+    "hallg": mkID("saal-g"),
+    "hall6": mkID("saal-6")
 };
 
 var locationNameChanges = {
@@ -92,12 +92,12 @@ var locationNameChanges = {
 };
 
 var poi2locationMapping = {
-    "33c3-h1": "33c3-hall-1",
-    "33c3-h2": "33c3-hall-2",    
-    "33c3-hg": "33c3-hall-g",        
-    "33c3-hg": "33c3-hall-g",
-    "33c3-lounge":  "33c3-party-lounge",
-    "33c3-poi-anti-error-lounge": "33c3-anti-error-lounge-loc"
+    "33c3-h1": mkID("saal-1"),
+    "33c3-h2": mkID("saal-2"),    
+    "33c3-hg": mkID("saal-g"),        
+    "33c3-h6": mkID("saal-6"),
+    "33c3-lounge":  mkID("party-lounge"),
+    "33c3-poi-anti-error-lounge": mkID("anti-error-lounge-loc")
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1832": "camp15-spacevillage",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1783": "camp15-foodhackingbase",
     // "camp15-http-campmap-mazdermind-de-api-villages-id-1779": "camp15-amateur-radio"
@@ -216,7 +216,7 @@ var testVideoURLs = {
 // CCC #45b964 green
 // Entertainment #45b964 (same as CCC) green
 // 
-// official from https://events.ccc.de/congress/2015/wiki/Static:Design
+// official from https://events.ccc.de/congress/2016/wiki/Static:Design
 var blue    = [ 80.0,  87.0, 175.0, 1.0];
 var violett = [181.0,  80.0, 189.0, 1.0];
 var turquise= [ 69.0, 185.0, 179.0, 1.0]; 
@@ -1289,8 +1289,8 @@ exports.scrape = function (callback) {
                             schedule: schedule_url,
                             additional_schedule: additional_schedule_url,
                             sendezentrum_schedule: sendezentrum_schedule_url,
-                            sendezentrum_speakers: sendezentrum_speaker_url
-                            // voc_streams: voc_streams_api_url,
+                            sendezentrum_speakers: sendezentrum_speaker_url,
+                            voc_streams: voc_streams_api_url
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
 						};
@@ -1318,7 +1318,7 @@ exports.scrape = function (callback) {
 								var chillout_lounge_lineup = result.chillout_lounge;
 
                                 // // VOC streams
-                                // var voc_streams = result.voc_streams;
+                                var voc_streams = result.voc_streams;
                                 //
                                 // // POIs
                                 // var poi_graph = result.poi_graph;
@@ -1362,30 +1362,30 @@ exports.scrape = function (callback) {
                                                     "label_en": "Other"};
 
                                 var streamMap = {};
-                                // voc_streams.forEach(function (group) {
-                                //     if (group["conference"] == eventId.toUpperCase()) {
-                                //         if (group["group"] == "Lecture Rooms" || group["group"] == "Live Podcasts") {
-                                //             group.rooms.forEach(function (room) {
-                                //                     console.log(room.schedulename);
-                                //                     room.streams.forEach(function (streamInfo) {
-                                //                         if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
-                                //                             var info = {
-                                //                                 "url": streamInfo.urls.hls.url,
-                                //                                 "type": "livestream",
-                                //                                 "mimetype": "video/mp4"
-                                //                             };
-                                //
-                                //                             var roomID = vocSlugToLocatonID[room.slug];
-                                //                             if (roomID) {
-                                //                                 streamMap[roomID] = info;
-                                //                             }
-                                //
-                                //                         }
-                                //                     });
-                                //             });
-                                //         }
-                                //     }
-                                // });
+                                voc_streams.forEach(function (group) {
+                                    if (group["conference"] == eventId.toUpperCase()) {
+                                        if (group["group"] == "Lecture Rooms" || group["group"] == "Live Podcasts") {
+                                            group.rooms.forEach(function (room) {
+                                                    console.log(room.schedulename);
+                                                    room.streams.forEach(function (streamInfo) {
+                                                        if (streamInfo.type == "video" && (streamInfo.slug == "hd-native" || streamInfo.slug == "hd-stereo") && streamInfo.urls.hls) {
+                                                            var info = {
+                                                                "url": streamInfo.urls.hls.url,
+                                                                "type": "livestream",
+                                                                "mimetype": "video/mp4"
+                                                            };
+
+                                                            var roomID = vocSlugToLocatonID[room.slug];
+                                                            if (roomID) {
+                                                                streamMap[roomID] = info;
+                                                            }
+
+                                                        }
+                                                    });
+                                            });
+                                        }
+                                    }
+                                });
 
                                 // Extra Data from Wiki
                                 handleResult(additional_schedule,
