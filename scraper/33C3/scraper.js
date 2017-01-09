@@ -1301,7 +1301,8 @@ exports.scrape = function (callback) {
 		{
 			lectures: function (callback) {
 				json_requester.get({
-					urls: {conference: "https://api.media.ccc.de/public/conferences/101"}
+					urls: {conference: "https://api.media.ccc.de/public/conferences/101",
+						   sendezentrum_conference: "https://api.media.ccc.de/public/conferences/102"}
 				},
 				function (result) {
 					if (result.conference.events) {
@@ -1317,6 +1318,9 @@ exports.scrape = function (callback) {
 						};
                         
                         result.conference.events.forEach(function (event) {
+                            videoAPICallURLs[event.guid] = event.url;
+                        });
+						result.sendezentrum_conference.events.forEach(function (event) {
                             videoAPICallURLs[event.guid] = event.url;
                         });
 
@@ -1368,11 +1372,20 @@ exports.scrape = function (callback) {
 									return {
 								                                        "guid": er.guid,
 								                                        "title": er.title,
+										"conference_url":er.conference_url,
 										"link": er.link,
 										"thumb": er.thumb_url,
 										"recording": recording.length > 0 ? recording[0] : null
 									};
 								});
+								
+								var congessRecordings = eventRecordingJSONs.filter(function (er) {
+									return er.conference_url == "https://api.media.ccc.de/public/conferences/101";
+								});
+								
+								var sendezentrumRecordings = eventRecordingJSONs.filter(function (er) {
+									return er.conference_url == "https://api.media.ccc.de/public/conferences/102";
+								});								
 								
                                 var defaultTrack = {"id": mkID("other"),
                                                     "color": [97.0,97.0,97.0,1.0], // grey
@@ -1445,7 +1458,7 @@ exports.scrape = function (callback) {
 												  			"label_en": "Podcast"};
                                 handleResult(sendezentrum_schedule,
                                              sendezentrum_speakers,
-                                             eventRecordingJSONs,
+                                             sendezentrumRecordings,
                                              "",
                                              podcastDefaultTrack,
                                              "https://frab.das-sendezentrum.de/",
@@ -1457,7 +1470,7 @@ exports.scrape = function (callback) {
                                 // 33C3 Frap
                                 handleResult(schedule, 
                                              speakers, 
-                                             eventRecordingJSONs,  
+                                             congessRecordings,  
                                              "",
                                              defaultTrack,
                                              "https://fahrplan.events.ccc.de/congress/2016/Fahrplan",
