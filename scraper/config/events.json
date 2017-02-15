@@ -157,5 +157,18 @@
 		}],
 		"url": "http://events.ccc.de/congress/2016",
         "hashtag": "33c3"
+	},
+	{
+		"type": "event",
+		"id": "rp17",
+		"label": "re:publica 17",
+		"title": "rp17",
+		"date": ["2017-05-08","2017-05-10"],
+		"locations": [{
+			"label": "Station Berlin",
+			"coords": [52.49814, 13.374538]
+		}],
+        "hashtag": "rp17",
+		"url": "https://re-publica.com/17"
 	}
 ]
