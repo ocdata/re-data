@@ -26,13 +26,13 @@ var allTracks = {
 		id: 'arts-and-culture', 
 		label_de:'Arts & Culture', 
 		label_en:'Arts & Culture',
-		color:[146, 206, 241, 1.0]
+		color:[65, 151, 145, 1.0]
     },
 	"sub:marine": {
 		id:'sub-marine', 
 		label_de:'sub:marine', 
 		label_en:'sub:marine',
-		color:[146.0, 206.0, 241.0, 1.0]
+		color:[45, 37, 126, 1.0]
     },
 	"Mobility & City": {
 		id:'mobility-and-city', 
@@ -44,19 +44,19 @@ var allTracks = {
 		id:'love-out-loud',           
 		label_de:'Love Out Loud',              		
 		label_en:'Love Out Loud', 
-		color:[231, 156, 128, 1.0] 
+		color:[245, 197, 67, 1.0] 
 	},
 	"Music": {
 		id:'music',    
 		label_de:'Music',
 		label_en:'Music',
-		color:[146.0, 193.0, 153.0, 1.0]
+		color:[153, 198, 157, 1.0]
 	},
 	'Politics & Society': { 
 		id:'politics-society',    
 		label_de:'Politik & Gesellschaft', 		
 		label_en:'Politics & Society', 
-		color:[231, 156, 128, 1.0] 
+		color:[231, 162, 195, 1.0] 
 	},
 	"Law Lab": { 
 		id:'law-lab',
