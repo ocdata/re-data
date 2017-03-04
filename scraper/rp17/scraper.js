@@ -113,8 +113,8 @@ var allFormats = {
 
 var allLevels = {
 	'Beginner':         { id:'beginner',     label_de:'Anfänger',         label_en:'Beginner'     },
-	'Fortgeschrittene': { id:'intermediate', label_de:'Fortgeschrittene', label_en:'Intermediate' },
-	'Experten':         { id:'advanced',     label_de:'Experten',         label_en:'Advanced'     },
+	'Intermediate': { id:'intermediate', label_de:'Fortgeschrittene', label_en:'Intermediate' },
+	'Advanced':         { id:'advanced',     label_de:'Experten',         label_en:'Advanced'     },
 	'Everyone':         { id:'beginner',     label_de:'Anfänger',         label_en:'Beginner'     }
 };
 
