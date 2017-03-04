@@ -107,7 +107,8 @@ var allFormats = {
 	'Talk':    { id:'talk',       label_de:'Vortrag',    label_en:'Talk'       },
 	'Workshop':   { id:'workshop',   label_de:'Workshop',   label_en:'Workshop'   },
 	'Action':     { id:'action',     label_de:'Aktion',     label_en:'Action'     },
-	'Lightning Talk':     { id:'lightning-talk',     label_de:'Lightning Talk',     label_en:'Lightning Talk'     }
+	'Lightning Talk':     { id:'lightning-talk',     label_de:'Lightning Talk',     label_en:'Lightning Talk'     },
+	'Meetup':  { id:'meetup',     label_de:'Meetup',     label_en:'Meetup'     },
 };
 
 var allLevels = {
@@ -118,7 +119,7 @@ var allLevels = {
 };
 
 var allLanguages = {
-	'Englisch':         { id:'en',    label_de:'Englisch',         label_en:'English'         },
+	'English':         { id:'en',    label_de:'Englisch',         label_en:'English'         },
 	'German':          { id:'de',    label_de:'Deutsch',          label_en:'German'          }
 };
 
@@ -643,7 +644,7 @@ function parseLanguage(text) {
 	var language = allLanguages[text];
 	if (language) return language;
 	console.error('Unknown Language "'+text+'"');
-	return allLanguages["Deutsch"];
+	return allLanguages["German"];
 }
 
 function removeHTMLTags(text) {
