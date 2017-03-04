@@ -26,37 +26,37 @@ var allTracks = {
 		id: 'arts-and-culture', 
 		label_de:'Arts & Culture', 
 		label_en:'Arts & Culture',
-		color:[180, 98, 8, 1.0]
+		color:[146, 206, 241, 1.0]
     },
-	"sub:marine" {
+	"sub:marine": {
 		id:'sub-marine', 
 		label_de:'sub:marine', 
 		label_en:'sub:marine',
-		color:[102.0, 156.0, 44.0, 1.0]
+		color:[146.0, 206.0, 241.0, 1.0]
     },
 	"Mobility & City": {
 		id:'mobility-and-city', 
 		label_de:'Mobility & City', 
 		label_en:'Mobility & City',
-		color:[0, 0, 0, 1.0]
+		color:[146, 206, 241, 1.0]
 	},
 	"Love Out Loud": { 
 		id:'love-out-loud',           
 		label_de:'Love Out Loud',              		
 		label_en:'Love Out Loud', 
-		color:[139, 0, 23, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},
 	"Music": {
 		id:'music',    
 		label_de:'Music',
 		label_en:'Music',
-		color:[51.0, 204.0, 102.0, 1.0]
+		color:[146.0, 206.0, 241.0, 1.0]
 	},
 	'Politics & Society': { 
 		id:'politics-society',    
 		label_de:'Politik & Gesellschaft', 		
 		label_en:'Politics & Society', 
-		color:[92, 57, 114, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},
 	"Law Lab": { 
 		id:'law-lab',
@@ -68,25 +68,25 @@ var allTracks = {
 		id:'business-work', 
 		label_de:'Business & Work',
 		label_en:'Business & Work', 
-		color:[64, 156, 28, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},
 	"Science Fiction": { 
 		id:'science-fiction',
 		label_de:'Science Fiction',
 		label_en:'Science Fiction' , 
-		color:[146, 132, 7, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},
 	're:learn': { 
 		id:'re-learn',
 		label_de:'re:learn',
 		label_en:'re:learn', 
-		color:[139, 0, 23, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},	    
 	're:blog': {
 		id:'re-blog',
 		label_de:'re:blog',
 		label_en:'re:blog', 
-		color:[139, 0, 23, 1.0] 
+		color:[146, 206, 241, 1.0] 
 	},
 	're:publica': { 
 		id:'re-publica',
