@@ -68,13 +68,13 @@ var allTracks = {
 		id:'business-work', 
 		label_de:'Business & Work',
 		label_en:'Business & Work', 
-		color:[231, 156, 128, 1.0] 
+		color:[64, 146, 73, 1.0] 
 	},
 	"Science Fiction": { 
 		id:'science-fiction',
 		label_de:'Science Fiction',
 		label_en:'Science Fiction' , 
-		color:[146, 206, 241, 1.0] 
+		color:[137, 178, 141, 1.0] 
 	},
 	're:learn': { 
 		id:'re-learn',
