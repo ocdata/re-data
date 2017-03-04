@@ -38,37 +38,37 @@ var allTracks = {
 		id:'mobility-and-city', 
 		label_de:'Mobility & City', 
 		label_en:'Mobility & City',
-		color:[146, 206, 241, 1.0]
+		color:[231, 156, 128, 1.0]
 	},
 	"Love Out Loud": { 
 		id:'love-out-loud',           
 		label_de:'Love Out Loud',              		
 		label_en:'Love Out Loud', 
-		color:[146, 206, 241, 1.0] 
+		color:[231, 156, 128, 1.0] 
 	},
 	"Music": {
 		id:'music',    
 		label_de:'Music',
 		label_en:'Music',
-		color:[146.0, 206.0, 241.0, 1.0]
+		color:[146.0, 193.0, 153.0, 1.0]
 	},
 	'Politics & Society': { 
 		id:'politics-society',    
 		label_de:'Politik & Gesellschaft', 		
 		label_en:'Politics & Society', 
-		color:[146, 206, 241, 1.0] 
+		color:[231, 156, 128, 1.0] 
 	},
 	"Law Lab": { 
 		id:'law-lab',
 		label_de:'Law Lab',
 		label_en:'Law Lab',
-		color:[0, 0, 0, 1.0] 
+		color:[231, 156, 128, 1.0] 
 	},
 	"Business & Work": { 
 		id:'business-work', 
 		label_de:'Business & Work',
 		label_en:'Business & Work', 
-		color:[146, 206, 241, 1.0] 
+		color:[231, 156, 128, 1.0] 
 	},
 	"Science Fiction": { 
 		id:'science-fiction',
