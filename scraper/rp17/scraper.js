@@ -81,7 +81,13 @@ var allTracks = {
 		label_de:'re:learn',
 		label_en:'re:learn', 
 		color:[146, 206, 241, 1.0] 
-	},	    
+	},	  
+	're:health': {
+		id:'re-health',
+		label_de:'re:health',
+		label_en:'re:health', 
+		color:[155, 191, 65, 1.0] 
+	}  
 	're:blog': {
 		id:'re-blog',
 		label_de:'re:blog',
@@ -97,10 +103,11 @@ var allTracks = {
 };
 
 var allFormats = {
-	'Diskussion': { id:'discussion', label_de:'Diskussion', label_en:'Discussion' },
-	'Vortrag':    { id:'talk',       label_de:'Vortrag',    label_en:'Talk'       },
+	'Discussion': { id:'discussion', label_de:'Diskussion', label_en:'Discussion' },
+	'Talk':    { id:'talk',       label_de:'Vortrag',    label_en:'Talk'       },
 	'Workshop':   { id:'workshop',   label_de:'Workshop',   label_en:'Workshop'   },
-	'Aktion':     { id:'action',     label_de:'Aktion',     label_en:'Action'     }
+	'Action':     { id:'action',     label_de:'Aktion',     label_en:'Action'     },
+	'Lightning Talk':     { id:'lightning-talk',     label_de:'Lightning Talk',     label_en:'Lightning Talk'     }
 };
 
 var allLevels = {
@@ -112,7 +119,7 @@ var allLevels = {
 
 var allLanguages = {
 	'Englisch':         { id:'en',    label_de:'Englisch',         label_en:'English'         },
-	'Deutsch':          { id:'de',    label_de:'Deutsch',          label_en:'German'          }
+	'German':          { id:'de',    label_de:'Deutsch',          label_en:'German'          }
 };
 
 // media convention videos
