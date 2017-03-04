@@ -22,23 +22,78 @@ var streamURLs = {
 };
 
 var allTracks = {
-	'Business & Innovation':  { id:'business-innovation', label_de:'Business & Innovation',  		label_en:'Business & Innovation', color:[64, 156, 28, 1.0] },    //
- 'City Of The Future':     { id:'city-of-the-future',  label_de:'City Of The Future',             label_en:'City Of The Future'   , color:[0, 0, 0, 1.0] }, //
-    'Culture':                { id:'culture',             label_de:'Kultur',                         label_en:'Culture'              , color:[180, 98, 8, 1.0] },   //
-'Fashiontech':            { id:'fashiontech',         label_de:'Fashiontech',            	  	label_en:'Fashiontech'          , color:[0, 0, 0, 1.0] },
-'GIG':            		  { id:'gig',         		  label_de:'Global Innovation Gathering', 	label_en:'Global Innovation Gathering' , color:[193.0, 117.0, 28.0, 1.0] },	
-'Media':                  { id:'media',               label_de:'Medien',                 		label_en:'Media'                , color:[11.0, 87.0, 127.0, 1.0] },  //
-	'Media Convention':       { id:'media-Convention',    label_de:'Media Convention',       		label_en:'Media Convention'     , color:[189, 0, 4, 1.0] },	     //
-	'Politics & Society':     { id:'politics-society',    label_de:'Politik & Gesellschaft', 		label_en:'Politics & Society'   , color:[92, 57, 114, 1.0] }, //
-'re:cord Musicday':       { id:'re-cord-musicday',    label_de:'re:cord Musicday',       		label_en:'re:cord Musicday'     , color:[51.0, 204.0, 102.0, 1.0] }, //
-    'Health':                 { id:'health',           label_de:'Health',              		label_en:'Health'            , color:[139, 0, 23, 1.0] },	
-    're:health':                 { id:'health',           label_de:'Health',              		label_en:'Health'            , color:[139, 0, 23, 1.0] },	    
-	're:publica':             { id:'re-publica',          label_de:'re:publica',              		label_en:'re:publica'            , color:[0, 0, 0, 1.0] },  //
-'re:think Mobility':      { id:'re-think-mobility',   label_de:'re:think Mobility',      		label_en:'re:think Mobility'    , color:[102.0, 156.0, 44.0, 1.0] },		
-	'Science & Technology':   { id:'science-technology',  label_de:'Wissenschaft & Technik', 		label_en:'Science & Technology' , color:[146, 132, 7, 1.0] },  //
-	'Research & Education':   { id:'research-education',  label_de:'Forschung & Bildung',    		label_en:'Research & Education' , color:[83, 78, 192, 1.0] },//
-    'Other':                  { id:'other',               label_de:'Other',                  		label_en:'Other'                , color:[0, 0, 0, 1.0] },
-    "Global Innovation Gathering (GIG)": { id:'global-innovation-gathering-gig', label_de:'Global Innovation Gathering (GIG)', label_en:'Global Innovation Gathering (GIG)', color:[0, 0, 0, 1.0] }
+    "Arts & Culture":  {
+		id: 'arts-and-culture', 
+		label_de:'Arts & Culture', 
+		label_en:'Arts & Culture',
+		color:[180, 98, 8, 1.0]
+    },
+	"sub:marine" {
+		id:'sub-marine', 
+		label_de:'sub:marine', 
+		label_en:'sub:marine',
+		color:[102.0, 156.0, 44.0, 1.0]
+    },
+	"Mobility & City": {
+		id:'mobility-and-city', 
+		label_de:'Mobility & City', 
+		label_en:'Mobility & City',
+		color:[0, 0, 0, 1.0]
+	},
+	"Love Out Loud": { 
+		id:'love-out-loud',           
+		label_de:'Love Out Loud',              		
+		label_en:'Love Out Loud', 
+		color:[139, 0, 23, 1.0] 
+	},
+	"Music": {
+		id:'music',    
+		label_de:'Music',
+		label_en:'Music',
+		color:[51.0, 204.0, 102.0, 1.0]
+	},
+	'Politics & Society': { 
+		id:'politics-society',    
+		label_de:'Politik & Gesellschaft', 		
+		label_en:'Politics & Society', 
+		color:[92, 57, 114, 1.0] 
+	},
+	"Law Lab": { 
+		id:'law-lab',
+		label_de:'Law Lab',
+		label_en:'Law Lab',
+		color:[0, 0, 0, 1.0] 
+	},
+	"Business & Work": { 
+		id:'business-work', 
+		label_de:'Business & Work',
+		label_en:'Business & Work', 
+		color:[64, 156, 28, 1.0] 
+	},
+	"Science Fiction": { 
+		id:'science-fiction',
+		label_de:'Science Fiction',
+		label_en:'Science Fiction' , 
+		color:[146, 132, 7, 1.0] 
+	},
+	're:learn': { 
+		id:'re-learn',
+		label_de:'re:learn',
+		label_en:'re:learn', 
+		color:[139, 0, 23, 1.0] 
+	},	    
+	're:blog': {
+		id:'re-blog',
+		label_de:'re:blog',
+		label_en:'re:blog', 
+		color:[139, 0, 23, 1.0] 
+	},
+	're:publica': { 
+		id:'re-publica',
+		label_de:'re:publica',
+		label_en:'re:publica', 
+		color:[0, 0, 0, 1.0] 
+	}
 };
 
 var allFormats = {
@@ -51,7 +106,8 @@ var allFormats = {
 var allLevels = {
 	'Beginner':         { id:'beginner',     label_de:'Anfänger',         label_en:'Beginner'     },
 	'Fortgeschrittene': { id:'intermediate', label_de:'Fortgeschrittene', label_en:'Intermediate' },
-	'Experten':         { id:'advanced',     label_de:'Experten',         label_en:'Advanced'     }
+	'Experten':         { id:'advanced',     label_de:'Experten',         label_en:'Advanced'     },
+	'Everyone':         { id:'beginner',     label_de:'Anfänger',         label_en:'Beginner'     }
 };
 
 var allLanguages = {
