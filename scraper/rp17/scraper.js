@@ -87,7 +87,7 @@ var allTracks = {
 		label_de:'re:health',
 		label_en:'re:health', 
 		color:[155, 191, 65, 1.0] 
-	}  
+	},  
 	're:blog': {
 		id:'re-blog',
 		label_de:'re:blog',
