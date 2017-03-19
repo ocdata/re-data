@@ -4,6 +4,7 @@
 var fs = require("fs");
 var path = require("path");
 var http = require("http");
+var compression = require('compression');
 
 /* require npm modules */
 var cradle = require("cradle");
@@ -39,6 +40,17 @@ var db = null;
 // setup express
 
 var app = express();
+app.use(compression({filter: shouldCompress}))
+
+function shouldCompress (req, res) {
+  if (req.headers['x-no-compression']) {
+    // don't compress responses with this request header
+    return false
+  }
+
+  // fallback to standard filter function
+  return compression.filter(req, res)
+}
 
 // enable Cross-Origin Resource Sharing
 // http://enable-cors.org/server_expressjs.html
