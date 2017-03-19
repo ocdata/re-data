@@ -366,102 +366,10 @@ exports.scrape = function (callback) {
 
 			Array.prototype.push.apply(sessionList, fakeSessions);
 
-
 			sessionList.forEach(function (session) {
-				if (session.nid == "") return; // skip invalid sessions
-
-//                console.log(session);
-
-				var begin = parseDateTime(session.start_iso)
-				var end = parseDateTime(session.end_iso)
-				var duration = (end - begin) / 1000;
-				if (duration < 0) return;
-				
-				var permalink = session.uri;
-				var links = [];
-
-				var ytLink = ytVideoMap[permalink];
-				if (ytLink) {
-					links.push(ytLink);
-				}
-                // console.log(session["video"]);
-                var videos = session.video;
-				if (typeof(session["video"]) === 'string') {	
-                    videos = [videos];
-                } else  if (!session["video"]) {
-                    videos = [];
-                }
-                var video = videoMap[session.id]
-                if (video) {
-                    videos.push(video);
-                }
-					
-				videos.forEach(function (videoURL) {
-					
-					if (videoURL.match(/^https?\:\/\/www\.youtube\.com\/watch\?v=(.+)$/i)) {
-                        var videoID = RegExp.$1;                        
-						if (videoID) {
-
-							// https://www.youtube.com/v/12BYSqVGCUk
-							var result =  {
-					 			"thumbnail": "https://img.youtube.com/vi/" + videoID + "/hqdefault.jpg",
-					 			"title": ent.decode(session.title),
-					 			"url": "https://www.youtube.com/v/" + videoID + "",
-					 			"service": "youtube",
-					 			"type": "recording"
-							};
-							links.push(result);
-						}
-					 };
-				});
-				
-
-                // console.log("session:", session.nid);
-
-				var entry = {
-					'id': eventId + '-session-' + session.nid,
-					'title': ent.decode(session.title),
-					'abstract': typeof(session.description_short) == "string" ? removeHTMLTags(session.description_short) : null,
-					'description': typeof(session.description) == "string" ? removeHTMLTags(session.description) : null,
-					'url': permalink,
-					'begin': begin,
-					'end': end,
-					'duration': duration,
-					'day': parseDay(session.start_iso),
-					'location': parseLocation(locationMap, session.room_id),
-					'track': parseTrack(session.category),
-					'format': parseFormat(session.format),
-					'level': parseLevel(session.level),
-					'lang': parseLanguage(session.language),
-					'speakers': parseSpeakers(speakerMap, session.speaker_uids),
-					'enclosures': [],
-					'links': links
-				}
-                
-                // console.log("entry: ", entry);
-                
-				if (removeTimesAndLocations) {
-					if (session.nid.toString()[2] != "2") {
-						entry["begin"] = null;
-						entry["end"] = null;					
-						entry["location"] = null;
-						entry["day"] = null;
-					}
-				}
-				
-				if (entry.location && entry.day) {
-					var liveStreamURL = streamURLs[entry.location.id];
-					if (liveStreamURL && (entry.day.id == "rp17-day-1" || entry.day.id == "rp17-day-2")) {
-						entry.enclosures.push({
-							"url": liveStreamURL,
-							"mimetype": "application/x-mpegURL",
-							"type": "livestream"
-						});
-					}
-				}
-				entry = entry;
-				
-				addEntry('session', entry);
+				var entry = parseSession(session, ytVideoMap, locationMap, speakerMap);
+				if (entry == null) return;
+				addEntry('session', entry);	
 			});
 			
 			alsoAdd('track', allTracks);
@@ -497,6 +405,101 @@ exports.scrape = function (callback) {
 			});
 		}
 	);
+}
+
+function parseSession(session, ytVideoMap, locationMap, speakerMap) {
+
+	if (session.nid == "") return null; // skip invalid sessions
+
+	//                console.log(session);
+
+	var begin = parseDateTime(session.start_iso)
+	var end = parseDateTime(session.end_iso)
+	var duration = (end - begin) / 1000;
+	if (duration < 0) return;
+				
+	var permalink = session.uri;
+	var links = [];
+
+	var ytLink = ytVideoMap[permalink];
+	if (ytLink) {
+		links.push(ytLink);
+	}
+	// console.log(session["video"]);
+	var videos = session.video;
+	if (typeof(session["video"]) === 'string') {	
+		videos = [videos];
+	} else  if (!session["video"]) {
+		videos = [];
+	}
+	var video = videoMap[session.id]
+	if (video) {
+		videos.push(video);
+	}
+					
+	videos.forEach(function (videoURL) {
+		if (videoURL.match(/^https?\:\/\/www\.youtube\.com\/watch\?v=(.+)$/i)) {
+			var videoID = RegExp.$1;                        
+			if (videoID) {
+
+				// https://www.youtube.com/v/12BYSqVGCUk
+				var result =  {
+					"thumbnail": "https://img.youtube.com/vi/" + videoID + "/hqdefault.jpg",
+					"title": ent.decode(session.title),
+					"url": "https://www.youtube.com/v/" + videoID + "",
+					"service": "youtube",
+					"type": "recording"
+				};
+				links.push(result);
+			}
+		};
+	});
+				
+	// console.log("session:", session.nid);
+
+	var entry = {
+		'id': '' + session.nid,
+		'title': ent.decode(session.title),
+		'abstract': typeof(session.description_short) == "string" ? removeHTMLTags(session.description_short) : null,
+		'description': typeof(session.description) == "string" ? removeHTMLTags(session.description) : null,
+		'url': permalink,
+		'begin': begin,
+		'end': end,
+		'duration': duration,
+		'day': parseDay(session.start_iso),
+		'location': parseLocation(locationMap, session.room_id),
+		'track': parseTrack(session.category),
+		'format': parseFormat(session.format),
+		'level': parseLevel(session.level),
+		'lang': parseLanguage(session.language),
+		'speakers': parseSpeakers(speakerMap, session.speaker_uids),
+		'enclosures': [],
+		'links': links
+	}
+                
+	// console.log("entry: ", entry);
+                
+	if (removeTimesAndLocations) {
+		if (session.nid.toString()[2] != "2") {
+			entry["begin"] = null;
+			entry["end"] = null;					
+			entry["location"] = null;
+			entry["day"] = null;
+		}
+	}
+				
+	if (entry.location && entry.day) {
+		var liveStreamURL = streamURLs[entry.location.id];
+		if (liveStreamURL && (entry.day.id == "rp17-day-1" || entry.day.id == "rp17-day-2")) {
+			entry.enclosures.push({
+				"url": liveStreamURL,
+				"mimetype": "application/x-mpegURL",
+				"type": "livestream"
+			});
+		}
+	}
+	entry = entry;
+	return entry;
 }
 
 function toArray(obj) {
@@ -600,9 +603,9 @@ function parseDateTime(isodatetime) {
 }
 
 function parseLocation(locationMap, roomid) {
-	if (roomid == '') return null;
+	if (roomid.length == 0) return null;
 
-	var id = eventId + "-location-"+roomid;
+	var id = eventId + "-location-" + roomid;
 	var location = locationMap[id];
 
 	if (location == undefined) {
