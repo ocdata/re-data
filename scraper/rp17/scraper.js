@@ -26,79 +26,91 @@ var allTracks = {
 		id: 'arts-and-culture', 
 		label_de:'Arts & Culture', 
 		label_en:'Arts & Culture',
-		color:[65, 151, 145, 1.0]
+		color:[0, 153, 146, 1.0]
     },
 	"sub:marine": {
 		id:'sub-marine', 
-		label_de:'sub:marine', 
-		label_en:'sub:marine',
-		color:[45, 37, 126, 1.0]
+		label_de:'sub:marin', 
+		label_en:'sub:marin',
+		color:[47, 36, 131, 1.0]
     },
 	"Mobility & City": {
 		id:'mobility-and-city', 
 		label_de:'Mobility & City', 
 		label_en:'Mobility & City',
-		color:[231, 156, 128, 1.0]
+		color:[130, 208, 245, 1.0]
 	},
 	"Love Out Loud": { 
 		id:'love-out-loud',           
 		label_de:'Love Out Loud',              		
 		label_en:'Love Out Loud', 
-		color:[245, 197, 67, 1.0] 
+		color:[253, 195, 0, 1.0] 
 	},
 	"Music": {
 		id:'music',    
 		label_de:'Music',
 		label_en:'Music',
-		color:[153, 198, 157, 1.0]
+		color:[50, 151, 178, 1.0]
 	},
 	'Politics & Society': { 
 		id:'politics-society',    
 		label_de:'Politik & Gesellschaft', 		
 		label_en:'Politics & Society', 
-		color:[231, 162, 195, 1.0] 
+		color:[242, 158, 196, 1.0] 
 	},
 	"Law Lab": { 
 		id:'law-lab',
 		label_de:'Law Lab',
 		label_en:'Law Lab',
-		color:[231, 156, 128, 1.0] 
+		color:[243, 152, 122, 1.0] 
 	},
 	"Business & Work": { 
 		id:'business-work', 
 		label_de:'Business & Work',
 		label_en:'Business & Work', 
-		color:[64, 146, 73, 1.0] 
+		color:[0, 150, 63, 1.0] 
 	},
 	"Science Fiction": { 
 		id:'science-fiction',
 		label_de:'Science Fiction',
 		label_en:'Science Fiction' , 
-		color:[137, 178, 141, 1.0] 
+		color:[141, 200, 153, 1.0] 
 	},
 	're:learn': { 
 		id:'re-learn',
 		label_de:'re:learn',
 		label_en:'re:learn', 
-		color:[146, 206, 241, 1.0] 
+		color:[243, 145, 0, 1.0] 
 	},	  
 	're:health': {
 		id:'re-health',
 		label_de:'re:health',
 		label_en:'re:health', 
-		color:[155, 191, 65, 1.0] 
+		color:[148, 195, 28, 1.0] 
 	},  
 	're:blog': {
 		id:'re-blog',
 		label_de:'re:blog',
 		label_en:'re:blog', 
-		color:[146, 206, 241, 1.0] 
+		color:[149, 25, 129, 1.0] 
 	},
 	're:publica': { 
 		id:'re-publica',
 		label_de:'re:publica',
 		label_en:'re:publica', 
 		color:[0, 0, 0, 1.0] 
+	},
+	'Global Innovation Gathering (GIG)': { 
+		id:'gig',
+		label_de:'GIG',
+		label_en:'GIG', 
+		color:[229, 0, 80, 1.0] 
+	},
+	'Media Convention': { 
+		id:'media-convention',
+		label_de:'Media Convention',
+		label_en:'Media Convention', 
+		color:[214, 0, 126, 1.0] 
 	}
 };
 
