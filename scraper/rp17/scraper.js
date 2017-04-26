@@ -131,8 +131,18 @@ var allLevels = {
 };
 
 var allLanguages = {
-	'English':         { id:'en',    label_de:'Englisch',         label_en:'English'         },
+	'English':         { id:'en',    label_de:'Englisch',         label_en:'English'},
 	'German':          { id:'de',    label_de:'Deutsch',          label_en:'German'          }
+};
+
+var translationsToLanguageIdMap = {
+    "D, Live Translation": "German",
+    "EN, Live Translation": "English"
+};
+
+var translationsToTranslatedLanguageMap = {
+    "D, Live Translation": "English",
+    "EN, Live Translation": "German"
 };
 
 // media convention videos
@@ -206,6 +216,11 @@ var allPOIs = {
 	
 };
 
+
+SessionStatus = {};
+SessionStatus.ACCEPTED = "1";
+SessionStatus.SCHEDULED = "2";
+SessionStatus.CANCELED = "4";
 
 var csvData = fs.readFileSync(__dirname + "/pois.csv");
 
@@ -469,6 +484,8 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 				
 	// console.log("session:", session.nid);
 
+    var isCancelled = session.status == SessionStatus.CANCELED;
+    
 	var entry = {
 		'id': '' + session.nid,
 		'title': ent.decode(session.title),
@@ -484,10 +501,13 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 		'format': parseFormat(session.format),
 		'level': parseLevel(session.level),
 		'lang': parseLanguage(session.language),
+        'translated_langs': parseTranslatedLanguages(session.language),
 		'speakers': parseSpeakers(speakerMap, session.speaker_uids),
 		'enclosures': [],
-		'links': links
-	}
+		'links': links,
+        'cancelled': isCancelled
+	};
+    
                 
 	// console.log("entry: ", entry);
                 
@@ -656,10 +676,23 @@ function parseLevel(text) {
 }
 
 function parseLanguage(text) {
-	var language = allLanguages[text];
+    var id = text;
+    var translatedId = translationsToLanguageIdMap[text];
+    if (translatedId) id = translatedId;
+        
+	var language = allLanguages[id];
 	if (language) return language;
+    
 	console.error('Unknown Language "'+text+'"');
 	return allLanguages["German"];
+}
+
+function parseTranslatedLanguages(text) {
+	var languageKey = translationsToTranslatedLanguageMap[text];
+	if (!languageKey) return [];
+    var language = allLanguages[languageKey];
+    if (!language) return [];
+	return [language];
 }
 
 function removeHTMLTags(text) {
