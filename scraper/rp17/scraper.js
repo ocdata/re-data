@@ -239,11 +239,13 @@ var locationOrderPreference = [
 		eventId + '-location-5938', // stage 11
 		eventId + '-location-18627', // stage J
 		eventId + '-location-18626', // stage T
-		eventId + '-location-10461', // Makerspace rp15     
-    	eventId + '-location-10736', // Lightning Talks 1
-    	eventId + '-location-10737', // Lightning Talks 2
-    	eventId + '-location-18634', // Meetups 1
-    	eventId + '-location-10740', // Meetups 2         
+        eventId + '-location-18628', // stage L1
+        eventId + '-location-18629', // stage L2    
+		eventId + '-location-18630', // Makerspace 
+    	eventId + '-location-18631', // Lightning Talks 1
+    	eventId + '-location-18632', // Lightning Talks 2
+    	eventId + '-location-18634', // Meetups Green
+    	eventId + '-location-18633', // Meetups Red
 		eventId + '-location-6145', // MIZ rp15
         eventId + '-location-6148', // re: rp15
 		eventId + '-location-2708', // store
@@ -252,7 +254,7 @@ var locationOrderPreference = [
 		eventId + '-location-2711', // MIKZ
 		eventId + '-location-2712', // new thinking
 		eventId + '-location-2713', // republica
-		eventId + '-location-2855', // re/connect
+		eventId + '-location-19490', // re/connect
 		eventId + '-location-2871', // backyard
 		eventId + '-location-6147',  // newthinkging rp15
 		eventId + "-location-6146", // fashiontec rp15
