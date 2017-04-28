@@ -187,6 +187,9 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 	"lang": {
 		"id": "de", "label_de": "Deutsch", "label_en": "German"
 	},
+    "translated_langs": [{
+        "id": "en", "label_de": "Englisch", "label_en": "English"
+    }],
 	"speakers": [
 		{ "id": "rp13-speaker-81", "name": "Sascha Lobo" }
 		//...
@@ -241,7 +244,7 @@ Optional fields:
 - `subtitle`
 - `will_be_recorded`, assume `false` if missing
 - `cancelled`, assume `false` if missing
-
+= `translated_langs`: Translations of this talk (subtitles, live translations). If present an Array of Dictionaries similar to `lang` field. 
 ### Enclosures
 
 Enclosures list URLs of files including mime type. 
