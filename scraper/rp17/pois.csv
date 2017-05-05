@@ -1,1 +1,33 @@
 id;floors;x;y;label_en;label_de;category;location_id;location_label_de;location_label_en
+stage1;0;2131;448;Stage 1;Stage 1;session-location;rp17-location-18618;Stage 1;Stage 1
+stage2;0;2715;152;Stage 2;Stage 2;session-location;rp17-location-18620;Stage 2;Stage 2
+stage3;0;1786;548;Stage 3;Stage 3;session-location;rp17-location-18621;Stage 3;Stage 3
+stage4;0;1818;270;Stage 4;Stage 4;session-location;rp17-location-18622;Stage 4;Stage 4
+stage5;0;2745;743;Stage 5;Stage 5;session-location;rp17-location-18623;Stage 5;Stage 5
+stage6;0;3126;713;Stage 6;Stage 6;session-location;rp17-location-18648;Stage 6;Stage 6
+stage7;0;2873;1016;Stage 7;Stage 7;session-location;rp17-location-18649;Stage 7;Stage 7
+stage8;0;3952;418;Stage 8;Stage 8;session-location;rp17-location-18624;Stage 8;Stage 8
+stage9;0;4053;310;Stage 9;Stage 9;session-location;rp17-location-18625;Stage 9;Stage 9
+staget;0;3749;701;Stage T;Stage T;session-location;rp17-location-18626;Stage T;Stage T
+stagej;0;3776;890;Stage J;Stage J;session-location;rp17-location-18627;Stage J;Stage J
+stagel1;0;4047;1054;Stage L1;Stage L1;session-location;rp17-location-18628;Stage L1;Stage L1
+stagel2;0;4044;1275;Stage L2;Stage L2;session-location;rp17-location-18629;Stage L2;Stage L2
+makerspace;0;2802;307;Maker Space;Maker Space;workshop-location;rp17-location-18630;Maker Space;Maker Space
+lightningtalks1;0;1606;506;Lightning Talks 1;Lightning Talks 1;session-location;rp17-location-18631;Lightning Talks 1;Lightning Talks 1
+lightningtalks2;0;1706;240;Lightning Talks 2;Lightning Talks 2;session-location;rp17-location-18632;Lightning Talks 2;Lightning Talks 2
+meetupred;0;1703;282;Meet Up RED;Meet Up RED;session-location;rp17-location-18633;Meet Up RED;Meet Up RED
+meetupgreen;0;1702;428;Meet Up GREEN;Meet Up GREEN;session-location;rp17-location-18634;Meet Up GREEN;Meet Up GREEN
+mediacube;0;3594;759;Media Cube;Media Cube;session-location;rp17-location-18650;Media Cube;Media Cube
+re:connectingeurope;0;2876;314;re:connecting Europe;re:connecting Europe;session-location;rp17-location-19490;re:connecting Europe;re:connecting Europe
+networkingarea(halle8);0;1643;371;Networking Area (Halle 8);Networking Area (Halle 8);community;rp17-location-19605;Networking Area (Halle 8);Networking Area (Halle 8)
+viparea;0;3588;1044;VIP Area;VIP Area;other;;VIP Area;VIP Area
+registration;0;4135;328;Registration;Registration;service;;Registration;Registration
+refill;0;1346;332;re:fill Bar;re:fill Bar;entertainment;;re:fill Bar;re:fill Bar
+courtyard;0;3527;554;Courtyard;Courtyard;community;;Courtyard;Courtyard
+reception;0;3402;662;re:ception;re:ception;service;;re:ception;re:ception
+entry;0;4259;544;Entry;Entry;other;;Entry;Entry
+restaurant;0;2561;365;re:staurant;re:staurant;food;;re:staurant;re:staurant
+exhibitionarea;0;3063;460;Exhibition Area;Exhibition Area;community;;Exhibition Area;Exhibition Area
+wardrobe;0;3280;261;Wardrobe/Badges;Garderobe/Badges;service;;Wardrobe/Badges;Garderobe/Badges
+wardrobe1;0;4161;755;Wardrobe;Garderobe;service;;Wardrobe;Garderobe
+relax;0;1458;340;re:lax;re:lax;other;;re:lax;re:lax
