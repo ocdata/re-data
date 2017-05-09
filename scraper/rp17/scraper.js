@@ -14,11 +14,19 @@ var removeTimesAndLocations = false;
 
 // Livestream test
 var streamURLs = {
-	"rp14-location-2594": "http://delive.artestras.cshls.lldns.net/artestras/contrib/delive.m3u8",
-	"rp14-location-2595": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8",
+	"rp17-location-18648": "https://alex-front.rosebud-media.de/event/smil:alexevent.smil/playlist.m3u8",
+	"rp17-location-18649": "https://alex-front.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8"
+	// https://alex-front.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8
+	// "rp14-location-2594": "http://delive.artestras.cshls.lldns.net/artestras/contrib/delive.m3u8",
+	// "rp14-location-2595": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8",
     // "rp17-location-10341": "http://alex-stream.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8", // Stage 7 Media Convention    
     // "rp17-location-10339": "http://alex.rosebud-media.de/event/_definst_/smil:alexevent.smil/playlist.m3u8" // Stage 5 Media Convention
     // "rp17-location-10339": "http://alex.rosebud-media.de/event/_definst_/smil:alexevent.smil/playlist.m3u8" // Stage 5 Media Convention
+};
+
+var youTubeLiveStreamIds = {
+	"rp17-location-18618": "kvtvSFApqD8",
+	"rp17-location-18620": "3qpBZ3FhFfg"
 };
 
 var allTracks = {
@@ -111,6 +119,12 @@ var allTracks = {
 		label_de:'Media Convention',
 		label_en:'Media Convention', 
 		color:[214, 0, 126, 1.0] 
+	},
+	"FinTech": {
+		id: "fintech",
+		label_de: "FinTech",
+		label_en: "FinTech",
+		color:[214, 0, 126, 1.0]
 	}
 };
 
@@ -225,6 +239,12 @@ SessionStatus.CANCELED = "4";
 var csvData = fs.readFileSync(__dirname + "/pois.csv");
 
 // we now supply a order preference with the location
+var locationNameOrderPreference = [
+	"Stage 1", "Stage 2", "Stage 3", "Stage 4", "Stage 5", "Stage 6", "Stage 7", "Stage 8", "Stage 9", "Stage T", "Stage J", 
+	"Stage L1", "Stage L2",  "Maker Space", "Lightning Talks 1", "Lightning Talks 2", "Meet Up RED", "Meet Up GREEN", "Media Cube",
+	"re:connecting Europe", "Networking Area (Halle 8)", "Newthinking", "re:play"
+];
+
 var locationOrderPreference = [
 		eventId + '-location-18618', // stage 1
 		eventId + '-location-18620', // stage 2
@@ -268,14 +288,14 @@ exports.scrape = function (callback) {
 		{
 			urls: {
 				sessions: 'https://re-publica.de/rest/sessions.json?args[0]=12419', // rpTEN id: 6553 rp15: 3013 rp17: 12419
-				speakers: 'https://re-publica.de/rest/speakers.json?args[0]=12419' // rpTEN id: 6553 rp15: 3013 rp17: 12419
+				// speakers: 'https://re-publica.de/rest/speakers.json?args[0]=12419' // rpTEN id: 6553 rp15: 3013 rp17: 12419
 			}
 		},
 		function (result) {
 			var data = [];
 
 			var sessionList  = result.sessions;
-			var speakerList  = result.speakers;
+			// var speakerList  = result.speakers;
 			var ytPlaylist   = [];
 
 			var ytVideoMap  = {};
@@ -287,30 +307,30 @@ exports.scrape = function (callback) {
 				ytVideoMap[permalink] = linkFromYouTubeEntry(entry);
 			});
 
-			speakerList.forEach(function (speaker) {
-				var speakerName = speaker.label;
-				// if (speaker.label == undefined && speaker.gn != undefined && speaker.fn != undefined) {
-					speakerName = speaker.gn + " " + speaker.sn;
-				// }
-				
-				// skip potential invalid speakers, those happen.
-				if (speaker.uid == "" || (speakerName == null || speakerName.trim() == "")) return;
-
-				var entry = {
-					'id': eventId + '-speaker-'+speaker.uid,
-					'name': ent.decode(speakerName),
-					'photo': (speaker.image.src != undefined ? speaker.image.src : speaker.image),
-					'url': makeSpeakerURL(speaker),
-					'biography': typeof(speaker.description_short) == "string" ? removeHTMLTags(speaker.description_short) : null,
-					'organization':  typeof(speaker.org) == "string" ? speaker.org : null,
-					'organization_url': typeof(speaker.org_uri) == "string" ? speaker.org_uri : null,
-					'position': typeof(speaker.position) == "string" ? speaker.position : null,
-					'sessions': [],
-					'links': parseSpeakerLinks(speaker.links)
-				}
-				speakerMap[entry.id] = entry;
-				addEntry('speaker', entry);
-			});
+			// speakerList.forEach(function (speaker) {
+			// 	var speakerName = speaker.label;
+			// 	// if (speaker.label == undefined && speaker.gn != undefined && speaker.fn != undefined) {
+			// 		speakerName = speaker.gn + " " + speaker.sn;
+			// 	// }
+			//
+			// 	// skip potential invalid speakers, those happen.
+			// 	if (speaker.uid == "" || (speakerName == null || speakerName.trim() == "")) return;
+			//
+			// 	var entry = {
+			// 		'id': eventId + '-speaker-'+speaker.uid,
+			// 		'name': ent.decode(speakerName),
+			// 		'photo': (speaker.image.src != undefined ? speaker.image.src : speaker.image),
+			// 		'url': makeSpeakerURL(speaker),
+			// 		'biography': typeof(speaker.description_short) == "string" ? removeHTMLTags(speaker.description_short) : null,
+			// 		'organization':  typeof(speaker.org) == "string" ? speaker.org : null,
+			// 		'organization_url': typeof(speaker.org_uri) == "string" ? speaker.org_uri : null,
+			// 		'position': typeof(speaker.position) == "string" ? speaker.position : null,
+			// 		'sessions': [],
+			// 		'links': parseSpeakerLinks(speaker.links)
+			// 	}
+			// 	speakerMap[entry.id] = entry;
+			// 	addEntry('speaker', entry);
+			// });
 
 			// first get rooms out of the sessions
 			sessionList.forEach(function (session) {
@@ -329,10 +349,10 @@ exports.scrape = function (callback) {
 					return;
 				}
 				
-				var orderPreference = locationOrderPreference.indexOf(id);
+				var orderPreference = locationNameOrderPreference.indexOf(locationName);
 				// put unknown locations at the end
 				if (orderPreference < 0) {
-					orderPreference = locationOrderPreference.length + 1;
+					orderPreference = locationNameOrderPreference.length + 1;
 				}
 				var entry = {
 					'id': id,
@@ -503,8 +523,8 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 		'format': parseFormat(session.format),
 		'level': parseLevel(session.level),
 		'lang': parseLanguage(session.language),
-        'translated_langs': parseTranslatedLanguages(session.language),
-		'speakers': parseSpeakers(speakerMap, session.speaker_uids),
+    'translated_langs': parseTranslatedLanguages(session.language),
+		'speakers': parseSpeakers(speakerMap, session.speaker_uids, session.speaker_names),
 		'enclosures': [],
 		'links': links,
         'cancelled': isCancelled
@@ -523,8 +543,23 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 	}
 				
 	if (entry.location && entry.day) {
+		let ytLiveStreamId = youTubeLiveStreamIds[entry.location.id];
+		if (ytLiveStreamId) {
+			let streamURL = "https://youtu.be/" + ytLiveStreamId;
+			entry.links.push(
+				{
+					"title": entry.title,
+					"url": streamURL,
+					"service": "youtube",
+					"type": "livestream",
+					"thumbnail": "https://img.youtube.com/vi/" + ytLiveStreamId + "/default.jpg"
+				}
+			);
+			
+		}
+		
 		var liveStreamURL = streamURLs[entry.location.id];
-		if (liveStreamURL && (entry.day.id == "rp17-day-1" || entry.day.id == "rp17-day-2")) {
+		if (!ytLiveStreamId && liveStreamURL && (entry.day.id == "rp17-day-1" || entry.day.id == "rp17-day-2")) {
 			entry.enclosures.push({
 				"url": liveStreamURL,
 				"mimetype": "application/x-mpegURL",
@@ -704,7 +739,7 @@ function removeHTMLTags(text) {
     return ent.decode(result);
 }
 
-function parseSpeakers(speakerMap, speakeruids) {
+function parseSpeakers(speakerMap, speakeruids, speakernames) {
 	var speakers = [];
 	
 	if (speakeruids == null) return [];
@@ -714,16 +749,27 @@ function parseSpeakers(speakerMap, speakeruids) {
 			return item.trim();
 		});
 	}
+	if (typeof(speakernames) == typeof("")) {
+		speakernames = speakernames.split(",").map(function (item) {
+			return item.trim();
+		});
+	}
 	
-	speakeruids.forEach(function (speakerId) {
-		var speaker = speakerMap[eventId + '-speaker-'+speakerId];
-		if (speaker != undefined) {
+	for (var i = speakeruids.length - 1; i >= 0; i--) {
+		let speakerId = speakeruids[i];
+		
+		let speakerName = speakernames[i];
+		let speaker = speakerMap[eventId + '-speaker-'+speakerId];
+				
+		if (speaker) {
 			speakers.push({'id': speaker.id, 'name': ent.decode(speaker.name)});
+		} else if (speakerName) {
+			speakers.push({'id': eventId + "-speaker-" + speakerId, 'name': ent.decode(speakerName)});
 		} else {
 			console.error("unknown speaker " + speakerId);
 		}
-	})
-
+	}
+	
 	return speakers;
 }
 
