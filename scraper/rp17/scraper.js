@@ -288,14 +288,14 @@ exports.scrape = function (callback) {
 		{
 			urls: {
 				sessions: 'https://re-publica.de/rest/sessions.json?args[0]=12419', // rpTEN id: 6553 rp15: 3013 rp17: 12419
-				// speakers: 'https://re-publica.de/rest/speakers.json?args[0]=12419' // rpTEN id: 6553 rp15: 3013 rp17: 12419
+				speakers: 'https://re-publica.de/rest/speakers.json?args[0]=12419' // rpTEN id: 6553 rp15: 3013 rp17: 12419
 			}
 		},
 		function (result) {
 			var data = [];
 
 			var sessionList  = result.sessions;
-			// var speakerList  = result.speakers;
+			var speakerList  = result.speakers;
 			var ytPlaylist   = [];
 
 			var ytVideoMap  = {};
@@ -307,30 +307,30 @@ exports.scrape = function (callback) {
 				ytVideoMap[permalink] = linkFromYouTubeEntry(entry);
 			});
 
-			// speakerList.forEach(function (speaker) {
-			// 	var speakerName = speaker.label;
-			// 	// if (speaker.label == undefined && speaker.gn != undefined && speaker.fn != undefined) {
-			// 		speakerName = speaker.gn + " " + speaker.sn;
-			// 	// }
-			//
-			// 	// skip potential invalid speakers, those happen.
-			// 	if (speaker.uid == "" || (speakerName == null || speakerName.trim() == "")) return;
-			//
-			// 	var entry = {
-			// 		'id': eventId + '-speaker-'+speaker.uid,
-			// 		'name': ent.decode(speakerName),
-			// 		'photo': (speaker.image.src != undefined ? speaker.image.src : speaker.image),
-			// 		'url': makeSpeakerURL(speaker),
-			// 		'biography': typeof(speaker.description_short) == "string" ? removeHTMLTags(speaker.description_short) : null,
-			// 		'organization':  typeof(speaker.org) == "string" ? speaker.org : null,
-			// 		'organization_url': typeof(speaker.org_uri) == "string" ? speaker.org_uri : null,
-			// 		'position': typeof(speaker.position) == "string" ? speaker.position : null,
-			// 		'sessions': [],
-			// 		'links': parseSpeakerLinks(speaker.links)
-			// 	}
-			// 	speakerMap[entry.id] = entry;
-			// 	addEntry('speaker', entry);
-			// });
+			speakerList.forEach(function (speaker) {
+				var speakerName = speaker.label;
+				// if (speaker.label == undefined && speaker.gn != undefined && speaker.fn != undefined) {
+					speakerName = speaker.gn + " " + speaker.sn;
+				// }
+
+				// skip potential invalid speakers, those happen.
+				if (speaker.uid == "" || (speakerName == null || speakerName.trim() == "")) return;
+
+				var entry = {
+					'id': eventId + '-speaker-'+speaker.uid,
+					'name': ent.decode(speakerName),
+					'photo': (speaker.image.src != undefined ? speaker.image.src : speaker.image),
+					'url': makeSpeakerURL(speaker),
+					'biography': typeof(speaker.description_short) == "string" ? removeHTMLTags(speaker.description_short) : null,
+					'organization':  typeof(speaker.org) == "string" ? speaker.org : null,
+					'organization_url': typeof(speaker.org_uri) == "string" ? speaker.org_uri : null,
+					'position': typeof(speaker.position) == "string" ? speaker.position : null,
+					'sessions': [],
+					'links': parseSpeakerLinks(speaker.links)
+				}
+				speakerMap[entry.id] = entry;
+				addEntry('speaker', entry);
+			});
 
 			// first get rooms out of the sessions
 			sessionList.forEach(function (session) {
