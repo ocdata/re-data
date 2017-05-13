@@ -1,5 +1,8 @@
 var eventId = 'rp17';
 
+let request = require("request");
+let cheerio = require("cheerio");
+let querystring = require("querystring");
 var ent = require('ent');
 var fs = require('fs');
 var path = require('path');
@@ -163,26 +166,8 @@ var translationsToTranslatedLanguageMap = {
 var videoMap = {
     // "rp17-session-10379": "https://www.youtube.com/watch?v=GM2SMruNpjQ", // Preisverleihung "YOUR TURN - Der Video-Creator Wettbewerb"
     // "rp17-session-10592": "https://www.youtube.com/watch?v=NsuDLjcxD6Y", // Die Macht der Bilder – Zwischen Pressefreiheit und Menschenwürde
-    // "rp17-session-9367": "https://www.youtube.com/watch?v=MZzxPPXni40", // What's up TV? - Television from abroad
-    // "rp17-session-10419": "https://www.youtube.com/watch?v=7d79CSnW3RM", // Halt die Fresse: Hate Speech!
-    // "rp17-session-10369": "https://www.youtube.com/watch?v=0Ym4sQB4TRk", // Sind wir schon drin? Virtual Reality Projekte und ihre Plattformen
-    // "rp17-session-10414": "https://www.youtube.com/watch?v=EX9y1L6CKe4", // Hauptsache authentisch? Instagram, Snapchat und Co. entzaubert.
-    // "rp17-session-9774": "https://www.youtube.com/watch?v=UpcJ6k7a1DM", // Games go Hollywood: Spielekonzerne als Film- und TV-Produzenten
-    // "rp17-session-10427": "https://www.youtube.com/watch?v=W8fVPd1Vfq8" // Wer zahlt für Nachrichtenvideos im Netz?
 };
 
-// rp15
-// var allDays = {
-//     '05.05.2015': { 'id': eventId +'-day-1', 'label_de':'5. Mai',
-//                                              'label_en':'May 5',
-//                                              'date':'2015-05-05' },
-//     '06.05.2015': { 'id': eventId +'-day-2', 'label_de':'6. Mai',
-//                                              'label_en':'May 6',
-//                                              'date':'2015-05-06' },
-//     '07.05.2015': { 'id': eventId + '-day-3', 'label_de':'7. Mai',
-//                                               'label_en':'May 7',
-//                                               'date':'2015-05-07' },
-// };
 
 // rpTEN
 var allDays = {
@@ -415,43 +400,62 @@ exports.scrape = function (callback) {
 
 			Array.prototype.push.apply(sessionList, fakeSessions);
 
+			let parsedSessions = [];
+
 			sessionList.forEach(function (session) {
 				var entry = parseSession(session, ytVideoMap, locationMap, speakerMap);
 				if (entry == null) return;
-				addEntry('session', entry);	
+				parsedSessions.push(entry);
+
 			});
 			
-			alsoAdd('track', allTracks);
-			alsoAdd('format', allFormats);
-			alsoAdd('level', allLevels);
-			alsoAdd('language', allLanguages);
-			// if (!removeTimesAndLocations) {
-				alsoAdd('day', allDays);				
-			// }
-			alsoAdd('map', allMaps);
-			alsoAdd('poi', allPOIs);			
+			// YT playlist id rp17
+			const playlistId = "PLAR_6-tD7IZW7BzeeeYpnq8R8Ake_BWna";
+			updateSessionsWithYoutubeVideosByTitle(parsedSessions, 
+																						 playlistId, 
+																						 "re:publica 2017 -",
+																						 splitChar=": ", 
+																						 (sessions) => {
+																							 for (let entry of sessions) {
+																							 		addEntry('session', entry);	
+																							 }
+																							 
+			
+																				 			alsoAdd('track', allTracks);
+																				 			alsoAdd('format', allFormats);
+																				 			alsoAdd('level', allLevels);
+																				 			alsoAdd('language', allLanguages);
+																				 			// if (!removeTimesAndLocations) {
+																				 				alsoAdd('day', allDays);				
+																				 			// }
+																				 			alsoAdd('map', allMaps);
+																				 			alsoAdd('poi', allPOIs);			
 						
 
-			function addEntry(type, obj) {
-				obj["event"] = eventId;
-				obj["type"] = type;
-				data.push(obj);
-			}
 
-			function alsoAdd(type, list) {
-				Object.keys(list).forEach(function (key) {
-					var obj = clone(list[key]);
-					obj["event"] = eventId;
-					obj["type"] = type;
-					data.push(obj);
-				});
-			}
-
-			parsePOIsFromCSV(csvData, function (pois) {
-				alsoAdd('poi', pois);  
+																				 			parsePOIsFromCSV(csvData, function (pois) {
+																				 				alsoAdd('poi', pois);  
 			
-				callback(data);
-			});
+																				 				callback(data);
+																				 			});
+																						 });
+																						 
+
+																			 			function addEntry(type, obj) {
+																			 				obj["event"] = eventId;
+																			 				obj["type"] = type;
+																			 				data.push(obj);
+																			 			}
+
+																			 			function alsoAdd(type, list) {
+																			 				Object.keys(list).forEach(function (key) {
+																			 					var obj = clone(list[key]);
+																			 					obj["event"] = eventId;
+																			 					obj["type"] = type;
+																			 					data.push(obj);
+																			 				});
+																			 			}
+			
 		}
 	);
 }
@@ -492,13 +496,9 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 			if (videoID) {
 
 				// https://www.youtube.com/v/12BYSqVGCUk
-				var result =  {
-					"thumbnail": "https://img.youtube.com/vi/" + videoID + "/hqdefault.jpg",
-					"title": ent.decode(session.title),
-					"url": "https://www.youtube.com/v/" + videoID + "",
-					"service": "youtube",
-					"type": "recording"
-				};
+				
+				let result = linkForYouTubeVideoIdAndTitle(videoID, ent.decode(session.title), "recording");
+				
 				links.push(result);
 			}
 		};
@@ -546,16 +546,8 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 		let ytLiveStreamId = youTubeLiveStreamIds[entry.location.id];
 		if (ytLiveStreamId) {
 			let streamURL = "https://youtu.be/" + ytLiveStreamId;
-			entry.links.push(
-				{
-					"title": entry.title,
-					"url": streamURL,
-					"service": "youtube",
-					"type": "livestream",
-					"thumbnail": "https://img.youtube.com/vi/" + ytLiveStreamId + "/default.jpg"
-				}
-			);
-			
+			let result = linkForYouTubeVideoIdAndTitle(ytLiveStreamId, entry.title, "livestream");
+			entry.links.push(result);
 		}
 		
 		var liveStreamURL = streamURLs[entry.location.id];
@@ -612,6 +604,18 @@ function permalinkFromYouTubeEntry(entry) {
 	return permalink;
 }
 
+function linkForYouTubeVideoIdAndTitle(videoId, title, type="recording") {
+	let result =  {
+		"thumbnail": "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg",
+		"title": title,
+		"url": "https://youtu.be/" + videoId,
+		"service": "youtube",
+		"type": type
+	};	
+ 
+ return result
+}
+
 function linkFromYouTubeEntry(entry) {
 	var mediaGroup = entry["media$group"];
 	if (mediaGroup == undefined) return false;
@@ -641,6 +645,42 @@ function linkFromYouTubeEntry(entry) {
 //    console.log(result);
 
  return result;
+}
+
+// Needs a parsed array of sessions in re-data format and a YT playlist id. 
+// It will scrape the video ids from YT playlist page based on title. Due to the 
+// horribly inconsisten way the videos are named a heuristic is applied for matching.
+// Callback will retrieve updated sessions objects. 
+function updateSessionsWithYoutubeVideosByTitle(sessions, playlistId, prefix="re:publica 2017 -", splitChar=":", cb) {
+	let url = "https://www.youtube.com/playlist?list=" + playlistId;
+
+	request(url, function (error, response, body) {
+	  if (error) { console.error("Error loading YT page", error); cb(sessions); return; }
+		
+	  let $ = cheerio.load(body);
+		let videoLinks = $("#pl-video-table tr a.pl-video-title-link");
+	
+		videoLinks.each((i, link) => {
+			let query = $(link).attr("href").split("?")[1];
+			let parsedQuery = querystring.parse(query);
+			let videoId = parsedQuery["v"];
+			let title = $(link).text().trim();
+
+			// skip all entries not stating with our prefix
+			if (!title.startsWith(prefix)) { return; }
+			let splited = title.split(splitChar);
+			let matchSuffix = splited[splited.length - 1];
+
+			for (let session of sessions) {
+				if (title.indexOf(session.title) >= 0) {
+					let link = linkForYouTubeVideoIdAndTitle(videoId, session.title);
+					session.links.push(link);
+				}
+			}
+		});
+		
+		cb(sessions);
+	});
 }
 
 function parseDate(text) {
