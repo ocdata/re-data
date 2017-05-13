@@ -608,7 +608,7 @@ function linkForYouTubeVideoIdAndTitle(videoId, title, type="recording") {
 	let result =  {
 		"thumbnail": "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg",
 		"title": title,
-		"url": "https://youtu.be/" + videoId,
+		"url": "https://www.youtube.com/v/" + videoId,
 		"service": "youtube",
 		"type": type
 	};	
