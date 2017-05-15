@@ -670,9 +670,11 @@ function updateSessionsWithYoutubeVideosByTitle(sessions, playlistId, prefix="re
 			if (!title.startsWith(prefix)) { return; }
 			let splited = title.split(splitChar);
 			let matchSuffix = splited[splited.length - 1];
-
+			
 			for (let session of sessions) {
-				if (title.indexOf(session.title) >= 0) {
+				let sessionTitle = session.title.substring(0, 55); // Only consider subscrint because YT titles are truncated
+				
+				if (title.indexOf(sessionTitle) >= 0) {
 					let link = linkForYouTubeVideoIdAndTitle(videoId, session.title);
 					session.links.push(link);
 				}
