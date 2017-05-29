@@ -170,5 +170,18 @@
 		}],
         "hashtag": "rp17",
 		"url": "https://re-publica.com/17"
-	}
+	},
+	{
+		"type": "event",
+		"id": "altconf17",
+		"label": "AltConf",
+		"title": "AltConf 17",
+		"date": ["2017-06-05","2017-06-08"],
+		"locations": [{
+			"label": "San Jose Marriott",
+			"coords": [37.783273, -122.401827]
+		}],
+		 "hashtag": "altconf",
+		"url": "http://altconf.com/"
+	},	
 ]
