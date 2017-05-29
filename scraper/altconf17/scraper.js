@@ -5,11 +5,11 @@ var path = require('path');
 
 var allDays = {
   "2017-06-05": {
-    "id": "2016-06-05",
+    "id": "2017-06-05",
     "event": eventId,
     "type": "day",
     "label_en": "Monday",
-		"date": "2016-06-05"
+		"date": "2017-06-05"
   },
   "2017-06-06": {
     "id": "2017-06-06",
