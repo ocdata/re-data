@@ -95,6 +95,9 @@ var allTracks = {
     'altconf': { "color": [20, 173, 61, 1],
                 "id": "altconf",
                 "label_en": "AltConf" },    
+	'podcast': {"id": "podcast",
+						  "color": [47, 131, 67,1],
+						  "label_en": "Podcast"}
   // 'development': { "color": [207,94,28,1],
   //                  "id": "development",
   //                  "label_en": "Development" },
@@ -114,8 +117,9 @@ var allTracks = {
 
 var allTrackColors = {
 	'default': [20, 173, 61, 1],
-    'altconf': [20, 173, 61, 1],
+  'altconf': [20, 173, 61, 1],
 	'Engineering Practices': [47, 131, 67,1],
+	'Podcast': [47, 131, 67,1],
 	'Engineering (has code) - Beginner level': [33, 102, 52, 1],	
 	'Engineering (has code) - Advanced Level': [33, 102, 52, 1],	
 	'Bussiness': [53, 143, 197,1],		
@@ -127,14 +131,11 @@ var allTrackColors = {
 };
 
 var trackMap = {
-  'development':   [ 
-  				],
-  'streaming': [ 
-  	 			],
-  'design': [ 
-  			],
-  'community': [ 
-				]			
+	"altconf17-6d2555ff148fbf8d7fe688867c6d21544fc51e0a": "podcast"
+};
+
+var daysForSessionIds = {
+	"altconf17-6d2555ff148fbf8d7fe688867c6d21544fc51e0a": "2017-06-05"
 };
 
 var sortOrderOfLocations = [
@@ -251,8 +252,13 @@ function parseSession(dict) {
 		session['track'] = parseTrack(session['track']);
 	} else  {
 	    session['track'] = allTracks['altconf'];
-        
 	}
+	var trackMapId = trackMap[session["id"]];
+	var newTrack = allTracks[trackMapId];
+	if (newTrack) {
+		session["track"] = newTrack;
+	}
+	
 	if (!session['level']) {
 		session['level'] = allLevels['intermediate'];
         
