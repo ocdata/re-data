@@ -239,7 +239,9 @@ function parseSession(dict) {
 		var month = beginDate.getMonth() + 1;	
 		var day = beginDate.getDate();	
 		var key = beginDate.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
-		session['day'] = allDays[key];
+		if (session["day"] == null) {
+			session['day'] = allDays[key];
+		}
 		var milSecs = (endDate.getTime() - beginDate.getTime());
 		session['duration'] = ((milSecs / 1000.0) / 60.0); // duration is in minutes
 		
@@ -279,7 +281,7 @@ function parseSession(dict) {
 		session['end'] = null;		
 	} 
 	
-	var dayMapId = daysForSessionIds[session["id"]];
+	var dayMapId = daysForSessionIds[dict["id"]];
 	var day = allDays[dayMapId];
 	if (day) {
 		session["day"] = day;
@@ -386,21 +388,6 @@ exports.scrape = function (callback) {
 
 function toArray(obj) {
 	return Object.keys(obj).map(function (key) { return obj[key] })
-}
-
-function parseDay(dateString) {
-	if (dateString == '') return false;
-
-	var date = new Date(dateString);
-	var day = date.getUTCDate();
-	var month = date.getUTCMonth() + 1;
-	var year = date.getUTCFullYear();
-
-	var key = year + '-' + (month < 10 ? '0'+month : month) + '-' + (day < 10 ? '0'+day : day);
-	var dayDict = allDays[key];
-
-	if (dayDict == undefined) return false;
-	return dayDict;
 }
 
 function parseDate(text) {
