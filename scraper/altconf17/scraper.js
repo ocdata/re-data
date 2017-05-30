@@ -139,7 +139,10 @@ var trackMap = {
 
 var sortOrderOfLocations = [
     "Theatre 1",
-    "Theatre 3"    
+    "Theatre 15",	
+    "Theatre 3" ,
+		"Room 1",
+		"Room 2"
 ];
 
 function parseSpeaker(dict) {
