@@ -279,6 +279,12 @@ function parseSession(dict) {
 		session['end'] = null;		
 	} 
 	
+	var dayMapId = daysForSessionIds[session["id"]];
+	var day = allDays[dayMapId];
+	if (day) {
+		session["day"] = day;
+	}
+	
 	var speakers = session['speakers'];
 	if (speakers) {
 		speakers = speakers.filter(function (speaker) {
