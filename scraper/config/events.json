@@ -184,4 +184,23 @@
 		 "hashtag": "altconf",
 		"url": "http://altconf.com/"
 	},	
+	{
+		"type": "event",
+		"id": "rpeu17",
+		"label": "re:publica EUROPE 17",
+		"title": "rp:eu17",
+		"date": ["2017-09-07","2017-09-13"],
+		"locations": [
+			{
+			"label": "Lighthouse Cinema, Dublin",
+			"coords": [53.348733, -6.279138]
+			},
+			{
+				"label": "Museum of Photography, Thessaloniki",
+				"coords": [40.63295, 22.935467]
+			},
+		],
+        "hashtag": "rpthe",
+		"url": "https://re-publica.com/eu17"
+	},	
 ]
