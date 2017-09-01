@@ -16,23 +16,6 @@ var sessionStartDateOffsetMilliSecs = fakeDate.getTime() - originalStartDate.get
 var removeTimesAndLocations = false;
 
 
-    function pad(number) {
-      var r = String(number);
-      if ( r.length === 1 ) {
-        r = '0' + r;
-      }
-      return r;
-    }
-
-    Date.prototype.toISOStringWithoutMilli = function() {
-      return this.getUTCFullYear()
-        + '-' + pad( this.getUTCMonth() + 1 )
-        + '-' + pad( this.getUTCDate() )
-        + 'T' + pad( this.getUTCHours() )
-        + ':' + pad( this.getUTCMinutes() )
-        + ':' + pad( this.getUTCSeconds() )
-        + 'Z';
-    };
 
 // Livestream test
 var streamURLs = {
@@ -517,9 +500,7 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 	    duration = (end - begin) / 1000;
     }
 	if (duration <= 0) return;
-
-    if (begin != null) begin = begin.toISOStringWithoutMilli();
-    if (end != null) end = end.toISOStringWithoutMilli();    
+ 
 				
 	var permalink = session.uri;
 	var links = [];
