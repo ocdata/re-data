@@ -510,13 +510,16 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 	//                console.log(session);
 
 	var begin = parseDateTime(session.start_iso);
-    if (begin != null) begin = begin.toISOStringWithoutMilli();
-    
 	var end = parseDateTime(session.end_iso);
-    if (end != null) end = end.toISOStringWithoutMilli();    
     
-	var duration = (end - begin) / 1000;
-	if (duration < 0) return;
+    var duration = 0;
+    if (end != null && begin != null) {
+	    duration = (end - begin) / 1000;
+    }
+	if (duration <= 0) return;
+
+    if (begin != null) begin = begin.toISOStringWithoutMilli();
+    if (end != null) end = end.toISOStringWithoutMilli();    
 				
 	var permalink = session.uri;
 	var links = [];
