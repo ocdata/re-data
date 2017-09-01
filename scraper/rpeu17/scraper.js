@@ -15,6 +15,25 @@ var fakeDate = originalStartDate; //new Date();
 var sessionStartDateOffsetMilliSecs = fakeDate.getTime() - originalStartDate.getTime();
 var removeTimesAndLocations = false;
 
+
+    function pad(number) {
+      var r = String(number);
+      if ( r.length === 1 ) {
+        r = '0' + r;
+      }
+      return r;
+    }
+
+    Date.prototype.toISOStringWithoutMilli = function() {
+      return this.getUTCFullYear()
+        + '-' + pad( this.getUTCMonth() + 1 )
+        + '-' + pad( this.getUTCDate() )
+        + 'T' + pad( this.getUTCHours() )
+        + ':' + pad( this.getUTCMinutes() )
+        + ':' + pad( this.getUTCSeconds() )
+        + 'Z';
+    };
+
 // Livestream test
 var streamURLs = {
 	// "rp17-location-18648": "https://alex-front.rosebud-media.de/event/smil:alexevent.smil/playlist.m3u8",
@@ -490,8 +509,12 @@ function parseSession(session, ytVideoMap, locationMap, speakerMap) {
 
 	//                console.log(session);
 
-	var begin = parseDateTime(session.start_iso)
-	var end = parseDateTime(session.end_iso)
+	var begin = parseDateTime(session.start_iso);
+    if (begin != null) begin = begin.toISOStringWithoutMilli();
+    
+	var end = parseDateTime(session.end_iso);
+    if (end != null) end = end.toISOStringWithoutMilli();    
+    
 	var duration = (end - begin) / 1000;
 	if (duration < 0) return;
 				
@@ -736,6 +759,7 @@ function parseDateTime(isodatetime) {
 	var date = new Date(isodatetime);
 	var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
 	date.setTime(newMillis);
+    date.setSeconds(date.getSeconds(),0);
 	return date;
 
 	console.error('Unknown date "'+date+'" and time "'+time+'"');
