@@ -777,8 +777,8 @@ function parseDateTime(isodatetime) {
 		  date.getUTCMonth() == 8 && 
 		  date.getUTCFullYear() == 2017) 
 	{
-			// dublin is 1 hour later
-			newMillis += 60 * 60 * 1000;		
+			// thessaloniki is 1 hour earlier
+			newMillis -= 60 * 60 * 1000;		
 	}
 	
 	date.setTime(newMillis);
