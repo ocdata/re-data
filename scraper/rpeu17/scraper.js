@@ -764,7 +764,7 @@ function parseDateTime(isodatetime) {
 	
 	// HACK HACK HACK: The api gives the wrong TZs so we have to fix it
 	// dublin, correct TZ if wrong
-	if (date.getUTCDay() < 9 && 
+	if (date.getUTCDate() < 9 && 
 		  date.getUTCMonth() == 8 && 
 			date.getUTCFullYear() == 2017) 
 	{
@@ -773,12 +773,13 @@ function parseDateTime(isodatetime) {
 	}
 
 	// thessaloniki, correct TZ if wrong
-	if (date.getUTCDay() >= 9 && 
+	if (date.getUTCDate() >= 9 && 
 		  date.getUTCMonth() == 8 && 
 		  date.getUTCFullYear() == 2017) 
 	{
 			// thessaloniki is 1 hour earlier
-			newMillis -= 60 * 60 * 1000;		
+		console.log("!!!!", date, "is in THE");
+			newMillis -= (60 * 60 * 1000);
 	}
 	
 	date.setTime(newMillis);
