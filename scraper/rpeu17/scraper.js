@@ -778,7 +778,6 @@ function parseDateTime(isodatetime) {
 		  date.getUTCFullYear() == 2017) 
 	{
 			// thessaloniki is 1 hour earlier
-		console.log("!!!!", date, "is in THE");
 			newMillis -= (60 * 60 * 1000);
 	}
 	
