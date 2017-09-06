@@ -759,10 +759,31 @@ function parseDateTime(isodatetime) {
 	if (typeof(isodatetime) != "string") return null;
 
 
-	var date = new Date(isodatetime);
-	var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
+	let date = new Date(isodatetime);
+	let newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
+	
+	// HACK HACK HACK: The api gives the wrong TZs so we have to fix it
+	// dublin, correct TZ if wrong
+	if (date.getUTCDay() < 9 && 
+		  date.getUTCMonth() == 8 && 
+			date.getUTCFullYear() == 2017) 
+	{
+			// dublin is 1 hour 
+			newMillis += 60 * 60 * 1000;
+	}
+
+	// thessaloniki, correct TZ if wrong
+	if (date.getUTCDay() >= 9 && 
+		  date.getUTCMonth() == 8 && 
+		  date.getUTCFullYear() == 2017) 
+	{
+			// dublin is 1 hour later
+			newMillis += 60 * 60 * 1000;		
+	}
+	
 	date.setTime(newMillis);
-    date.setSeconds(date.getSeconds(),0);
+  date.setSeconds(date.getSeconds(),0);
+	
 	return date;
 
 	console.error('Unknown date "'+date+'" and time "'+time+'"');
