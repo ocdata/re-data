@@ -118,5 +118,89 @@
 			"coords": [53.561583,9.985683]
 		}],
 		"url": "http://events.ccc.de/congress/2015"
-	}
+	},
+	{
+		"type": "event",
+		"id": "rpten",
+		"label": "re:publica TEN",
+		"title": "TEN",
+		"date": ["2016-05-02","2016-05-04"],
+		"locations": [{
+			"label": "Station Berlin",
+			"coords": [52.49814, 13.374538]
+		}],
+        "hashtag": "rpTEN",
+		"url": "http://16.re-publica.de/"
+	},
+	{
+		"type": "event",
+		"id": "altconf16",
+		"label": "AltConf 2016",
+		"title": "AltConf",
+		"date": ["2016-06-13","2016-06-17"],
+		"locations": [{
+			"label": "AMC Metreon",
+			"coords": [37.784361,-122.4045953]
+		}],
+        "hashtag": "altconf",
+		"url": "http://altconf.com"
+    },
+	{
+		"type": "event",
+		"id": "33c3",
+		"label": "33C3",
+		"title": "33rd Chaos Communication Congress – Gated Comunities",
+		"date": ["2016-12-27","2016-12-30"],
+		"locations": [{
+			"label": "Congress Center Hamburg",
+			"coords": [53.561583,9.985683]
+		}],
+		"url": "http://events.ccc.de/congress/2016",
+        "hashtag": "33c3"
+	},
+	{
+		"type": "event",
+		"id": "rp17",
+		"label": "re:publica 17",
+		"title": "rp17",
+		"date": ["2017-05-08","2017-05-10"],
+		"locations": [{
+			"label": "Station Berlin",
+			"coords": [52.49814, 13.374538]
+		}],
+        "hashtag": "rp17",
+		"url": "https://re-publica.com/17"
+	},
+	{
+		"type": "event",
+		"id": "altconf17",
+		"label": "AltConf",
+		"title": "AltConf 17",
+		"date": ["2017-06-05","2017-06-08"],
+		"locations": [{
+			"label": "San Jose Marriott",
+			"coords": [37.783273, -122.401827]
+		}],
+		 "hashtag": "altconf",
+		"url": "http://altconf.com/"
+	},	
+	{
+		"type": "event",
+		"id": "rpeu17",
+		"label": "re:publica EUROPE 17",
+		"title": "rp:eu17",
+		"date": ["2017-09-07","2017-09-13"],
+		"locations": [
+			{
+			"label": "Lighthouse Cinema, Dublin",
+			"coords": [53.348733, -6.279138]
+			},
+			{
+				"label": "Museum of Photography, Thessaloniki",
+				"coords": [40.63295, 22.935467]
+			},
+		],
+        "hashtag": "rpthe",
+		"url": "https://re-publica.com/eu17"
+	},	
 ]

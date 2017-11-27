@@ -4,6 +4,7 @@
 var fs = require("fs");
 var path = require("path");
 var http = require("http");
+var compression = require('compression');
 
 /* require npm modules */
 var cradle = require("cradle");
@@ -39,6 +40,17 @@ var db = null;
 // setup express
 
 var app = express();
+app.use(compression({filter: shouldCompress}))
+
+function shouldCompress (req, res) {
+  if (req.headers['x-no-compression']) {
+    // don't compress responses with this request header
+    return false
+  }
+
+  // fallback to standard filter function
+  return compression.filter(req, res)
+}
 
 // enable Cross-Origin Resource Sharing
 // http://enable-cors.org/server_expressjs.html
@@ -51,9 +63,10 @@ app.use(function(req, res, next) {
 // api: events
 
 app.get('/events', function(req, res) {
-	db.view('events/id', {include_docs: true, descending: true}, function(err, data) {
-		replyList(err, data, req.query, res);
-	});
+    fs.readFile(path.resolve(__dirname, "../scraper/config/events.json"), function (err, data) {
+        replyList(err, data ? JSON.parse(data) : null, req.query, res);
+    });
+    
 });
 
 app.get('/events/:id', function(req, res) {
@@ -156,6 +169,27 @@ function replyList(err, data, query, res) {
 	});
 }
 
+// helpers
+
+function pad(number) {
+  var r = String(number);
+  if ( r.length === 1 ) {
+    r = '0' + r;
+  }
+  return r;
+}
+
+Date.prototype.toISOString = function() {
+  return this.getUTCFullYear()
+    + '-' + pad( this.getUTCMonth() + 1 )
+    + '-' + pad( this.getUTCDate() )
+    + 'T' + pad( this.getUTCHours() )
+    + ':' + pad( this.getUTCMinutes() )
+    + ':' + pad( this.getUTCSeconds() )
+    + 'Z';
+};
+
+
 
 // function for replying a single item
 
@@ -163,10 +197,12 @@ function replyItem(err, data, query, res) {
 	if (err) {
 		log.critical(err);
 		res.json({ok:false});
+        return;
 	}
 
 	if (data.length != 1) {
 		res.json({ok:false});
+        return;
 	}
 
 	// delete unnecessary fields _id and _rev

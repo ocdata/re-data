@@ -79,6 +79,17 @@ Several properties are marked as optional. If they are not marked as optional th
 
 If you want to specify an optional property as not present explicity (i.e. delete it if it has been there before) specify an explicit `null` value for the optional property. 
 
+## Formats
+
+Most basic types are defined by JSON
+
+- `string`: JSON String
+- `number`: JSON Number
+- `date`: JSON String representing an ISO 8601 Date (no time)
+- `datetime`: JSON String representing an ISO 8601 Date and Time
+- `boolean`: JSON Bool (true/false)
+
+
 ## Events
 
 An event is one chronologically delimited total of sessions. Like a yearly conference.
@@ -106,12 +117,37 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 	"end": "2013-05-08",
 	"locations": [{
 		"label": "Station Berlin",
-		"coords": [52.49814,13.374538] // lat, lon
+		"coords": [52.49814,13.374538], // lat, lon
+        "wifi": {
+            "ssid": "re:publica",
+            "security": "captive",
+            "username": "wifi"            
+            "password": "user"
+        }
 	}],
+    "hashtag": "rp13",    
 	"url": "http://13.re-publica.de/",
 	"last_modified": 1393611456.99
 }]
 ````
+
+| field | format | required | description |
+| ----- | ------ | -------- | ----------- |
+| `id` |`string`|`yes`|Identifier|
+| `title`|`string`|`yes`|Title of the conference|
+| `slogan`|`string`|`no`|Slogan of the conference, if present|
+| `begin`|`date`|`yes`|Begin date of the conference|
+| `end`|`date`|`yes`|Begin date of the conference|
+| `locations`|`array` of `objects`|`no`|Locations, might be empty if unknown|
+| `locations.label`|`string`|`yes`|Name of the location (not localized) |
+| `locations.coords`|`array` of exatly two `number`s|`no`|Geocoordinates in WGS84. First value is latitude, second longitude
+| `locations.wifi`|`object`|`no`|Information about the Wifi at the location|
+| `locations.wifi.ssid`|`string`|`yes`|SSID of the Wifi|
+| `locations.wifi.security`|`(none|wpa2|wpa|wpa2enterprise|captive)`|`yes`|Infomation on the secirity method of the wifi|
+| `locations.wifi.username`|`string`|`no`|if a username is required by the wifi security (e.g. `captive`) and the information is public (!) the username|
+| `locations.wifi.password`|`string`|`no`|if a password is required by the wifi securityand the information is public (!) the password|
+| `hashtag`|`string`|`no`|Hashtag (without `#` sign!) to use with Twitter/Facebook/Instagram, etc.|
+| `url`|`string`|`no`|Homepage URL of the conference|
 
 ### GET `/events/<event-id>`
 
@@ -151,10 +187,15 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 	"lang": {
 		"id": "de", "label_de": "Deutsch", "label_en": "German"
 	},
+    "translated_langs": [{
+        "id": "en", "label_de": "Englisch", "label_en": "English"
+    }],
 	"speakers": [
 		{ "id": "rp13-speaker-81", "name": "Sascha Lobo" }
 		//...
 	],
+	"will_be_recorded": true,
+	"cancelled": false,	
 	"enclosures": [
 		{
 			"url": "http://example.com/files/live.m3u8",
@@ -201,7 +242,9 @@ Sessions also have two special fields: enclosures and links:
 Optional fields:
 
 - `subtitle`
-
+- `will_be_recorded`, assume `false` if missing
+- `cancelled`, assume `false` if missing
+= `translated_langs`: Translations of this talk (subtitles, live translations). If present an Array of Dictionaries similar to `lang` field. 
 ### Enclosures
 
 Enclosures list URLs of files including mime type. 
@@ -317,6 +360,8 @@ Locations are specified spaces on the compound and may be stages.
 		"id": "stage1", // location_id
 		"label_de": "Stage 1",
 		"label_en": "Stage 1",
+        "shortlabel_de": "ST1",
+        "shortlabel_en": "ST1",
 		"is_stage": true, // is this a stage
 		"order_index": 0, // order stage objects by this, when listed
 		"point_of_interest": {
@@ -332,6 +377,7 @@ Locations are specified spaces on the compound and may be stages.
 - `is_stage`: (Required) This location is a stage, as opposed to a meeting aread/workshop space, etc.
 - `order_index`: (Optional) Unique index per event, it defines the natural order of the locations (e.g. as used on promotional materials). 0 has the highest priority. 
 - `point_of_interest`: (Optional) Relationship to a point of interest, if any. `id` and at least one `label_` properties are required if present
+- `shortlabel_LANG` (Optional) A _very_ short label (not longer then 3 characters!) for use on small screens (e.g. watch complications, Mini LED displays, etc.) 
 
 ### GET `/events/<event-id>/locations/<location-id>`
 

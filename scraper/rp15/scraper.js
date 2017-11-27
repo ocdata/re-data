@@ -53,17 +53,19 @@ var allLanguages = {
 	'Deutsch/Englisch': { id:'de+en', label_de:'Deutsch/Englisch', label_en:'German/English'  }
 };
 
+// rp15
 var allDays = {
-	'05.05.2015': { 'id': eventId +'-day-1', 'label_de':'5. Mai', 
-											 'label_en':'May 5', 
-											 'date':'2015-05-05' },
-	'06.05.2015': { 'id': eventId +'-day-2', 'label_de':'6. Mai', 
-											 'label_en':'May 6', 
-											 'date':'2015-05-06' },
-	'07.05.2015': { 'id': eventId + '-day-3', 'label_de':'7. Mai', 
-											  'label_en':'May 7', 
-											  'date':'2015-05-07' },
+    '05.05.2015': { 'id': eventId +'-day-1', 'label_de':'5. Mai',
+                                             'label_en':'May 5',
+                                             'date':'2015-05-05' },
+    '06.05.2015': { 'id': eventId +'-day-2', 'label_de':'6. Mai',
+                                             'label_en':'May 6',
+                                             'date':'2015-05-06' },
+    '07.05.2015': { 'id': eventId + '-day-3', 'label_de':'7. Mai',
+                                              'label_en':'May 7',
+                                              'date':'2015-05-07' },
 };
+
 
 var allMaps = {
 	'map-level0': {
@@ -287,7 +289,7 @@ exports.scrape = function (callback) {
 				if (ytLink) {
 					links.push(ytLink);
 				}
-				if (session["video"]) {	
+				if (session.hasOwnProperty("video") && session.video instanceof Array) {	
 					
 					session.video.forEach(function (videoURL) {
 						
