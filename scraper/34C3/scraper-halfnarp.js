@@ -64,7 +64,7 @@ colors[eventId + "-science"] = turquise;
 colors[eventId + "-hardware-making"] = brown;
 colors[eventId + "-art-culture"] = orange;
 colors[eventId + "-failosophy"] = yellow;
-colors[eventId + "-space"] = yellow;
+colors[eventId + "-resilience"] = yellow;
 colors[eventId + "-ccc"] = green;
 colors[eventId + "-entertainment"] = green;
 
@@ -315,7 +315,7 @@ function sessionFromJSON(json, id_prefix, linkMakerFunction) {
             return "http://events.ccc.de/congress/2017/Fahrplan/events/" + json["event_id"] + ".html";            
         };
     }
-	
+
 	var speakers = speakerFromString(json["speaker_names"]).map(function (speaker) {
 		return {
 				"id": id_prefix + speaker.id,
@@ -367,17 +367,18 @@ function sessionFromJSON(json, id_prefix, linkMakerFunction) {
 };
 
 function trackFromJSON(json) {
-    
+
     var id2slug = {};
-    id2slug[318] = "security";
-    id2slug[316] = "ethics-society-politics";
-    id2slug[314] = "science";
-    id2slug[323] = "space";    
-    id2slug[317] = "hardware-making";
-    id2slug[315] = "art-culture";
+    id2slug[331] = "security";
+    id2slug[328] = "ethics-society-politics";
+    id2slug[333] = "science";
+    id2slug[332] = "Resilience";    
+    
+    id2slug[330] = "hardware-making";
+    id2slug[329] = "art-culture";
     // id2slug[""] = "failosophy";
-    id2slug[319] = "ccc";
-    id2slug[320] = "entertainment";
+    id2slug[336] = "ccc";
+    id2slug[335] = "entertainment";
     // id2slug[""] = "self-organized-sessions";
     // id2slug[""] = "podcast";
     // id2slug[""] = "sendezentrum";
@@ -393,7 +394,7 @@ function trackFromJSON(json) {
     nameFromSlug["security"] = "Security";
     nameFromSlug["ethics-society-politics"] = "Ethics, Society & Politics";
     nameFromSlug["science"] = "Science";
-    nameFromSlug["space"] = "Space"; 
+    nameFromSlug["resilience"] = "Resilience"; 
     nameFromSlug["hardware-making"] = "Hardware & Making";
     nameFromSlug["art-culture"] = "Art & Culture";
     nameFromSlug["failosophy"] = "Failosophy";
