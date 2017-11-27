@@ -202,5 +202,18 @@
 		],
         "hashtag": "rpthe",
 		"url": "https://re-publica.com/eu17"
-	},	
+	},
+	{
+		"type": "event",
+		"id": "34c3",
+		"label": "34C3",
+		"title": "34th Chaos Communication Congress – #tuwat",
+		"date": ["2017-12-27","2017-12-30"],
+		"locations": [{
+			"label": "Congress Center Leipzig",
+			"coords": [51.396667, 12.402778]
+		}],
+		"url": "http://events.ccc.de/congress/2017",
+        "hashtag": "34c3"
+	},
 ]
