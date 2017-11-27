@@ -372,7 +372,7 @@ function trackFromJSON(json) {
     id2slug[331] = "security";
     id2slug[328] = "ethics-society-politics";
     id2slug[333] = "science";
-    id2slug[332] = "Resilience";    
+    id2slug[332] = "resilience";    
     
     id2slug[330] = "hardware-making";
     id2slug[329] = "art-culture";
