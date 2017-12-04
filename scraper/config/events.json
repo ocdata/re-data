@@ -10,7 +10,7 @@
 			"coords": [37.783273, -122.401827]
 		}],
 		"url": "http://altconf.com/"
-	},		
+	},
 	{
 		"type": "event",
 		"id": "test-rp14",
@@ -22,7 +22,7 @@
 			"coords": [52.49814,13.374538]
 		}],
 		"url": "http://14.re-publica.de/"
-	},			
+	},
 	{
 		"type": "event",
 		"id": "rp13",
@@ -70,7 +70,7 @@
 			"coords": [52.49814, 13.374538]
 		}],
 		"url": "http://15.re-publica.de/"
-	},		
+	},
 	{
 		"type": "event",
 		"id": "ds14",
@@ -82,7 +82,7 @@
 			"coords": [51.066246, 13.751621]
 		}],
 		"url": "https://datenspuren.de/2014/"
-	},			
+	},
 	{
 		"type": "event",
 		"id": "31c3",
@@ -183,7 +183,7 @@
 		}],
 		 "hashtag": "altconf",
 		"url": "http://altconf.com/"
-	},	
+	},
 	{
 		"type": "event",
 		"id": "rpeu17",
@@ -198,7 +198,7 @@
 			{
 				"label": "Museum of Photography, Thessaloniki",
 				"coords": [40.63295, 22.935467]
-			},
+			}
 		],
         "hashtag": "rpthe",
 		"url": "https://re-publica.com/eu17"
@@ -215,5 +215,5 @@
 		}],
 		"url": "http://events.ccc.de/congress/2017",
         "hashtag": "34c3"
-	},
+	}
 ]

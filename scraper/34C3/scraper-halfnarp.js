@@ -33,19 +33,19 @@ var dayMonthChange = 0;
 var dayDayChange = 0;
 
 // Security #5057af blue
-// Politics #b550bd violett 
-// Science #45b9b3 turqise 
-// Hardware #a8563f brown 
+// Politics #b550bd violett
+// Science #45b9b3 turqise
+// Hardware #a8563f brown
 // Art #b99745 orange
 // Failosophy #c0ba59 yellow
 // CCC #45b964 green
 // Entertainment #45b964 (same as CCC) green
-// 
+//
 // official from https://events.ccc.de/congress/2015/wiki/Static:Design
 var blue    = [ 80.0,  87.0, 175.0, 1.0];
 var violett = [181.0,  80.0, 189.0, 1.0];
-var turquise= [ 69.0, 185.0, 179.0, 1.0]; 
-var brown   = [168.0,  86.0,  63.0, 1.0]; 
+var turquise= [ 69.0, 185.0, 179.0, 1.0];
+var brown   = [168.0,  86.0,  63.0, 1.0];
 var orange  = [185.0, 151.0,  69.0, 1.0];
 var yellow  = [192.0, 186.0,  89.0, 1.0];
 var green   = [ 69.0, 185.0, 100.0, 1.0];
@@ -54,7 +54,7 @@ var green   = [ 69.0, 185.0, 100.0, 1.0];
 var red     = [118.0,  26.0,  61.0, 1.0];
 var grey    = [ 97.0,  97.0,  97.0, 1.0];
 var black   = [  0.0,   0.0,   0.0, 1.0];
-var cream   = [135.0,  81.0,  86.0, 1.0]; 
+var cream   = [135.0,  81.0,  86.0, 1.0];
 
 
 var colors = {};
@@ -79,7 +79,7 @@ colors[eventId + "-other"] = grey;
 
 
 // http://hls.stream.c3voc.de/hls/sN_L_Q.m3u8
-// N ∈ [1;5], L ∈ {native, translated}, Q ∈ {hd, sd, slides}. 
+// N ∈ [1;5], L ∈ {native, translated}, Q ∈ {hd, sd, slides}.
 
 // http://halfnarp.events.ccc.de/-/talkpreferences
 
@@ -87,9 +87,13 @@ var sortOrderOfLocations = [
 
 ];
 
-var testVideoURLs = {}
-// 	"34c3-7909": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4" // Talk:Wie Jugendschutzprogramme nicht nur die Jugend schädigen Video: Das Transparenzportal Hamburg
-// };
+var testVideoURLs = {
+ 	"34c3-8710": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4" // Talk:Wie Jugendschutzprogramme nicht nur die Jugend schädigen Video: Das Transparenzportal Hamburg
+};
+
+var testHLSURLs = {
+	"34c3-8714": "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8" // "https://walterebert.com/playground/video/hls/sintel-trailer.m3u8" 
+};
 
 // for app review we only show limited innocent content…
 var whitelistedSessionIDs = [
@@ -121,7 +125,7 @@ var allLevels = {
 
 var allLanguages = {
 	'en': { id:'en', label_en:'English' },
-	'de': { id:'de', label_en:'German' },	
+	'de': { id:'de', label_en:'German' },
 };
 
 var allMaps = {
@@ -132,12 +136,12 @@ var allMaps = {
 		'label_de': "Congress Center Hamburg",
 		'label_en': "Congress Center Hamburg",
 		'floor_label_de': "Erdgeschoss",
-		'floor_label_en': "Ground Floor",		
+		'floor_label_en': "Ground Floor",
 		"is_outdoor": true,
-		"is_indoor": true,		
+		"is_indoor": true,
 		"floor": 0,
 		"order_index": 0,
-		"area": {"width": 1000.0, 
+		"area": {"width": 1000.0,
 		         "height": 530.0},
 		"tiles": {
                     "base_url": "http://data.conference.bits.io/maps/34c3/floor0",
@@ -154,14 +158,14 @@ var allMaps = {
 		'id': eventId + "-map-" + "level1",
 		'type': "map",
 		'label_de': "Congress Center Hamburg",
-		'label_en': "Congress Center Hamburg",		
+		'label_en': "Congress Center Hamburg",
 		'floor_label_de': "1. Obergeschoß",
 		'floor_label_en': "1st floor",
 		"is_outdoor": false,
-		"is_indoor": true,		
+		"is_indoor": true,
 		"floor": 1,
 		"order_index": 1,
-		"area": {"width": 1000.0, 
+		"area": {"width": 1000.0,
 		         "height": 530.0},
 		"tiles": {
                     "base_url": "http://data.conference.bits.io/maps/34c3/floor1",
@@ -178,14 +182,14 @@ var allMaps = {
 		'id': eventId + "-map-" + "level2",
 		'type': "map",
 		'label_de': "Congress Center Hamburg",
-		'label_en': "Congress Center Hamburg",		
+		'label_en': "Congress Center Hamburg",
 		'floor_label_de': "2. Obergeschoß",
 		'floor_label_en': "2nd floor",
 		"is_outdoor": false,
-		"is_indoor": true,		
+		"is_indoor": true,
 		"floor": 2,
 		"order_index": 2,
-		"area": {"width": 1000.0, 
+		"area": {"width": 1000.0,
 		         "height": 530.0},
 		"tiles": {
                     "base_url": "http://data.conference.bits.io/maps/34c3/floor2",
@@ -244,7 +248,7 @@ var allMaps = {
 	//                     "height": 4320}
 	//                 },
 	//     "pois": []
-	// }			
+	// }
 };
 
 var allPOIs = {};
@@ -273,13 +277,13 @@ var allDays = {
 		"id": mkID("day-4"),
 		"label_de": "Tag 4",
 		"label_en": "Day 4"
-	}	
+	}
 };
 var allRooms = {};
 var allSpeakers = {};
 var allTracks = {
 	'other': { id:'other', label_de:'Other', label_en:'Other', color:[101.0, 101.0, 101.0, 1.0] },
-    'self-organized-sessions': {id: 'self-organized-sessions', label_en: "Self-Organized Sessions", label_de: "Self-Organized Sessions", color:grey } 
+    'self-organized-sessions': {id: 'self-organized-sessions', label_en: "Self-Organized Sessions", label_de: "Self-Organized Sessions", color:grey }
 };
 var allSpeakers = {};
 
@@ -304,15 +308,15 @@ function mkID(string) {
 
 function normalizeXMLDayDateKey(date) {
 	var parseDate = new Date(date);
-	
-	return date;	
+
+	return date;
 };
 
 function sessionFromJSON(json, id_prefix, linkMakerFunction) {
     var linkFunction = linkMakerFunction;
     if (linkFunction == null) {
         linkFunction = function (session) {
-            return "http://events.ccc.de/congress/2017/Fahrplan/events/" + json["event_id"] + ".html";            
+            return "http://events.ccc.de/congress/2017/Fahrplan/events/" + json["event_id"] + ".html";
         };
     }
 
@@ -322,12 +326,12 @@ function sessionFromJSON(json, id_prefix, linkMakerFunction) {
 				"name": speaker.name
 		};
 	});
-    
+
     var lang = allLanguages[json["language"]];
     if (lang == undefined) {
         lang = allLanguages["de"];
     }
-	
+
 	var session = {
 		"id": mkID(id_prefix + json["event_id"]),
 		"title": json["title"],
@@ -345,12 +349,12 @@ function sessionFromJSON(json, id_prefix, linkMakerFunction) {
 		"enclosures": [],
 		"links": []
 	};
-	
+
 	// if whitelist is present and this id is not whitelisted return null
 	if (whitelistedSessionIDs.length > 0 && whitelistedSessionIDs.indexOf(session.id) == -1) {
 		return null;
 	}
-	
+
 	var testVideoURL = testVideoURLs[session.id];
 	if (testVideoURL) {
 		session.enclosures.push({
@@ -360,9 +364,18 @@ function sessionFromJSON(json, id_prefix, linkMakerFunction) {
 			"thumbnail": "http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg"
 		});
 	}
-	
+	var testHLSURL = testHLSURLs[session.id];
+	if (testHLSURL) {
+		session.enclosures.push({
+			"url": testHLSURL,
+			"mimetype": "application/x-mpegurl",
+			"type": "recording",
+			"thumbnail": "http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg"
+		});
+	}
+
     session["url"] = linkFunction(session);
-    
+
 	return session;
 };
 
@@ -372,8 +385,8 @@ function trackFromJSON(json) {
     id2slug[331] = "security";
     id2slug[328] = "ethics-society-politics";
     id2slug[333] = "science";
-    id2slug[332] = "resilience";    
-    
+    id2slug[332] = "resilience";
+
     id2slug[330] = "hardware-making";
     id2slug[329] = "art-culture";
     // id2slug[""] = "failosophy";
@@ -387,14 +400,14 @@ function trackFromJSON(json) {
     if (slug == undefined) {
         slug = "other";
     }
-    
+
     var trackID = mkID(slug);
-    
+
     var nameFromSlug = {};
     nameFromSlug["security"] = "Security";
     nameFromSlug["ethics-society-politics"] = "Ethics, Society & Politics";
     nameFromSlug["science"] = "Science";
-    nameFromSlug["resilience"] = "Resilience"; 
+    nameFromSlug["resilience"] = "Resilience";
     nameFromSlug["hardware-making"] = "Hardware & Making";
     nameFromSlug["art-culture"] = "Art & Culture";
     nameFromSlug["failosophy"] = "Failosophy";
@@ -404,12 +417,12 @@ function trackFromJSON(json) {
     nameFromSlug["podcast"] = "Podcast";
     nameFromSlug["sendezentrum"] = "Sendezentrum";
     nameFromSlug["other"] = "Other";
-    
-	allTracks[trackID] = {'id': trackID, 
-						  'label_en': nameFromSlug[slug], 
+
+	allTracks[trackID] = {'id': trackID,
+						  'label_en': nameFromSlug[slug],
 						  'label_de': nameFromSlug[slug],
 						  'color': colors[trackID]};
-	
+
 	return allTracks[trackID];
 };
 
@@ -417,17 +430,17 @@ function trackFromJSON(json) {
 
 function speakerFromString(string) {
 	var speakers = [];
-	
+
     var names = []
-    
+
     if (string != undefined) {
     	names = string.split(",").map(function (item) {
     		return item.trim();
-    	});    
+    	});
     }
-    
-	
-	
+
+
+
 	names.forEach(function (speakerName) {
 		var speakerID = mkID(speakerName.trim());
 		if (speakerName == "") {
@@ -448,21 +461,21 @@ function speakerFromString(string) {
 			speakers.push(speaker);
 		}
 	});
-	
+
 	return speakers;
 };
 
 exports.scrape = function (callback) {
 	console.log("scrape");
-	
+
 	var scraper = new scrapyard({
-		cache: path.resolve(__dirname, '..', '.cache'), 
+		cache: path.resolve(__dirname, '..', '.cache'),
 		debug: true,
 		timeout: 300000,
 		retries: 5,
 		connections: 10
 	});
-	
+
 	async.series(
 		{
 			halfnarp: function (callback) {
@@ -470,17 +483,17 @@ exports.scrape = function (callback) {
 					urls: {halfnarp: halfnarp_schedule_url}
 				},
 				function (result) {
-					
-					
-					result.halfnarp.forEach(function (item, index) {				
+
+
+					result.halfnarp.forEach(function (item, index) {
 						var session = sessionFromJSON(item, '', null);
-						
+
 						// if session could be parsed add it
 						if (session != null) {
 							addEntry('session', session);
 						}
 					});
-					
+
 					callback(null, 'halfnarp');
 				});
 			} //,
@@ -506,20 +519,20 @@ exports.scrape = function (callback) {
             //
             //         callback(null, 'workshops');
             //     });
-            // }        
+            // }
 		},
 		function (err, results) {
 			if (!err) {
-				
+
 				alsoAdd('track', allTracks);
 				alsoAdd('format', allFormats);
 				alsoAdd('level', allLevels);
 				alsoAdd('language', allLanguages);
-				alsoAdd('day', allDays);				
-				alsoAdd('speaker', allSpeakers);				
+				alsoAdd('day', allDays);
+				alsoAdd('speaker', allSpeakers);
 				alsoAdd('map', allMaps);
-				alsoAdd('poi', allPOIs);						
-				
+				alsoAdd('poi', allPOIs);
+
 				callback(data);
 			} else {
 				console.log(err);
@@ -529,25 +542,25 @@ exports.scrape = function (callback) {
 };
 
 function parsePOIsFromCSV(data, callback) {
-	parseCSV(csvData, {"delimiter": ";", 
+	parseCSV(csvData, {"delimiter": ";",
 					   "auto_parse": false,
 					   "skip_empty_lines": true}, function(err, output) {
-						   
+
 			var pois = [];
-			
+
 			output.forEach(function (row) {
 				var id = row[0];
-				
-				if (id == 'id' || 
-					id == '' || 
-					id == ' ' || 					
+
+				if (id == 'id' ||
+					id == '' ||
+					id == ' ' ||
 					row[2] == '' || row[2] == ' ' ||
-					row[3] == '' || row[3] == ' ') 
+					row[3] == '' || row[3] == ' ')
 				{
 					// console.log("skipping "  + row);
 					return;
 				}
-				
+
 				var poi = {
 					"id": (eventId + "-pointofinterest-" + id),
 					"type": "poi",
@@ -559,11 +572,11 @@ function parsePOIsFromCSV(data, callback) {
 	                "priority": 1000,
 					"beacons": []
 				};
-				
+
 				var x = parseInt(row[2]);
 				var y = parseInt(row[3]);
-				var floors = row[1].split(",");				
-				if (floors.length > 0 && floors[0] != '') {  
+				var floors = row[1].split(",");
+				if (floors.length > 0 && floors[0] != '') {
 					for (var i = floors.length - 1; i >= 0; i--) {
 						var floorID = eventId + "-map-level" + floors[i];
 							poi.positions.push(
@@ -574,11 +587,11 @@ function parsePOIsFromCSV(data, callback) {
 
 					}
 				}
-				
+
 				pois.push(poi);
 			});
-			
-			callback(pois);		
+
+			callback(pois);
 	});
 };
 
