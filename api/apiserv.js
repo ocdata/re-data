@@ -66,7 +66,7 @@ app.get('/events', function(req, res) {
     fs.readFile(path.resolve(__dirname, "../scraper/config/events.json"), function (err, data) {
         replyList(err, data ? JSON.parse(data) : null, req.query, res);
     });
-
+    
 });
 
 app.get('/events/:id', function(req, res) {
@@ -88,7 +88,7 @@ var types = [
 	'levels',
 	'languages',
 	'maps',
-	'pois'
+	'pois'	
 ];
 
 types.forEach(function (type) {
@@ -159,26 +159,6 @@ function replyList(err, data, query, res) {
 		data = data.filter(function (item, index) {
 			return (index >= startIndex) && (index < endIndex);
 		})
-	}
-
-	// HACK: Just for tvOS app review
-	if (res.req.url.indexOf("/sessions") >= 0) {
-		let ua = res.req.headers["user-agent"];
-		if (ua.indexOf("Congress") >= 0 &&
-				ua.indexOf("tvOS") >= 0 ) {
-
-				let sessionToModify = data.find(function (session) {
-					return session["id"] == "34c3-8710";
-				});
-				if (sessionToModify) {
-					let enclosure = {"testdata": true,
-												   "url": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4",
-													 "mimetype": "video/mp4",
-													 "type": "recording",
-													 "thumbnail": "https://static.media.ccc.de/media/congress/2016/7811-hd.jpg"};
-					sessionToModify["enclosures"] = [enclosure];
-				}
-		}
 	}
 
 	// return result
@@ -261,3 +241,4 @@ if ("port" in config.app) {
 		log.info("Server ready, Listening on Socket", config.app.socket);
 	});
 }
+
