@@ -65,29 +65,19 @@ var sortOrderOfLocations = [
 
 // to map VOC API output to our rooms
 var vocSlugToLocatonID = {
-    "sendezentrum": mkID("sendezentrumsb-hne"),
-    "hall1": mkID("saal-1"),
-    "hall2": mkID("saal-2"),
-    "hallg": mkID("saal-g"),
-    "hall6": mkID("saal-6")
+    "Saal Adams": mkID("saal-adams"),
+    "Saal Borg": mkID("saal-borg"),
+    "Saal Clarke": mkID("saal-clarke"),
+    "Saal Dijkstra": mkID("saal-dijkstra")
 };
 
 var locationNameChanges = {
-    "34c3-sendezentrumsb-hne": "Sendezentrum",
-    "34c3-podcastingtisch": "Podcasttisch"
+    //"34c3-sendezentrumsb-hne": "Sendezentrum",
+    //"34c3-podcastingtisch": "Podcasttisch"
 };
 
 var poi2locationMapping = {
-    "34c3-h1": mkID("saal-1"),
-    "34c3-h2": mkID("saal-2"),
-    "34c3-hg": mkID("saal-g"),
-    "34c3-h6": mkID("saal-6"),
-    "34c3-lounge":  mkID("party-lounge"),
-    "34c3-poi-anti-error-lounge": mkID("anti-error-lounge-loc")
-    // "camp15-http-campmap-mazdermind-de-api-villages-id-1832": "camp15-spacevillage",
-    // "camp15-http-campmap-mazdermind-de-api-villages-id-1783": "camp15-foodhackingbase",
-    // "camp15-http-campmap-mazdermind-de-api-villages-id-1779": "camp15-amateur-radio"
-	// "camp15-hackcenter-1"
+    //"34c3-h1": mkID("saal-1")
 };
 
 var additionalLocations = [
@@ -1386,7 +1376,7 @@ exports.scrape = function (callback) {
                                                                 "mimetype": "video/mp4"
                                                             };
 
-                                                            var roomID = vocSlugToLocatonID[room.slug];
+                                                            var roomID = vocSlugToLocatonID[room.schedulename];
                                                             if (roomID) {
                                                                 streamMap[roomID] = info;
                                                             }
@@ -1405,7 +1395,7 @@ exports.scrape = function (callback) {
                                                                 "mimetype": "audio/mp3"
                                                             };
 
-                                                            var roomID = vocSlugToLocatonID[room.slug];
+                                                            var roomID = vocSlugToLocatonID[room.schedulename];
                                                             if (roomID) {
                                                                 streamMap[roomID] = info;
                                                             }
