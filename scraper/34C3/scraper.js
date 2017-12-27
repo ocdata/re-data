@@ -20,7 +20,8 @@ var icalendar = require('icalendar');
 var log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 var json_requester = require('../lib/json_requester');
 
-var additional_schedule_url = "http://data.c3voc.de/34c3/workshops.schedule.json";
+var additional_schedule_url = "http://data.conference.bits.io/data/34c3/voc/workshops.schedule.json";
+// var dlf_schedule_url = "http://data.c3voc.de/34C3/workshops.schedule.json";
 var sendezentrum_schedule_url = "https://frab.das-sendezentrum.de/de/34c3/public/schedule.json";
 var sendezentrum_speaker_url = "https://frab.das-sendezentrum.de/de/34c3/public/speakers.json";
 var schedule_url = "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
@@ -60,7 +61,19 @@ var sortOrderOfLocations = [
     '34c3-saal-borg',
     '34c3-saal-g',
     '34c3-saal-clarke',
-    '34c3-saal-dijkstra'
+	'34c3-saal-dijkstra',
+	mkID("Lecture room 11"),
+    mkID("Seminar room 14-15"),
+    mkID("Lecture room 12"),
+    mkID("Seminar room 13"),
+    mkID("CCL Hall 3"),
+    mkID("Chaos West Stage"),
+    mkID("Hive Stage"),
+    mkID("Komona Aquarius"),
+    mkID("Komona Coral Reef"),
+    mkID("Komona D.Ressrosa"),
+    mkID("Komona Blue Princess"),
+    mkID("Kidspace")
 ];
 
 // to map VOC API output to our rooms
@@ -1277,14 +1290,15 @@ exports.scrape = function (callback) {
 		{
 			lectures: function (callback) {
 				json_requester.get({
-					urls: {conference: "https://api.media.ccc.de/public/conferences/101"}
+					urls: {conference: "https://api.media.ccc.de/public/conferences/33c3"}
 				},
 				function (result) {
 					if (result.conference.events) {
 						var videoAPICallURLs = {
                             speakers: speakers_url,
                             schedule: schedule_url,
-                            voc_streams: voc_streams_api_url
+							voc_streams: voc_streams_api_url,
+							additional_schedule: additional_schedule_url
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
 						};
@@ -1408,15 +1422,15 @@ exports.scrape = function (callback) {
                                 });
 
                                 // Extra Data from Wiki
-                       //          handleResult(additional_schedule,
-                       //                       speakers,
-                       //                       eventRecordingJSONs,
-                       //                       "",
-                       //                       defaultTrack,
-                       //                       "https://fahrplan.events.ccc.de/congress/2017/Fahrplan",
-                       //                       [], // no voc streams for wiki
-											 // "workshop",
-											 // function (session, sourceJSON) { return "https://events.ccc.de/congress/2017/wiki/Session:" + encodeURIComponent(session.title); });
+                                handleResult(additional_schedule,
+                                             speakers,
+                                             eventRecordingJSONs,
+                                             "",
+                                             defaultTrack,
+                                             "https://fahrplan.events.ccc.de/congress/2017/Fahrplan",
+                                             [], // no voc streams for wiki
+											 "workshop",
+											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2017/wiki/Session:" + encodeURIComponent(session.title); });
 
                                 // Sendezentrum Frap
 								// var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
