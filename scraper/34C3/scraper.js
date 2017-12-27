@@ -1236,10 +1236,9 @@ exports.scrape = function (callback) {
                             // poi_titles: poi_titles_url
 						};
 
-// TODO: Renable for recordings
-                        // result.conference.events.forEach(function (event) {
-                        //     videoAPICallURLs[event.guid] = event.url;
-                        // });
+                        result.conference.events.forEach(function (event) {
+                            videoAPICallURLs[event.guid] = event.url;
+                        });
 
 						json_requester.get({urls: videoAPICallURLs},
 							function (result) {
@@ -1294,7 +1293,7 @@ exports.scrape = function (callback) {
 								});
 
 								var congessRecordings = eventRecordingJSONs.filter(function (er) {
-									return er.conference_url == "https://api.media.ccc.de/public/conferences/101";
+									return er.conference_url == "https://api.media.ccc.de/public/conferences/132";
 								});
 
 								var sendezentrumRecordings = eventRecordingJSONs.filter(function (er) {
