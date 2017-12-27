@@ -94,24 +94,7 @@ var poi2locationMapping = {
 };
 
 var additionalLocations = [
-    // {
-    //     "id": mkID("party-lounge"),
-    //     "label_de": "Lounge",
-    //     "label_en": "Lounge",
-    //     "is_stage": false
-    // },
-    // {
-    //     "id": mkID("anti-error-lounge-loc"),
-    //     "label_de": "Chillout Lounge",
-    //     "label_en": "Chillout Lounge",
-    //     "is_stage": false
-    // },
-    // {
-    //     "id": mkID("dome-loc"),
-    //     "label_de": "Dome",
-    //     "label_en": "Dome",
-    //     "is_stage": false
-    // }
+
 ];
 
 var additionalPOIs = [
@@ -135,55 +118,7 @@ var additionalPOIs = [
         "links": [],
         "priority": 100,
         "type": "poi"
-    }//,
-    // {
-  //       "label_de": "POC",
-  //       "label_en": "POC",
-  //       "id": mkID("poi-poc"),
-  //       "category": "service",
-  //       "hidden": false,
-  //       "positions": [
-  //           {"map": "34c3-map-level1",
-  //            "x": 3620.558035714286,
-  //            "y": 1777.3660714285713
-  //           }
-  //       ],
-  //       "links": [],
-  //       "priority": 100,
-  //       "type": "poi"
-  //   },
-  //   {
-  //       "label_de": "Anti-Error Lounge",
-  //       "label_en": "Anti-Error Lounge",
-  //       "id": mkID("poi-anti-error-lounge"),
-  //       "category": "entertainment",
-  //       "hidden": false,
-  //       "positions": [
-  //           {"map": "34c3-map-level4",
-  //            "x": 2471,
-  //            "y": 2335
-  //           }
-  //       ],
-  //       "links": [],
-  //       "priority": 100,
-  //       "type": "poi"
-  //   },
-  //   {
-  //       "label_de": "Unbezahlbar",
-  //       "label_en": "Unbezahlbar",
-  //       "id": mkID("unbezahlbar"),
-  //       "category": "community",
-  //       "hidden": false,
-  //       "positions": [
-  //           {"map": "34c3-map-level4",
-  //            "x": 2391,
-  //            "y": 2535
-  //           }
-  //       ],
-  //       "links": [],
-  //       "priority": 100,
-  //       "type": "poi"
-  //   }
+    }
 ];
 
 
@@ -230,8 +165,6 @@ colors[eventId + "-art-culture"] = orange;
 colors[eventId + "-failosophy"] = yellow;
 colors[eventId + "-ccc"] = green;
 colors[eventId + "-entertainment"] = green;
-
-
 colors[eventId + "-self-organized-sessions"] = grey;
 colors[eventId + "-podcast"] = red;
 colors[eventId + "-sendezentrum"] = red;
@@ -1290,7 +1223,7 @@ exports.scrape = function (callback) {
 		{
 			lectures: function (callback) {
 				json_requester.get({
-					urls: {conference: "https://api.media.ccc.de/public/conferences/33c3"}
+					urls: {conference: "https://api.media.ccc.de/public/conferences/34c3"}
 				},
 				function (result) {
 					if (result.conference.events) {
