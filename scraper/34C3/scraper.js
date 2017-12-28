@@ -622,17 +622,20 @@ function normalizeXMLDayDateKey(date, begin) {
 
 }
 
-function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction) {
+function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction, idField) {
 	var links = [];
-	var id = mkID(event["id"]);
+	if (idField == null) {
+		idField = "id"
+	}
+	var id = mkID(event[idField]);
 	if (typeof(idPrefix) == "string") {
-		id = mkID(event["id"], idPrefix);
+		id = mkID(event[idField], idPrefix);
 	}
     var linkFunction = linkMakerFunction;
     if (linkFunction == null) {
         linkFunction = function (session, sourceJSON) {
-			if (!event["id"]) return "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/";
-            return "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/events/" + event["id"] + ".html";
+			if (!event[idField]) return "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/";
+            return "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/events/" + event[idField] + ".html";
         };
     }
 
@@ -800,7 +803,7 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 };
 
 
-function handleResult(events, speakers, eventRecordings, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix, linkMakerFunction) {
+function handleResult(events, speakers, eventRecordings, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix, linkMakerFunction, idField) {
 
 	speakers.forEach(function (speaker) {
 		var speakerJSON = parseSpeaker(speaker, speakerImageURLPrefix);
@@ -873,7 +876,7 @@ function handleResult(events, speakers, eventRecordings, locationNamePrefix, def
 
 			 	// Event
 				// -----
-				var eventJSON = parseEvent(event, day, roomJSON, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction);
+				var eventJSON = parseEvent(event, day, roomJSON, locationNamePrefix, trackJSON, streamMap, idPrefix, linkMakerFunction, idField);
                 // if event could not be parse skip it
 				if (eventJSON == null) return;
 
@@ -1362,7 +1365,8 @@ exports.scrape = function (callback) {
                                              "https://fahrplan.events.ccc.de/congress/2017/Fahrplan",
                                              [], // no voc streams for wiki
 											 "workshop",
-											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2017/wiki/Session:" + encodeURIComponent(session.title); });
+											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2017/wiki/Session:" + encodeURIComponent(session.title); },
+											"guid");
 
                                 // Sendezentrum Frap
 								// var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
@@ -1389,7 +1393,8 @@ exports.scrape = function (callback) {
                                              "https://fahrplan.events.ccc.de/congress/2017/Fahrplan",
                                              streamMap,
 										                         null,
- 										 	                       null);
+																	 null, 
+																	 null);
 
 
                                 // Handle CSV data
