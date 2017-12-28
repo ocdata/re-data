@@ -1290,7 +1290,9 @@ exports.scrape = function (callback) {
 
 								eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
 									var recording = er.recordings.filter(function (rec, index, all) {
-										return rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd";
+										return (rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd") && 
+												rec.folder.indexOf("slides-") === -1 && // don't use slide URLs
+												rec.high_quality;
 									});
 
 									return {
