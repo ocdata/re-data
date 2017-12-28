@@ -22,8 +22,8 @@ var json_requester = require('../lib/json_requester');
 
 var additional_schedule_url = "http://data.conference.bits.io/data/34c3/voc/workshops.schedule.json";
 // var dlf_schedule_url = "http://data.c3voc.de/34C3/workshops.schedule.json";
-var sendezentrum_schedule_url = "https://frab.das-sendezentrum.de/de/34c3/public/schedule.json";
-var sendezentrum_speaker_url = "https://frab.das-sendezentrum.de/de/34c3/public/speakers.json";
+var freifunk_schedule_url = "https://frab.txtfile.eu/en/34c3-ffc/public/schedule.json";
+var freifunk_speaker_url = "https://frab.txtfile.eu/en/34c3-ffc/public/speakers.json";
 var schedule_url = "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
 var speakers_url =  "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
 
@@ -805,6 +805,9 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 
 function handleResult(events, speakers, eventRecordings, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix, linkMakerFunction, idField) {
 
+	if (!speakers) {
+		speakers = [];
+	}
 	speakers.forEach(function (speaker) {
 		var speakerJSON = parseSpeaker(speaker, speakerImageURLPrefix);
 
@@ -1234,7 +1237,9 @@ exports.scrape = function (callback) {
                             speakers: speakers_url,
                             schedule: schedule_url,
 							voc_streams: voc_streams_api_url,
-							additional_schedule: additional_schedule_url
+							additional_schedule: additional_schedule_url,
+							freifunk_speakers: freifunk_speaker_url,
+							freifunk_schedule: freifunk_schedule_url
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
 						};
@@ -1253,7 +1258,10 @@ exports.scrape = function (callback) {
                                 // // Wiki Events
                                 var additional_schedule = result.additional_schedule;
 
-
+								// Freifunk
+								var freifunk_schedule = result.freifunk_schedule;
+								var freifunk_speakers = result.freifunk_speakers.schedule_speakers.speakers;
+								
 								// Chillout Lounge
 								var chillout_lounge_lineup = result.chillout_lounge;
 
@@ -1272,8 +1280,8 @@ exports.scrape = function (callback) {
 								delete result.schedule;
 								delete result.speakers;
                                 delete result.additional_schedule;
-                                delete result.sendezentrum_schedule;
-                                delete result.sendezentrum_speakers;
+                                delete result.freifunk_speakers;
+                                delete result.freifunk_schedule;
                                 delete result.poi_titles;
                                 delete result.poi_graph;
                                 delete result.chillout_lounge;
@@ -1369,19 +1377,20 @@ exports.scrape = function (callback) {
 											"guid");
 
                                 // Sendezentrum Frap
-								// var podcastDefaultTrack =  {"id": mkID("sendezentrum"),
-                //                 				  			"color": red,
-								// 				  			"label_de": "Podcast",
-								// 				  			"label_en": "Podcast"};
-                //                 handleResult(sendezentrum_schedule,
-                //                              sendezentrum_speakers,
-                //                              sendezentrumRecordings,
-                //                              "",
-                //                              podcastDefaultTrack,
-                //                              "https://frab.das-sendezentrum.de/",
-                //                              streamMap,
-								// 		 	 "podcast",
-								// 		 	 function (session, sourceJSON) { return "https://frab.das-sendezentrum.de/de/34c3/public/events/" + sourceJSON.id; });
+								var podcastDefaultTrack =  {"id": mkID("freifunk"),
+                                				  			"color": red,
+												  			"label_de": "Freifunk",
+												  			"label_en": "Freifunk"};
+                                handleResult(freifunk_schedule,
+                                             freifunk_speakers,
+                                             eventRecordingJSONs, // TODO: Recordings?
+                                             "",
+                                             podcastDefaultTrack,
+                                             "https://frab.txtfile.eu/",
+                                             streamMap,
+										 	 "freifunk",
+											  function (session, sourceJSON) { return "https://frab.txtfile.eu/en/34c3-ffc/public/events/" + sourceJSON.id; },
+											"guid");
 
 
                                 // 34c3 Frap
