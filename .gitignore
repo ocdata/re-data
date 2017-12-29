@@ -2,6 +2,7 @@ scraper/config/scrapers.js
 node_modules
 web/data/
 .cache
+.vscode
 config.js
 
 backups/
