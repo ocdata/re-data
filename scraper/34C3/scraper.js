@@ -26,6 +26,7 @@ var freifunk_schedule_url = "https://frab.txtfile.eu/en/34c3-ffc/public/schedule
 var freifunk_speaker_url = "https://frab.txtfile.eu/en/34c3-ffc/public/speakers.json";
 var schedule_url = "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
 var speakers_url =  "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
+var halfnarp_url = "http://halfnarp.events.ccc.de/-/talkpreferences";
 
 var voc_streams_api_url = "https://streaming.media.ccc.de/streams/v1.json";
 var poi_titles_url = "https://github.com/NoMoKeTo/c3nav/raw/master/src/projects/34c3/titles.json";
@@ -189,126 +190,7 @@ var allLanguages = {
 };
 
 var allMaps = {
-	'map-level0': {
-		'event': eventId,
-		'id': eventId + "-map-" + "level0",
-		'type': "map",
-		'label_de': "Congress Center Hamburg",
-		'label_en': "Congress Center Hamburg",
-		'floor_label_de': "Erdgeschoss",
-		'floor_label_en': "Ground Floor",
-		"is_outdoor": true,
-		"is_indoor": true,
-		"floor": 0,
-		"order_index": 0,
-		"area": {"width": 1000.0,
-		         "height": 530.0},
-		"tiles": {
-                    "base_url": "http://data.conference.bits.io/maps/34c3/floor0",
-                    "large_image_url": "http://data.conference.bits.io/maps/34c3/floor0/mini.png",
-                    "tile_size": 512,
-                    "tile_file_extension": "png",
-                    "size": {"width": 5940,
-                             "height": 4320}
-                },
-	    "pois": []
-	},
-	'map-level1': {
-		'event': eventId,
-		'id': eventId + "-map-" + "level1",
-		'type': "map",
-		'label_de': "Congress Center Hamburg",
-		'label_en': "Congress Center Hamburg",
-		'floor_label_de': "1. Obergeschoß",
-		'floor_label_en': "1st floor",
-		"is_outdoor": false,
-		"is_indoor": true,
-		"floor": 1,
-		"order_index": 1,
-		"area": {"width": 1000.0,
-		         "height": 530.0},
-		"tiles": {
-                    "base_url": "http://data.conference.bits.io/maps/34c3/floor1",
-                    "large_image_url": "http://data.conference.bits.io/maps/34c3/floor1/mini.png",
-                    "tile_size": 512,
-                    "tile_file_extension": "png",
-           "size": {"width": 5940,
-                    "height": 4320}
-                },
-	    "pois": []
-	},
-	'map-level2': {
-		'event': eventId,
-		'id': eventId + "-map-" + "level2",
-		'type': "map",
-		'label_de': "Congress Center Hamburg",
-		'label_en': "Congress Center Hamburg",
-		'floor_label_de': "2. Obergeschoß",
-		'floor_label_en': "2nd floor",
-		"is_outdoor": false,
-		"is_indoor": true,
-		"floor": 2,
-		"order_index": 2,
-		"area": {"width": 1000.0,
-		         "height": 530.0},
-		"tiles": {
-                    "base_url": "http://data.conference.bits.io/maps/34c3/floor2",
-                    "large_image_url": "http://data.conference.bits.io/maps/34c3/floor2/mini.png",
-                    "tile_size": 512,
-                    "tile_file_extension": "png",
-           "size": {"width": 5940,
-                    "height": 4320}
-                },
-	    "pois": []
-	},
-	'map-level3': {
-        'event': eventId,
-        'id': eventId + "-map-" + "level3",
-        'type': "map",
-        'label_de': "Congress Center Hamburg",
-        'label_en': "Congress Center Hamburg",
-        'floor_label_de': "3. Obergeschoß",
-        'floor_label_en': "3rd floor",
-        "is_outdoor": false,
-        "is_indoor": true,
-        "floor": 3,
-        "order_index": 3,
-        "area": {"width": 1000.0,
-                 "height": 530.0},
-        "tiles": {
-                        "base_url": "http://data.conference.bits.io/maps/34c3/floor3",
-                        "large_image_url": "http://data.conference.bits.io/maps/34c3/floor3/mini.png",
-                        "tile_size": 512,
-                        "tile_file_extension": "png",
-               "size": {"width": 5940,
-                        "height": 4320}
-                    },
-        "pois": []
-    },
-    'map-level4': {
-        'event': eventId,
-        'id': eventId + "-map-" + "level4",
-        'type': "map",
-        'label_de': "Congress Center Hamburg",
-        'label_en': "Congress Center Hamburg",
-        'floor_label_de': "4. Obergeschoß",
-        'floor_label_en': "4th floor",
-        "is_outdoor": false,
-        "is_indoor": true,
-        "floor": 4,
-        "order_index": 4,
-        "area": {"width": 1000.0,
-                 "height": 530.0},
-        "tiles": {
-                        "base_url": "http://data.conference.bits.io/maps/34c3/floor4",
-                        "large_image_url": "http://data.conference.bits.io/maps/34c3/floor4/mini.png",
-                        "tile_size": 512,
-                        "tile_file_extension": "png",
-               "size": {"width": 5940,
-                        "height": 4320}
-                    },
-        "pois": []
-    }
+	
 };
 
 
@@ -324,6 +206,7 @@ var allRooms = {};
 var allSpeakers = {};
 var allTracks = {};
 var allSpeakers = {};
+var allRecommendations = {};
 
 function addEntry(type, obj) {
 	obj.event  = eventId;
@@ -347,6 +230,77 @@ function mkID(string) {
 function mkID(string, prefix) {
 	if (prefix == undefined) return eventId + "-" + string.toString().replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
 	return eventId + "-" + prefix + "-" + string.toString().replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+}
+
+// HALFNARP - Recomendations
+
+function recommendedSessions(halfnarp) {
+	// Store all classified sessions for each 
+	let result = {};
+	let sessions = halfnarp;
+	
+	for (session of sessions) {
+		
+		let sessionId = mkID(`${session.event_id}`);
+		let recommedations = [];
+		for (otherSession of sessions) {	
+			
+			if (session.event_id === otherSession.event_id) {
+				continue;
+			}
+			
+			let distance = halfnarpEventDistance(session, otherSession);
+			if (distance) {
+				recommedations.push({"title": otherSession.title,
+									 "id": mkID(`${otherSession.event_id}`),
+									 "distance": distance});
+			}
+		}
+		
+		recommedations = recommedations.sort((a,b) => {
+			return a.distance - b.distance;
+		}).filter((a) => a.distance < 100).map((a) => {
+			return {"title": a.title,
+					"id": a.id}
+		});
+		
+		result[sessionId] = recommedations.slice(0,5);
+	}
+
+	console.log("result=", result);
+	return result;
+}
+
+function halfnarpEventDistance(sessionA, sessionB) {
+    let distance = 0;
+    let aClassifiers = Object.keys(sessionA.event_classifiers);
+    if (aClassifiers.length == 0) {
+		console.log(sessionA);
+        return null;
+    }
+
+    for (classifier in sessionA.event_classifiers) {
+        let aWeight = sessionA.event_classifiers[classifier];
+        let bWeight = sessionB[classifier];
+        if (!bWeight) bWeight = -10;
+
+        distance = distance + Math.abs(aWeight - bWeight);
+    }
+
+    for (classfier in sessionB.event_classifiers) {
+        if (aClassifiers.indexOf(classifier)) {
+            continue;
+        }
+
+        distance = distance + sessionB.event_classifiers[classifier] + 5;
+    }
+
+    if (sessionA.track_id === sessionB.track_id) {
+        distance = distance * 0.95;
+    }
+
+    let numberOfClassifiers = Object.keys(sessionA.event_classifiers).length 
+    return distance / numberOfClassifiers;
 }
 
 function parseDay(dayXML) {
@@ -725,6 +679,10 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		"links": links
 	};
 
+	let recommendations = allRecommendations[id];
+	if (!recommendations) recommendations = [];
+	session["related_sessions"] = recommendations;
+
 	if (session.title.match(/\bcancelled\b/i) || session.title.match(/\babgesagt\b/i)) {
 		session["cancelled"] = true;
 	} else {
@@ -801,7 +759,6 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 
 	return session;
 };
-
 
 function handleResult(events, speakers, eventRecordings, locationNamePrefix, defaultTrack, speakerImageURLPrefix, streamMap, idPrefix, linkMakerFunction, idField) {
 
@@ -1222,6 +1179,7 @@ exports.scrape = function (callback) {
 		debug: true,
 		timeout: 300000,
 		retries: 5,
+		type: "json",
 		connections: 10
 	});
 
@@ -1239,7 +1197,8 @@ exports.scrape = function (callback) {
 							voc_streams: voc_streams_api_url,
 							additional_schedule: additional_schedule_url,
 							freifunk_speakers: freifunk_speaker_url,
-							freifunk_schedule: freifunk_schedule_url
+							freifunk_schedule: freifunk_schedule_url,
+							halfnarp: halfnarp_url
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
 						};
@@ -1267,13 +1226,14 @@ exports.scrape = function (callback) {
 
                                 // // VOC streams
                                 var voc_streams = result.voc_streams;
-                                //
-                                // // POIs
-                                // var poi_graph = result.poi_graph;
-                                // var poi_titles = result.poi_titles;
-                                //
-                                // handlePOIs(poi_graph, poi_titles);
-
+								
+								var halfnarp = result.halfnarp;
+								if (halfnarp) {
+									allRecommendations = recommendedSessions(halfnarp);
+									console.log(allRecommendations);
+								} else {
+									allRecommendations = {};
+								}
 								var allSpeakers = {};
 
 								delete result.voc_streams;
@@ -1289,6 +1249,7 @@ exports.scrape = function (callback) {
 								var eventRecordingJSONs = toArray(result);
 
 								eventRecordingJSONs = eventRecordingJSONs.map(function (er) {
+									if (!er.recordings) return null;
 									var recording = er.recordings.filter(function (rec, index, all) {
 										return (rec.mime_type == "video/mp4" || rec.mime_type == "vnd.voc/h264-hd") && 
 												rec.folder.indexOf("slides-") === -1 && // don't use slide URLs
@@ -1296,8 +1257,8 @@ exports.scrape = function (callback) {
 									});
 
 									return {
-								                                        "guid": er.guid,
-								                                        "title": er.title,
+								        "guid": er.guid,
+								        "title": er.title,
 										"conference_url":er.conference_url,
 										"link": er.link,
 										"thumb": er.thumb_url,
@@ -1306,10 +1267,12 @@ exports.scrape = function (callback) {
 								});
 
 								var congessRecordings = eventRecordingJSONs.filter(function (er) {
+									if (!er) return false;
 									return er.conference_url == "https://api.media.ccc.de/public/conferences/132";
 								});
 
 								var sendezentrumRecordings = eventRecordingJSONs.filter(function (er) {
+									if (!er) return false;
 									return er.conference_url == "https://api.media.ccc.de/public/conferences/102";
 								});
 
