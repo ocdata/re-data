@@ -234,7 +234,17 @@ function mkID(string, prefix) {
 
 // HALFNARP - Recomendations
 
-function recommendedSessions(halfnarp) {
+function recommendedSessions(halfnarp, frapSessions) {
+	let validSessionIds = [];
+	for (day of frapSessions.schedule.conference.days) {
+		for (roomName in day.rooms) {
+			let sessions = day.rooms[roomName];
+			let ids = sessions.map((session) => session.id);
+			
+			validSessionIds = validSessionIds.concat(ids);
+		}
+	}
+	
 	// Store all classified sessions for each 
 	let result = {};
 	let sessions = halfnarp;
@@ -245,7 +255,8 @@ function recommendedSessions(halfnarp) {
 		let recommedations = [];
 		for (otherSession of sessions) {	
 			
-			if (session.event_id === otherSession.event_id) {
+			if (session.event_id === otherSession.event_id ||
+			    validSessionIds.indexOf(otherSession.event_id) === -1) {
 				continue;
 			}
 			
@@ -267,7 +278,6 @@ function recommendedSessions(halfnarp) {
 		result[sessionId] = recommedations.slice(0,5);
 	}
 
-	console.log("result=", result);
 	return result;
 }
 
@@ -1229,8 +1239,7 @@ exports.scrape = function (callback) {
 								
 								var halfnarp = result.halfnarp;
 								if (halfnarp) {
-									allRecommendations = recommendedSessions(halfnarp);
-									console.log(allRecommendations);
+									allRecommendations = recommendedSessions(halfnarp, schedule);
 								} else {
 									allRecommendations = {};
 								}
