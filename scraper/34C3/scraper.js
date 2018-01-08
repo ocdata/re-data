@@ -99,12 +99,14 @@ var additionalLocations = [
 ];
 
 var additionalLinks = {
+};
+
+var additionalEnclosures = {
 	"34c3-workshop-e7d29e30-123b-4840-a2fc-e6674ad6c455": {
-		"thumbnail": "https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg",
-		"title": "Talk von Markus Drenger auf dem 34C3 zum beA",
-		"url": "https://www.youtube.com/v/Od5WAah-ktk",
-		"service": "youtube",
-		"type": "recording"
+		"url": "https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4",
+		"mimetype": "video/mp4",
+		"type": "recording",
+		"thumbnail": "https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg"
 	}
 };
 
@@ -760,6 +762,11 @@ if (testVideoURL) {
 		"type": "recording",
 		"thumbnail": "http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg"
 	});
+}
+
+let additionalEnclosure = additionalEnclosures[session.id];
+if (additionalEnclosure) {
+	session.enclosures.push(additionalEnclosure);
 }
 
 if (session.location) {
