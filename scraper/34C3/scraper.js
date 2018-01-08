@@ -98,6 +98,16 @@ var additionalLocations = [
 
 ];
 
+var additionalLinks = {
+	"34c3-workshop-e7d29e30-123b-4840-a2fc-e6674ad6c455": {
+		"thumbnail": "https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg",
+		"title": "Talk von Markus Drenger auf dem 34C3 zum beA",
+		"url": "https://www.youtube.com/watch?v=Od5WAah-ktk",
+		"service": "youtube",
+		"type": "recording"
+	}
+};
+
 var additionalPOIs = [
     {
         "label_de": "Sendezentrum",
@@ -627,6 +637,11 @@ function parseEvent(event, day, room, locationNamePrefix, trackJSON, streamMap, 
 		});
 
 	});
+
+	let link = additionalLinks[id];
+	if (link) {
+		links.push(link);
+	}
 
 	var begin = parseDate(event.date);
 
@@ -1206,8 +1221,8 @@ exports.scrape = function (callback) {
                             schedule: schedule_url,
 							voc_streams: voc_streams_api_url,
 							additional_schedule: additional_schedule_url,
-							freifunk_speakers: freifunk_speaker_url,
-							freifunk_schedule: freifunk_schedule_url,
+							// freifunk_speakers: freifunk_speaker_url,
+							// freifunk_schedule: freifunk_schedule_url,
 							halfnarp: halfnarp_url
                             // poi_graph: poi_graph_url,
                             // poi_titles: poi_titles_url
@@ -1228,8 +1243,8 @@ exports.scrape = function (callback) {
                                 var additional_schedule = result.additional_schedule;
 
 								// Freifunk
-								var freifunk_schedule = result.freifunk_schedule;
-								var freifunk_speakers = result.freifunk_speakers.schedule_speakers.speakers;
+								var freifunk_schedule = null; //result.freifunk_schedule;
+								var freifunk_speakers = null; // result.freifunk_speakers.schedule_speakers.speakers;
 								
 								// Chillout Lounge
 								var chillout_lounge_lineup = result.chillout_lounge;
@@ -1350,6 +1365,7 @@ exports.scrape = function (callback) {
 											 function (session, sourceJSON) { return "https://events.ccc.de/congress/2017/wiki/Session:" + encodeURIComponent(session.title); },
 											"guid");
 
+								if (freifunk_schedule) {
                                 // Sendezentrum Frap
 								var podcastDefaultTrack =  {"id": mkID("freifunk"),
                                 				  			"color": red,
@@ -1365,7 +1381,7 @@ exports.scrape = function (callback) {
 										 	 "freifunk",
 											  function (session, sourceJSON) { return "https://frab.txtfile.eu/en/34c3-ffc/public/events/" + sourceJSON.id; },
 											"guid");
-
+								}
 
                                 // 34c3 Frap
                                 handleResult(schedule,
