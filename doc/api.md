@@ -229,6 +229,16 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 			"type": "recording"
 		}
 	],
+	"related_sessions": [
+		{
+			"id": "rp13-session-5117",
+			"title": "Comic Misunderstanding – A conversation with Graham Linehan (IT Crowd)"
+		},
+		{
+			"id": "rp13-session-5866",
+			"title": "YouTube macht die Stars von heute"
+		} //...
+	],
 	"last_modified": 1393611456.99
 }]
 ````
@@ -244,7 +254,8 @@ Optional fields:
 - `subtitle`
 - `will_be_recorded`, assume `false` if missing
 - `cancelled`, assume `false` if missing
-= `translated_langs`: Translations of this talk (subtitles, live translations). If present an Array of Dictionaries similar to `lang` field. 
+- `translated_langs`: Translations of this talk (subtitles, live translations). If present an Array of Dictionaries similar to `lang` field. 
+
 ### Enclosures
 
 Enclosures list URLs of files including mime type. 
@@ -260,6 +271,10 @@ Links is a list of related webpages. Currently we provide only links to youtube/
 
 * Values of ```"type"```: ```"recording"```
 * Values of ```"service"```: ```"youtube"```, ```"vimeo"```
+
+### Related Sessions
+
+Array of related sessions, sorted by priodity. The object contains only `id` and `title` of the session.
 
 ## Speakers
 
