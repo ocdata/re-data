@@ -200,18 +200,21 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 		{
 			"url": "http://example.com/files/live.m3u8",
 			"mimetype": "application/x-mpegURL",
-			"type": "livestream"
+			"type": "livestream",
+			"languages": ["de", "en"]
 		},	
 		{
 			"url": "http://example.com/files/video.mp4",
 			"mimetype": "video/mp4",
 			"type": "recording"
+			"languages": ["en"],
 			"thumbnail": "http://example.com/files/video_thumb.jpg"
 		},
 		{
 			"url": "http://example.com/files/audio.mp3",
 			"mimetype": "audio/mpeg",
 			"type": "recording",
+			"languages": ["de"],
 			"thumbnail": "http://example.com/files/audio_cover.jpg"
 		},
 		{
@@ -226,6 +229,7 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 			"title": "re:publica 2014: ...",
 			"url": "http://youtube.com/watch?v=18xQRtdrJhQ",
 			"service": "youtube",
+			"languages": ["de"],
 			"type": "recording"
 		}
 	],
@@ -262,6 +266,7 @@ Enclosures list URLs of files including mime type.
 
 - **url:** Required, the URL of the enclosure
 - **mimetype:** Required, the MIME type of the enclosure. 
+- **languags:** Optional, the ISO language codes of the audio or video (subtitle) languages in this file (can be multiple for streams with multiple audio tracks). 
 - **type:**  Required; indicates the kind of enclosure present. Is one of `slides`, `recording`, `livestream`.
 - **thumbnail:**  Optional; URL of a thumbnail imaged that can be used as a cover or video thumbnail for the enclosure. E.g. a video thumbnail for video enclosures, a cover for audio content or an image of the first slide for the slides. 
 
@@ -271,6 +276,8 @@ Links is a list of related webpages. Currently we provide only links to youtube/
 
 * Values of ```"type"```: ```"recording"```
 * Values of ```"service"```: ```"youtube"```, ```"vimeo"```
+
+If you know the languages of the destination add `languages` (optional) just like enclosures
 
 ### Related Sessions
 
