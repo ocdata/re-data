@@ -6,23 +6,33 @@
   "dependencies": {
     "md5": "2.2.1",
     "async": "0.9.0",
-		"cheerio": "0.22.0",
+    "cheerio": "0.22.0",
     "colors": "^1.1.2",
     "cradle": "0.6.7",
     "csv-parse": "0.0.6",
-    "ent": "0.1.0",
+    "ent": "2.2.0",
     "ical": "0.3.1",
     "icalendar": "0.7.1",
     "moment": "2.2.1",
     "scrapyard": "0.0.8",
-		"icalendar": "0.7.1",
     "turf": "2.0.0",
     "paper": "0.9.25",
-    "ent": "2.2.0",
     "html-to-text": "2.1.3",
-		"request": " 2.81.0"
+    "request": " 2.81.0"
   },
   "engines": {
-    "node": "0.10.21"
+    "node": ">= 9.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scrape": "node scraper.js"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "mocha": "^5.0.4"
   }
 }
