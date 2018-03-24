@@ -24,4 +24,11 @@ class Speaker {
   get biography() {
     return this.source.bio;
   }
+
+  get miniJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+    }
+  }
 }

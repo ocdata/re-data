@@ -7,12 +7,13 @@ class Track {
     this.color = color;
   }
 
-  get label_de() {
-    return this.name;
-  }
-
-  get label_en() {
-    return this.name;
+  get json() {
+    return {
+      id: this.id,
+      label_de: this.name,
+      label_en: this.name,
+      color: this.color,
+    }
   }
 }
 

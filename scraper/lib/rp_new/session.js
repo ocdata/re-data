@@ -81,6 +81,13 @@ class Session {
       return null;
     }
   }
+
+  get miniJSON() {
+    return {
+      id: this.id,
+      title: this.title,
+    }
+  }
 }
 
 module.exports = Session;

@@ -7,6 +7,14 @@ class Location {
     this.label_en = name;
     this.id = Helpers.mkId(name);
   }
+
+  get miniJSON() {
+    return {
+      id: this.id,
+      label_de: this.label_de,
+      label_en: this.label_en,
+    }
+  }
 }
 
 module.exports = Location;
