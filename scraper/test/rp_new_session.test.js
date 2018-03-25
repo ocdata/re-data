@@ -1,12 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const Session = require('../lib/rp_new/session');
+const Speaker = require('../lib/rp_new/speaker');
 const mocha = require('mocha');
 const assert = require("chai").assert;
 
 
 describe('rp_new', () => {
   const sessionsFixtureJson = require('./fixtures/rp18_sessions_sample.json');
+  const speakersFixtureJson = require('./fixtures/rp18_speakers_sample.json');
   
   describe('Session', () => {
     const [sessionJson] = sessionsFixtureJson;
@@ -33,5 +35,15 @@ describe('rp_new', () => {
       assert.equal(session.format.id, 'discussion');
       assert.equal(session.level.id, 'everyone');
     })
+  });
+
+  describe('Speaker', () => {
+    const [speakerJson] = speakersFixtureJson;
+    const speaker = new Speaker(speakerJson);
+
+    it('should parse main text properties', () => {
+      assert.equal(speaker.id, "15866");
+      assert.equal(speaker.name, "Robert Richter");
+    });
   });
 });
