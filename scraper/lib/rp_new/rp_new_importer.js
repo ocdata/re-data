@@ -5,21 +5,31 @@ const Session = require('./session');
 const Speaker = require('./speaker');
 const Location = require('./location');
 const Track = require('./track');
+const Event = require('./event');
 const { Format, Level } = require('./mappings');
 
 class RPNewImporter {
-  constructor(event, sessions, speakers, trackColorMap = {}, locationIndices = []) {
-    this.source = { event, sessions, speakers, trackColorMap, locationIndices }
-    this.tracks = {}
-    this.locations = {}
-    this.speakers = {}
-    this.sessions = {}
+  constructor(event, sessions, speakers, trackColorMap = {}, locationIndices = [], dayNames = {}, dayStartHour = 5) {
+    this.source = { event, sessions, speakers, trackColorMap, locationIndices, dayNames };
+    this.tracks = {};
+    this.locations = {};
+    this.speakers = {};
+    this.sessions = {};
+    this.days = {};
+    this.event = new Event(this.source.event);
 
+    this._processDays();
     this._processTracks();
     this._processLocations();
     this._processSpeakers();
     this._processSessions();
     this._processRelations();
+  }
+
+  _processDays() {
+    this.event.days(this.source.dayNames).forEach(day => {
+      this.days[day.id] = day;
+    });
   }
 
   _processTracks() {
@@ -62,7 +72,20 @@ class RPNewImporter {
   }
 
   _processRelations() {
-    // TODO
+    Object.keys(this.sessions).forEach(sessionId => {
+      const session = this.sessions[sessionId];
+      session.speakers.forEach(sessionSpeaker => {
+        const speaker = this.speakers[sessionSpeaker.id];
+        if (speaker) {
+          if (!speaker.sessions.find(speakerSession => speakerSession.id === sessionId)) {
+            speaker.sessions.push(session);
+          }
+        }
+      });
+
+      // TODO: Add days 
+      // TODO: Add sessions to locations
+    });
   }
 }
 

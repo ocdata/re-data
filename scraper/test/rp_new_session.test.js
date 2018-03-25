@@ -26,7 +26,7 @@ describe('rp_new', () => {
 
     it('should parse locations', () => {
       assert.equal(event.locations.length, 1);
-      
+
       const [location] = event.locations;
       assert.equal(location.label, 'Station Berlin');
       assert.equal(location.timezone, 'Europe/Berlin');
@@ -82,6 +82,22 @@ describe('rp_new', () => {
       assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
     });
 
+    it('should parse speakers for a session and have all their info', () => {
+      const session = rpnew.sessions['24826'];
+      assert.equal(session.speakers.length, 2);
+
+      const [speaker1, speaker2] = session.speakers;
+      assert.equal(speaker1.id, '15837');
+      assert.equal(speaker1.name, 'Javier Soto Morras');
+      assert.equal(speaker2.id, '15836');
+      assert.equal(speaker2.name, 'Raphaël de Courville');
+
+      const fullSpeaker = rpnew.speakers[speaker1.id];
+      assert.equal(fullSpeaker.id, speaker1.id);
+      assert.equal(fullSpeaker.name, speaker1.name);
+      assert.include(fullSpeaker.biography, 'Interaction Designer');
+    });
+
     it('should parse all speakers', () => {
       const speakerIds = Object.keys(rpnew.speakers);
       assert.equal(speakerIds.length, speakersFixtureJson.length);
@@ -89,6 +105,14 @@ describe('rp_new', () => {
       const speaker = rpnew.speakers['15837'];
       assert.equal(speaker.id, '15837');
       assert.equal(speaker.name, 'Javier Soto Morras');
+    });
+
+    it('should parse sessions for a speaker', () => {
+      const speaker = rpnew.speakers['15837'];
+      assert.equal(speaker.sessions.length, 1);
+      const [session] = speaker.sessions;
+      assert.equal(session.id, '24826');
+      assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
     });
 
     it('should parse all tracks', () => {
@@ -105,11 +129,17 @@ describe('rp_new', () => {
     });
 
     it('should parse all days', () => {
-      // const dayKeys = Object.keys(rpnew.days);
-      // assert.equal(dayKeys.length, 3);
+      const dayKeys = Object.keys(rpnew.days);
+      assert.equal(dayKeys.length, 3);
 
-      // const day1 = rpnew.days['2018-05-02'];
-      // assert.equal(day1.date, moment('2018-05-02'));
+      const day1 = rpnew.days['2018-05-02'];
+      assert.isTrue(day1.date.isSame(moment('2018-05-02')));
+
+      const day2 = rpnew.days['2018-05-03'];
+      assert.isTrue(day2.date.isSame(moment('2018-05-03')));
+
+      const day3 = rpnew.days['2018-05-04'];
+      assert.isTrue(day3.date.isSame(moment('2018-05-04')));
     });
   });
 });

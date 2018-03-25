@@ -3,6 +3,7 @@ const Helpers = require('./../helpers');
 class Speaker {
   constructor(json) {
     this.source = json;
+    this.sessions = [];
   }
 
   get id() {

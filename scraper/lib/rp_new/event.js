@@ -31,7 +31,7 @@ class Event {
       const rpday = new Day(day, name);
       days.push(rpday);
       day = day.add(1, 'd');
-    } while (day.isBefore(this.end));
+    } while (!day.isAfter(this.end));
     return days;
   }
 }
