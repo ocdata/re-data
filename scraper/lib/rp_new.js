@@ -20,6 +20,10 @@ class RPNewImporter {
     this.sessions = {}
 
     this._processTracks();
+    this._processLocations();
+    this._processSpeakers();
+    this._processSessions();
+    this._processRelations();
   }
 
   _processTracks() {
@@ -45,15 +49,23 @@ class RPNewImporter {
       }
       this.locations[location.id] = location;
     });
-    // Do nothing for now
   }
 
   _processSpeakers() {
-
+    this.source.speakers.forEach(speakerJSON => {
+      const speaker = new Speaker(speakerJSON);
+      this.speakers[speaker.id] = speaker;
+    });
   }
 
   _processSessions() {
-   
-    // add sessions to speakers
+    this.source.sessions.forEach(sessionJSON => {
+      const session = new Session(sessionJSON);
+      this.sessions[session.id] = session;
+    });
+  }
+
+  _processRelations() {
+    // TODO
   }
 }
