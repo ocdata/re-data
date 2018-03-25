@@ -1,0 +1,22 @@
+{
+  "type": "event",
+  "id": "rp18",
+  "label": "re:publica 18",
+  "title": "re:publica 18 POP",
+  "date": [
+    "2018-05-02",
+    "2018-05-04"
+  ],
+  "locations": [
+    {
+      "label": "Station Berlin",
+      "coords": [
+        52.49814,
+        13.374538
+      ],
+      "timezone": "Europe/Berlin"
+    }
+  ],
+  "url": "http://18.re-publica.de/",
+  "hashtag": "rp18"
+}

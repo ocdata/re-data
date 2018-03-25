@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Session = require('../lib/rp_new/session');
 const Speaker = require('../lib/rp_new/speaker');
+const RPNewImporter = require('../lib/rp_new/rp_new_importer');
 const mocha = require('mocha');
 const assert = require("chai").assert;
 
@@ -9,7 +10,8 @@ const assert = require("chai").assert;
 describe('rp_new', () => {
   const sessionsFixtureJson = require('./fixtures/rp18_sessions_sample.json');
   const speakersFixtureJson = require('./fixtures/rp18_speakers_sample.json');
-  
+  const eventFixtureJson = require('./fixtures/rp18_event_sample.json');
+
   describe('Session', () => {
     const [sessionJson] = sessionsFixtureJson;
     const session = new Session(sessionJson);
@@ -44,6 +46,28 @@ describe('rp_new', () => {
     it('should parse main text properties', () => {
       assert.equal(speaker.id, "15866");
       assert.equal(speaker.name, "Robert Richter");
+    });
+  });
+
+  describe('RPNewImporter Parser', () => {
+    const rpnew = new RPNewImporter(eventFixtureJson, sessionsFixtureJson, speakersFixtureJson);
+
+    it('should parse all sessions', () => {
+      const sessionIds = Object.keys(rpnew.sessions);
+      assert.equal(sessionIds.length, sessionsFixtureJson.length);
+
+      const session = rpnew.sessions['24826'];
+      assert.equal(session.id, '24826');
+      assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
+    });
+
+    it('should parse all speakers', () => {
+      const speakerIds = Object.keys(rpnew.speakers);
+      assert.equal(speakerIds.length, speakersFixtureJson.length);
+      
+      const speaker = rpnew.speakers['15837'];
+      assert.equal(speaker.id, '15837');
+      assert.equal(speaker.name, 'Javier Soto Morras');
     });
   });
 });
