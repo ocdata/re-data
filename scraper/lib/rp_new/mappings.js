@@ -19,7 +19,7 @@ const Level = {
   Fortgeschrittene:
     { id: 'intermediate', label_de: 'Fortgeschrittene', label_en: 'Intermediate' },
   Experten:
-    { id: 'advanced', label_de: 'Experten', label_en: 'Advanced' }
+    { id: 'advanced', label_de: 'Experten', label_en: 'Advanced' },
 };
 
 const Language = {
@@ -36,6 +36,6 @@ const Language = {
 };
 
 
-const Mappings = { Format, Level, Language }
+const Mappings = { Format, Level, Language };
 
 module.exports = Mappings;
