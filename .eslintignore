@@ -1,0 +1,5 @@
+scraper/test/*
+scraper/node_modules/*
+scraper/model/*
+.vscode/*
+.ask/*

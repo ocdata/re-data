@@ -24,7 +24,7 @@ class Event {
   }
 
   days(names = {}) {
-    let days = [];
+    const days = [];
     let day = this.begin;
     do {
       const name = names[day.format('YYYY-MM-DD')];

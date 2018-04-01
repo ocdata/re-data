@@ -27,11 +27,11 @@ class Speaker {
   }
 
   get JSON() {
-    let result = {
+    const result = {
       id: this.id,
       name: this.name,
       sessions: [],
-    }
+    };
     if (this.sessions) {
       result.sessions = this.sessions.map(session => session.miniJSON);
     }
@@ -42,7 +42,7 @@ class Speaker {
     return {
       id: this.id,
       name: this.name,
-    }
+    };
   }
 }
 
