@@ -95,6 +95,7 @@ class RPNewImporter {
           }
         }
       });
+      console.log(session);
       // TODO: Add days
       // TODO: Add sessions to locations
     });

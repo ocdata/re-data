@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 
@@ -13,10 +14,6 @@ class Session {
   
   get title() {
     return Helpers.dehtml(this.source.title);
-  }
- 
-  get subtitle() {
-    return null;
   }
 
   get abstract() {
@@ -43,10 +40,10 @@ class Session {
     const names = this.source.moderator.split(', ');
     const ids = this.source.moderator_uid.split(', ');
 
-    let result = [];
+    const result = [];
     names.forEach((name, index) => {
       const id = ids[index];
-      result.push({id, name});
+      result.push({ id, name });
     });
     return result;
   }  
@@ -59,34 +56,36 @@ class Session {
     const language = Helpers.nullIfEmpty(this.source.language);
     if (language) {
       return Language[language];
-    } else {
-      return null;
-    }
+    } 
+    return null;
   }
 
   get format() {
     const format = Helpers.nullIfEmpty(this.source.format);
     if (format) {
       return Format[format];
-    } else {
-      return null;
-    }
+    } 
+    return null;
   }
 
   get level() {
     const level = Helpers.nullIfEmpty(this.source.experience);
     if (level) {
       return Level[level];
-    } else {
-      return null;
     }
+    return null;
   }
 
   get miniJSON() {
     return {
       id: this.id,
       title: this.title,
-    }
+    };
+  }
+
+  get JSON() {
+    const json = this.miniJSON;
+    return json;
   }
 }
 
