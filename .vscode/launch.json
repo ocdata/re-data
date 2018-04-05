@@ -13,6 +13,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Start import",
+      "program": "${workspaceFolder}/scraper/scraper.js",
+      "args": [
+        "import"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Mocha Tests (scraper)",
       "program": "${workspaceFolder}/scraper/node_modules/mocha/bin/_mocha",
       "args": [
