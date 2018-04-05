@@ -71,8 +71,13 @@ describe('rp_new', () => {
   });
 
   describe('RPNewImporter Parser', () => {
-    const rpnew = new RPNewImporter(eventFixtureJson, sessionsFixtureJson, speakersFixtureJson);
-
+    const rpnew = new RPNewImporter(
+      eventFixtureJson,
+      sessionsFixtureJson,
+      speakersFixtureJson,
+      { urlPrefix: 'https://18.re-publica.com/en/session/' },
+    );
+      
     it('should parse all sessions', () => {
       const sessionIds = Object.keys(rpnew.sessions);
       assert.equal(sessionIds.length, sessionsFixtureJson.length);
@@ -80,6 +85,13 @@ describe('rp_new', () => {
       const session = rpnew.sessions['24826'];
       assert.equal(session.id, '24826');
       assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
+    });
+
+    it('should generate a slug for a session', () => {
+      const session = rpnew.sessions['24828'];
+      
+      assert.equal(session.slug, 'eigene-angebote-zeiten-amazon-youtube-netflix-es-spat-konkurrenz');
+      assert.equal(session.JSON.url, 'https://18.re-publica.com/en/session/eigene-angebote-zeiten-amazon-youtube-netflix-es-spat-konkurrenz');
     });
 
     it('should parse speakers for a session and have all their info', () => {
@@ -117,7 +129,7 @@ describe('rp_new', () => {
 
     it('should parse all tracks', () => {
       const trackKeys = Object.keys(rpnew.tracks);
-      assert.equal(trackKeys.length, 3);
+      assert.equal(trackKeys.length, 2);
       
       const track = rpnew.tracks['media-convention-berlin'];
       assert.equal(track.name, "MEDIA CONVENTION Berlin");
