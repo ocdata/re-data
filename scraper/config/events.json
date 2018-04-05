@@ -215,5 +215,49 @@
 		}],
 		"url": "http://events.ccc.de/congress/2017",
         "hashtag": "34c3"
+	},
+	{
+    "type": "event",
+    "id": "34c3",
+    "label": "34C3",
+    "title": "34th Chaos Communication Congress – #tuwat",
+    "date": [
+        "2017-12-27",
+        "2017-12-30"
+    ],
+    "locations": [
+        {
+            "label": "Congress Center Leipzig",
+            "coords": [
+                51.396667,
+                12.402778
+            ],
+            "timezone": "Europe/Berlin"
+        }
+    ],
+    "url": "http://events.ccc.de/congress/2017",
+    "hashtag": "34C3"
+	},
+	{
+		"type": "event",
+		"id": "rp18",
+		"label": "re:publica 18",
+		"title": "re:publica 18 POP",
+		"date": [
+			"2018-05-02",
+			"2018-05-04"
+		],
+		"locations": [
+			{
+				"label": "Station Berlin",
+				"coords": [
+					52.49814,
+					13.374538
+				],
+				"timezone": "Europe/Berlin"
+			}
+		],
+		"url": "http://18.re-publica.de/",
+		"hashtag": "rp18"
 	}
 ]

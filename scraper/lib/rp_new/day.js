@@ -6,6 +6,9 @@ class Day {
     this.date = date;
     this.id = date.format('YYYY-MM-DD');
     this.name = name;
+    if (!this.name) {
+      this.name = this.date;
+    }
   }
 
   get JSON() {

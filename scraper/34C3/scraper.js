@@ -1,54 +1,54 @@
 /* get node modules */
-var fs = require('fs');
-var path = require('path');
-var eventId = "34c3";
+const fs = require('fs');
+const path = require('path');
+const eventId = "34c3";
 
 /* get npm modules */
-var scrapyard = require('scrapyard');
-var http = require('http');
-var moment = require('moment');
-var ent = require('ent');
-var cheerio = require('cheerio');
-var sanitizeHtml = require('sanitize-html');
-var parseCSV = require('csv-parse');
-var async = require('async');
-var md5 = require('MD5');
-var ical = require('ical');
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var icalendar = require('icalendar');
+const scrapyard = require('scrapyard');
+const http = require('http');
+const moment = require('moment');
+const ent = require('ent');
+const cheerio = require('cheerio');
+const sanitizeHtml = require('sanitize-html');
+const parseCSV = require('csv-parse');
+const async = require('async');
+const md5 = require('MD5');
+const ical = require('ical');
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const icalendar = require('icalendar');
 
-var log = require(path.resolve(__dirname, '../../api/lib/log.js'));
-var json_requester = require('../lib/json_requester');
+const log = require(path.resolve(__dirname, '../../api/lib/log.js'));
+const json_requester = require('../lib/json_requester');
 
-var additional_schedule_url = "http://data.conference.bits.io/data/34c3/voc/workshops.schedule.json";
+const additional_schedule_url = "http://data.conference.bits.io/data/34c3/voc/workshops.schedule.json";
 // var dlf_schedule_url = "http://data.c3voc.de/34C3/workshops.schedule.json";
-var freifunk_schedule_url = "https://frab.txtfile.eu/en/34c3-ffc/public/schedule.json";
-var freifunk_speaker_url = "https://frab.txtfile.eu/en/34c3-ffc/public/speakers.json";
-var schedule_url = "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
-var speakers_url =  "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
-var halfnarp_url = "http://halfnarp.events.ccc.de/-/talkpreferences";
+const freifunk_schedule_url = "https://frab.txtfile.eu/en/34c3-ffc/public/schedule.json";
+const freifunk_speaker_url = "https://frab.txtfile.eu/en/34c3-ffc/public/speakers.json";
+const schedule_url = "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/schedule.json";//"http://data.conference.bits.io/data/32c3/schedule.json"; //
+const speakers_url =  "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
+const halfnarp_url = "http://halfnarp.events.ccc.de/-/talkpreferences";
 
-var voc_streams_api_url = "https://streaming.media.ccc.de/streams/v1.json";
-var poi_titles_url = "https://github.com/NoMoKeTo/c3nav/raw/master/src/projects/34c3/titles.json";
+const voc_streams_api_url = "https://streaming.media.ccc.de/streams/v1.json";
+const poi_titles_url = "https://github.com/NoMoKeTo/c3nav/raw/master/src/projects/34c3/titles.json";
 // var pois = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/34c3/pois.json";
-var poi_graph_url = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/34c3/graph.json";
+const poi_graph_url = "https://raw.githubusercontent.com/NoMoKeTo/c3nav/master/src/projects/34c3/graph.json";
 
 // CSV data
-var lounge_session_csv_data = fs.readFileSync(__dirname + "/party_lounge.csv");
-var chill_out_lounge_csv_data = fs.readFileSync(__dirname + "/34c3_4Floor_ChillOut_LineUp.csv");
+const lounge_session_csv_data = fs.readFileSync(__dirname + "/party_lounge.csv");
+const chill_out_lounge_csv_data = fs.readFileSync(__dirname + "/34c3_4Floor_ChillOut_LineUp.csv");
 
-var dome_lounge_csv_data = fs.readFileSync(__dirname + "/dome.csv");
+const dome_lounge_csv_data = fs.readFileSync(__dirname + "/dome.csv");
 //"https://gist.githubusercontent.com/MaZderMind/d5737ab867ade7888cb4/raw/bb02a27ca758e1ca3de96b1bf3f811541436ab9d/streams-v1.json"
 // later at https://streaming.media.ccc.de/streams/v1.json
 
 // for debugging we can just pretend rp14 was today
-var originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
-var fakeDate = originalStartDate; // new Date(Date.UTC(2015, 11, 23, 16, 0, 0, 0));
-var sessionStartDateOffsetMilliSecs = fakeDate.getTime() - originalStartDate.getTime();
+const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
+const fakeDate = originalStartDate; // new Date(Date.UTC(2015, 11, 23, 16, 0, 0, 0));
+const sessionStartDateOffsetMilliSecs = fakeDate.getTime() - originalStartDate.getTime();
 
-var dayYearChange = 0;
-var dayMonthChange = 0;
-var dayDayChange = 0;
+const dayYearChange = 0;
+const dayMonthChange = 0;
+const dayDayChange = 0;
 
 // console.log("Real date: " + originalStartDate);
 // console.log("Fake date: " + fakeDate);
@@ -57,7 +57,7 @@ var dayDayChange = 0;
 // http://hls.stream.c3voc.de/hls/sN_L_Q.m3u8
 // N ∈ [1;5], L ∈ {native, translated}, Q ∈ {hd, sd, slides}.
 
-var sortOrderOfLocations = [
+const sortOrderOfLocations = [
 	'34c3-saal-adams',
 	'34c3-saal-borg',
 	'34c3-saal-g',
@@ -78,30 +78,30 @@ var sortOrderOfLocations = [
 ];
 
 // to map VOC API output to our rooms
-var vocSlugToLocatonID = {
+const vocSlugToLocatonID = {
 	"Saal Adams": mkID("saal-adams"),
 	"Saal Borg": mkID("saal-borg"),
 	"Saal Clarke": mkID("saal-clarke"),
 	"Saal Dijkstra": mkID("saal-dijkstra")
 };
 
-var locationNameChanges = {
+const locationNameChanges = {
 	//"34c3-sendezentrumsb-hne": "Sendezentrum",
 	//"34c3-podcastingtisch": "Podcasttisch"
 };
 
-var poi2locationMapping = {
+const poi2locationMapping = {
 	//"34c3-h1": mkID("saal-1")
 };
 
-var additionalLocations = [
+const additionalLocations = [
 	
 ];
 
-var additionalLinks = {
+const additionalLinks = {
 };
 
-var additionalEnclosures = {
+const additionalEnclosures = {
 	"34c3-workshop-e7d29e30-123b-4840-a2fc-e6674ad6c455": {
 		"url": "https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4",
 		"mimetype": "video/mp4",
@@ -110,7 +110,7 @@ var additionalEnclosures = {
 	}
 };
 
-var additionalPOIs = [
+const additionalPOIs = [
 	{
 		"label_de": "Sendezentrum",
 		"label_en": "Sendezentrum",
@@ -136,11 +136,11 @@ var additionalPOIs = [
 
 
 // Livestream test
-var streamURLs = {
+const streamURLs = {
 	// "camp15-saal-1": "http://hls.stream.c3voc.de/hls/s1_native_hd.m3u8",
 };
 
-var testVideoURLs = {
+const testVideoURLs = {
 	// "34c3-7415": "http://cdn.media.ccc.de/congress/2014/h264-hd/31c3-6582-de-Das_Transparenzportal_Hamburg_hd.mp4" // Talk:Wie Jugendschutzprogramme nicht nur die Jugend schädigen Video: Das Transparenzportal Hamburg
 };
 
@@ -154,22 +154,22 @@ var testVideoURLs = {
 // Entertainment #45b964 (same as CCC) green
 //
 // official from https://events.ccc.de/congress/2017/wiki/Static:Design
-var blue    = [ 80.0,  87.0, 175.0, 1.0];
-var violett = [181.0,  80.0, 189.0, 1.0];
-var turquise= [ 69.0, 185.0, 179.0, 1.0];
-var brown   = [168.0,  86.0,  63.0, 1.0];
-var orange  = [185.0, 151.0,  69.0, 1.0];
-var yellow  = [192.0, 186.0,  89.0, 1.0];
-var green   = [ 69.0, 185.0, 100.0, 1.0];
+const blue    = [ 80.0,  87.0, 175.0, 1.0];
+const violett = [181.0,  80.0, 189.0, 1.0];
+const turquise= [ 69.0, 185.0, 179.0, 1.0];
+const brown   = [168.0,  86.0,  63.0, 1.0];
+const orange  = [185.0, 151.0,  69.0, 1.0];
+const yellow  = [192.0, 186.0,  89.0, 1.0];
+const green   = [ 69.0, 185.0, 100.0, 1.0];
 
 // non-official
-var red     = [118.0,  26.0,  61.0, 1.0];
-var grey    = [110.0,  110.0,  110.0, 1.0];
-var black   = [  0.0,   0.0,   0.0, 1.0];
-var cream   = [135.0,  81.0,  86.0, 1.0];
+const red     = [118.0,  26.0,  61.0, 1.0];
+const grey    = [110.0,  110.0,  110.0, 1.0];
+const black   = [  0.0,   0.0,   0.0, 1.0];
+const cream   = [135.0,  81.0,  86.0, 1.0];
 
 
-var colors = {};
+const colors = {};
 colors[eventId + "-security"] = blue;
 colors[eventId + "-ethics-society-politics"] = violett;
 colors[eventId + "-science"] = turquise;
@@ -184,41 +184,39 @@ colors[eventId + "-sendezentrum"] = red;
 colors[eventId + "-other"] = grey;
 
 
-var allFormats = {
+const allFormats = {
 	'discussion': { id:'discussion', label_en:'Discussion' },
 	'talk':    { id:'talk',    label_en:'Talk'       },
 	'workshop':   { id:'workshop',   label_en:'Workshop'   }
 }
 
-var allLevels = {
+const allLevels = {
 	'beginner':         { id:'beginner',     label_en:'Beginner'     },
 	'intermediate':     { id:'intermediate', label_en:'Intermediate' },
 	'advanced':         { id:'advanced',     label_en:'Advanced'     }
 };
 
-var allLanguages = {
+const allLanguages = {
 	'en': { id:'en', label_en:'English' },
 	'de': { id:'de', label_en:'German' },
 };
 
-var allMaps = {
+const allMaps = {
 	
 };
 
 
 
-var allPOIs = {};
+const allPOIs = {};
 
 
-var data   = [];
-var allDays = {
+const data   = [];
+const allDays = {
 	
 };
-var allRooms = {};
-var allSpeakers = {};
-var allTracks = {};
-var allSpeakers = {};
-var allRecommendations = {};
+const allRooms = {};
+const allSpeakers = {};
+const allTracks = {};
 
 function addEntry(type, obj) {
 	obj.event  = eventId;

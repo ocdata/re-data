@@ -7,13 +7,21 @@ class Track {
     this.color = color;
   }
 
-  get json() {
+  get JSON() {
     return {
       id: this.id,
       label_de: this.name,
       label_en: this.name,
       color: this.color,
-    }
+    };
+  }
+
+  get miniJSON() {
+    return {
+      id: this.id,
+      label_de: this.name,
+      label_en: this.name,
+    };
   }
 }
 

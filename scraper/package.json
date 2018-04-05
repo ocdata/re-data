@@ -19,6 +19,7 @@
     "paper": "0.9.25",
     "request": " 2.81.0",
     "scrapyard": "0.0.8",
+    "slug": "^0.9.1",
     "turf": "2.0.0"
   },
   "engines": {

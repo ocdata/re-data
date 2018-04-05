@@ -3,9 +3,9 @@ const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 
 class Session {
-
-  constructor(json) {
+  constructor(json, urlFunction = undefined) {
     this.source = json;
+    this.urlFunction = urlFunction;
   }
 
   get id() {
@@ -28,10 +28,10 @@ class Session {
     const names = this.source.speaker.split(', ');
     const ids = this.source.speaker_uid.split(', ');
 
-    let result = [];
+    const result = [];
     names.forEach((name, index) => {
       const id = ids[index];
-      result.push({id, name});
+      result.push({ id, name });
     });
     return result;
   }
@@ -46,7 +46,7 @@ class Session {
       result.push({ id, name });
     });
     return result;
-  }  
+  }
 
   get videoUrl() {
     return Helpers.nullIfEmpty(this.source.video);
@@ -76,6 +76,10 @@ class Session {
     return null;
   }
 
+  get slug() {
+    return Helpers.mkId(this.title);
+  }
+
   get miniJSON() {
     return {
       id: this.id,
@@ -85,6 +89,21 @@ class Session {
 
   get JSON() {
     const json = this.miniJSON;
+    json.track = this.track;
+    json.format = this.format;
+    json.abstract = Helpers.dehtml(this.source.short_thesis);
+    json.description = Helpers.dehtml(this.source.description);
+    json.format = this.format;
+    json.level = this.level;
+    json.lang = this.language;
+    json.speakers = this.speakers;
+    json.cancelled = this.source.status === 'Cancelled';
+    json.will_be_recorded = false;
+    json.related_sessions = [];
+    json.links = [];
+    if (this.urlFunction) {
+      json.url = this.urlFunction(this);
+    }
     return json;
   }
 }
