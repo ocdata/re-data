@@ -1,4 +1,7 @@
+const Slug = require('slug');
 const ent = require('ent');
+
+Slug.defaults.mode = 'rfc3986';
 
 const Helpers = {
   dehtml: function dehtml(str) {
@@ -13,7 +16,12 @@ const Helpers = {
       return string;
     }
     return null;
-  }
+  },
+  slug: function makeSlug(string) {
+    const stopwords = ['in', 'von', 'ist', 'und', 'zu', 'für', 'der', 'die', 'das'];
+    const filteredString = string.split(' ').filter(word => !stopwords.includes(word.toLowerCase())).join(' ');
+    return Slug(filteredString);
+  },
 };
 
 module.exports = Helpers;

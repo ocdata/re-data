@@ -1,4 +1,3 @@
-const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 
@@ -77,7 +76,7 @@ class Session {
   }
 
   get slug() {
-    return Helpers.mkId(this.title);
+    return Helpers.slug(this.title);
   }
 
   get miniJSON() {
