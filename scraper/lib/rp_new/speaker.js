@@ -1,9 +1,10 @@
 const Helpers = require('./../helpers');
 
 class Speaker {
-  constructor(json) {
+  constructor(json, urlFunction = null) {
     this.source = json;
     this.sessions = [];
+    this.urlFunction = urlFunction;
   }
 
   get id() {
@@ -32,6 +33,9 @@ class Speaker {
       name: this.name,
       sessions: [],
     };
+    if (this.urlFunction) {
+      result.url = this.urlFunction(this);
+    }
     if (this.sessions) {
       result.sessions = this.sessions.map(session => session.miniJSON);
     }

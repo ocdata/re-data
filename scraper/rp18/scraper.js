@@ -20,7 +20,10 @@ exports.scrape = (callback) => {
         event,
         result.sessions,
         result.speakers,
-        {urlPrefix: 'https://18.re-publica.com/en/session/'}
+        {
+          sessionUrlPrefix: 'https://18.re-publica.com/en/session/',
+          speakerUrlPrefix: 'https://18.re-publica.com/de/member/',
+        },
       );
 
       callback(importer.JSON);

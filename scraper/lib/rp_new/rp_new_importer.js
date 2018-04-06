@@ -22,7 +22,8 @@ class RPNewImporter {
     this.source.locationIndices = options.locationIndices ? options.locationIndices : [];
     this.source.dayNames = options.dayNames ? options.dayNames : {};
     this.source.dayStartHour = options.dayStartHour ? options.dayStartHour : 5;
-    this.source.urlPrefix = options.urlPrefix;
+    this.source.sessionUrlPrefix = options.sessionUrlPrefix;
+    this.source.speakerUrlPrefix = options.speakerUrlPrefix;
     
     this.tracks = {};
     this.locations = {};
@@ -73,7 +74,14 @@ class RPNewImporter {
 
   _processSpeakers() {
     this.source.speakers.forEach((speakerJSON) => {
-      const speaker = new Speaker(speakerJSON);
+      let urlFunction;
+      if (this.source.speakerUrlPrefix) {
+        urlFunction = (speaker) => {
+          if (!speaker.id) return undefined;
+          return `${this.source.speakerUrlPrefix}${speaker.id}`;
+        };
+      }
+      const speaker = new Speaker(speakerJSON, urlFunction);
       if (speaker.name) {
         this.speakers[speaker.id] = speaker;
       }
@@ -83,10 +91,10 @@ class RPNewImporter {
   _processSessions() {
     this.source.sessions.forEach((sessionJSON) => {
       let urlFunction;
-      if (this.source.urlPrefix) {
+      if (this.source.sessionUrlPrefix) {
         urlFunction = (session) => {
-          if (!session.slug) return null;
-          return `${this.source.urlPrefix}${session.slug}`;
+          if (!session.slug) return undefined;
+          return `${this.source.sessionUrlPrefix}${session.slug}`;
         };
       }
       const session = new Session(sessionJSON, urlFunction);
