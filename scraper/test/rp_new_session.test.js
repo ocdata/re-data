@@ -75,7 +75,7 @@ describe('rp_new', () => {
       eventFixtureJson,
       sessionsFixtureJson,
       speakersFixtureJson,
-      { urlPrefix: 'https://18.re-publica.com/en/session/' },
+      { sessionUrlPrefix: 'https://18.re-publica.com/en/session/' },
     );
       
     it('should parse all sessions', () => {
