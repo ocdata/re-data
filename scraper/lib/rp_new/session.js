@@ -84,6 +84,7 @@ class Session {
   get slug() {
     const slugRegex = /\/session\/(.+)" href/i;
     const match = this.source.title.match(slugRegex);
+    if (!match) return null;
     const slug = match[1];
     return slug;
   }
