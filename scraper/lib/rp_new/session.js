@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 
@@ -97,8 +98,26 @@ class Session {
     };
   }
 
+  get begin() {
+    const beginStr = Helpers.nullIfEmpty(this.source.datetime_start);
+    if (beginStr) {
+      return moment(beginStr);
+    }
+    return null;
+  }
+
+  get end() {
+    const endStr = Helpers.nullIfEmpty(this.source.datetime_end);
+    if (endStr) {
+      return moment(endStr);
+    }
+    return null;
+  }
+
   get JSON() {
     const json = this.miniJSON;
+    if (this.begin) json.begin = this.begin.format();
+    if (this.end) json.end = this.end.format();
     json.track = this.track;
     json.format = this.format;
     json.abstract = Helpers.dehtml(this.source.short_thesis);
@@ -112,6 +131,7 @@ class Session {
     } else {
       json.cancelled = false;
     }
+    json.day = this.day;
     json.will_be_recorded = false;
     json.related_sessions = [];
     json.links = [];

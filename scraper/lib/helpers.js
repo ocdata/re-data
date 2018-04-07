@@ -5,6 +5,7 @@ Slug.defaults.mode = 'rfc3986';
 
 const Helpers = {
   dehtml: function dehtml(str) {
+    if (typeof str !== 'string') return str;
     const nohtml = str.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'')
     return ent.decode(nohtml);
   },
@@ -22,6 +23,19 @@ const Helpers = {
     const filteredString = string.split(' ').filter(word => !stopwords.includes(word.toLowerCase())).join(' ');
     return Slug(filteredString);
   },
+};
+
+Helpers.deleteEmptyStringValues = function deleteEmpty(object) {
+  const mutableObject = object;
+  Object.keys(mutableObject).forEach((key) => {
+    const value = mutableObject[key];
+    
+    if (value === '') {
+      mutableObject[key] = undefined;
+    }
+  });
+
+  return mutableObject;
 };
 
 module.exports = Helpers;

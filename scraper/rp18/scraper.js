@@ -23,6 +23,12 @@ exports.scrape = (callback) => {
         {
           sessionUrlPrefix: 'https://18.re-publica.com/en/session/',
           speakerUrlPrefix: 'https://18.re-publica.com/de/member/',
+          speakerPicturePrefix: 'https://re-publica.com',
+          dayNames: {
+            '2018-05-02': 'Tag 1',
+            '2018-05-03': 'Tag 2',
+            '2018-05-04': 'Tag 3',
+          },
         },
       );
 

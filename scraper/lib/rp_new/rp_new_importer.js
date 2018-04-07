@@ -5,6 +5,7 @@ const Location = require('./location');
 const Track = require('./track');
 const Event = require('./event');
 const { Level, Language, Format } = require('./mappings');
+const moment = require('moment-timezone');
 
 class RPNewImporter {
   constructor(
@@ -24,6 +25,7 @@ class RPNewImporter {
     this.source.dayStartHour = options.dayStartHour ? options.dayStartHour : 5;
     this.source.sessionUrlPrefix = options.sessionUrlPrefix;
     this.source.speakerUrlPrefix = options.speakerUrlPrefix;
+    this.source.speakerPicturePrefix = options.speakerPicturePrefix;
     
     this.tracks = {};
     this.locations = {};
@@ -31,7 +33,11 @@ class RPNewImporter {
     this.sessions = {};
     this.days = {};
     this.event = new Event(this.source.event);
-    
+    // TODO: Actually use the info from Event locations here.
+    // For this to work we need the session locations to have a event location mapping.
+    this.timezone = 'Europe/Berlin';
+    moment.tz.setDefault(this.timezone);
+
     this._processDays();
     this._processTracks();
     this._processLocations();
@@ -80,8 +86,20 @@ class RPNewImporter {
           if (!speaker.id) return undefined;
           return `${this.source.speakerUrlPrefix}${speaker.id}`;
         };
+        
       }
-      const speaker = new Speaker(speakerJSON, urlFunction);
+      let pictureFunction;
+      if (this.source.speakerPicturePrefix) {
+        pictureFunction = (session) => {
+          if (!session.source.picture) return undefined;
+          return `${this.source.speakerPicturePrefix}${session.source.picture}`;
+        };
+      }
+      const speaker = new Speaker(
+        speakerJSON,
+        urlFunction,
+        pictureFunction,
+      );
       if (speaker.name) {
         this.speakers[speaker.id] = speaker;
       }
@@ -108,6 +126,18 @@ class RPNewImporter {
   }
 
   _processSessionRelations() {
+    const dayIdForSession = (session, eventTimezone, dayBeginHour) => {
+      if (!moment.isMoment(session.begin) && eventTimezone && dayBeginHour) return null;
+      let { begin } = session;
+
+      const hour = begin.tz(eventTimezone).hour();
+      if (hour < dayBeginHour) {
+        begin = begin.subtract(24, 'h');
+      }
+      
+      return begin.format('YYYY-MM-DD');
+    };
+
     Object.keys(this.sessions).forEach((sessionId) => {
       const session = this.sessions[sessionId];
       session.speakers.forEach((sessionSpeaker) => {
@@ -118,12 +148,23 @@ class RPNewImporter {
           }
         }
       });
+
+      // Tracks
       const trackId = Helpers.mkId(session.source.topic);
       const track = this.tracks[trackId];
       if (track) {
         session.track = track.miniJSON;
       }
-      // TODO: Add days
+
+      // Days
+      const dayId = dayIdForSession(session, this.timezone, this.source.dayStartHour);
+      if (dayId) {
+        const day = this.days[dayId];
+        if (day) {
+          session.day = day.miniJSON;
+        }
+      }
+      
       // TODO: Add sessions to locations
     });
   }
