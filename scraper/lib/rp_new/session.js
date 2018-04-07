@@ -54,29 +54,40 @@ class Session {
   get language() {
     const language = Helpers.nullIfEmpty(this.source.language);
     if (language) {
-      return Language[language];
-    } 
-    return null;
+      const result = Language[language];
+      if (result) return result;
+    }
+    return Language.German;
   }
 
   get format() {
     const format = Helpers.nullIfEmpty(this.source.format);
     if (format) {
-      return Format[format];
-    } 
-    return null;
+      const result = Format[format];
+      if (result) return result;
+    }
+    return Format.Talk;
   }
 
   get level() {
     const level = Helpers.nullIfEmpty(this.source.experience);
     if (level) {
-      return Level[level];
+      const result = Level[level];
+      if (result) return result;
     }
-    return null;
+    // default to eveyone
+    return Level.Everyone;
   }
 
   get slug() {
-    return Helpers.slug(this.title);
+    const slugRegex = /\/session\/(.+)" href/i;
+    const match = this.source.title.match(slugRegex);
+    const slug = match[1];
+    return slug;
+  }
+
+  get grouping() {
+    return Helpers.dehtml(this.source.track);
   }
 
   get miniJSON() {
@@ -96,7 +107,11 @@ class Session {
     json.level = this.level;
     json.lang = this.language;
     json.speakers = this.speakers;
-    json.cancelled = this.source.status === 'Cancelled';
+    if (this.source.status) {
+      json.cancelled = this.source.status.toLowerCase() === 'cancelled';
+    } else {
+      json.cancelled = false;
+    }
     json.will_be_recorded = false;
     json.related_sessions = [];
     json.links = [];

@@ -103,6 +103,11 @@ class RPNewImporter {
   }
 
   _processRelations() {
+    this._processSessionRelations();
+    this._processSpeakerRelations();
+  }
+
+  _processSessionRelations() {
     Object.keys(this.sessions).forEach((sessionId) => {
       const session = this.sessions[sessionId];
       session.speakers.forEach((sessionSpeaker) => {
@@ -121,6 +126,10 @@ class RPNewImporter {
       // TODO: Add days
       // TODO: Add sessions to locations
     });
+  }
+
+  _processSpeakerRelations() {
+    Object.keys(this.speakers);
   }
 
   get JSON() {

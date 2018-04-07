@@ -12,7 +12,7 @@ class Speaker {
   }
 
   get name() {
-    return this.source.name;
+    return Helpers.dehtml(this.source.name);
   }
 
   get organization() {
@@ -26,7 +26,7 @@ class Speaker {
   get biography() {
     return this.source.bio;
   }
-
+  
   get JSON() {
     const result = {
       id: this.id,
