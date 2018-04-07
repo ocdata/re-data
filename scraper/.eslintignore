@@ -3,3 +3,5 @@ node_modules/*
 model/*
 .vscode/*
 .ask/*
+lib/db.js
+lib/dump.js
