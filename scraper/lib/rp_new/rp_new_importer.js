@@ -86,7 +86,6 @@ class RPNewImporter {
           if (!speaker.id) return undefined;
           return `${this.source.speakerUrlPrefix}${speaker.id}`;
         };
-        
       }
       let pictureFunction;
       if (this.source.speakerPicturePrefix) {
