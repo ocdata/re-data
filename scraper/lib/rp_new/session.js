@@ -1,6 +1,7 @@
 const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
+const Link = require('./link');
 
 class Session {
   constructor(json, urlFunction = undefined) {
@@ -135,6 +136,7 @@ class Session {
     json.will_be_recorded = false;
     json.related_sessions = [];
     json.links = [];
+    json.enclosures = [];
     if (this.urlFunction) {
       json.url = this.urlFunction(this);
     }

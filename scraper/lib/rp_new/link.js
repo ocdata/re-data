@@ -1,6 +1,5 @@
 class Link {
-
-  static get linkTypeRegExes() {
+  static get usernameLinkRegExes() {
     return {
       github: /^https?:\/\/([\w-]+\.)?github\.com\/([\w-]+)\/?$/i,
       twitter: /^https?:\/\/([\w-]+\.)?twitter\.com\/([\w-]+)\/?$/i,
@@ -8,7 +7,14 @@ class Link {
       instagram: /^https?:\/\/([\w-]+\.)?instagram\.com\/([\w-]+)\/?$/i,
       linkedin: /^https?:\/\/([\w-]+\.)?linkedin\.com\/in\/([\w-]+)\/?$/i,
       xing: /^https?:\/\/([\w-]+\.)?xing\.com\/profile\/([\w-]+)\/?$/i,
-      'app.net': /^https?:\/\/([\w-]+\.)?app.net\.com\/([\w-]+)\/?$/i,
+      'app.net': /^https?:\/\/([\w-]+\.)?app\.net\/([\w-]+)\/?$/i,
+      youtube: /^https?:\/\/([\w-]+\.)?youtube\.com\/user\/([\w-]+)\/?$/i,
+    };
+  }
+
+  static get videoServiceLinkRegExes() {
+    return {
+      youtube: [/^https?:\/\/([\w-]+\.)?youtube\.com\//i],
     };
   }
 
@@ -23,7 +29,8 @@ class Link {
     let username = null;
     let service = 'web';
     
-    Object.entries(Link.linkTypeRegExes).forEach((keyValue) => {
+    // username matches
+    Object.entries(Link.usernameLinkRegExes).forEach((keyValue) => {
       const serviceIdentifier = keyValue[0];
       const regex = keyValue[1];
 
@@ -33,6 +40,22 @@ class Link {
         username = match[match.length - 1];
       }
     });
+
+    if (!username) {
+      Object.entries(Link.videoServiceLinkRegExes).forEach((keyValue) => {
+        const serviceIdentifier = keyValue[0];
+        const regexes = keyValue[1];
+
+        regexes.forEach((regex) => {
+          if (service) return;
+
+          const match = this.url.match(regex);
+          if (match) {
+            service = serviceIdentifier;
+          }
+        });
+      });
+    }
 
     return { service, username };
   }
