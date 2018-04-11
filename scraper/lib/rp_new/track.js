@@ -3,7 +3,7 @@ const Helpers = require('./../helpers');
 class Track {
   constructor(name, color = [0.0, 0.0, 0.0, 1.0]) {
     this.id = Helpers.mkId(name);
-    this.name = name;
+    this.name = Helpers.dehtml(name);
     this.color = color;
   }
 
