@@ -84,8 +84,8 @@ describe('rp_new', () => {
       const session = rpnew.sessions['24826'];
       assert.equal(session.id, '24826');
       assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
-      assert.equal(session.begin.format, moment('2018-05-02T08:30:00', 'Europe/Berlin').format);
-      assert.equal(session.end.format, moment('2018-05-02T08:30:00', 'Europe/Berlin').format);
+      assert.equal(session.begin.format, moment('2018-05-02T08:30:00Z').format);
+      assert.equal(session.end.format, moment('2018-05-02T08:30:00Z').format);
     });
 
     it('should generate a slug for a session', () => {

@@ -3,7 +3,7 @@ const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 
 class Session {
-  constructor(json, urlFunction = undefined, timezone = 'Europe/Berlin') {
+  constructor(json, urlFunction = undefined, timezone = 'Etc/UTC') {
     this.source = json;
     this.urlFunction = urlFunction;
     this.timezone = timezone;
@@ -103,7 +103,7 @@ class Session {
   get begin() {
     const beginStr = Helpers.nullIfEmpty(this.source.datetime_start);
     if (beginStr) {
-      return moment(beginStr, this.timezone);
+      return moment(`${beginStr}Z`);
     }
     return null;
   }
@@ -111,7 +111,7 @@ class Session {
   get end() {
     const endStr = Helpers.nullIfEmpty(this.source.datetime_end);
     if (endStr) {
-      return moment(endStr, this.timezone);
+      return moment(`${endStr}Z`);
     }
     return null;
   }
