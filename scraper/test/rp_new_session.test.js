@@ -8,7 +8,6 @@ const RPNewImporter = require('../lib/rp_new/rp_new_importer');
 const mocha = require('mocha');
 const assert = require("chai").assert;
 
-
 describe('rp_new', () => {
   const sessionsFixtureJson = require('./fixtures/rp18_sessions_sample.json');
   const speakersFixtureJson = require('./fixtures/rp18_speakers_sample.json');
@@ -85,6 +84,8 @@ describe('rp_new', () => {
       const session = rpnew.sessions['24826'];
       assert.equal(session.id, '24826');
       assert.equal(session.title, 'Tales of Spatial Transformation: Hybrid Design Practices in the Age of Spatial, Cognitive and Physical Computing');
+      assert.equal(session.begin.format, moment('2018-05-02T08:30:00', 'Europe/Berlin').format);
+      assert.equal(session.end.format, moment('2018-05-02T08:30:00', 'Europe/Berlin').format);
     });
 
     it('should generate a slug for a session', () => {

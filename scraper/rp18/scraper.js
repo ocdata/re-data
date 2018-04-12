@@ -15,8 +15,8 @@ exports.scrape = (callback) => {
   JSONRequester.get(
     {
       urls: {
-        sessions: 'https://re-publica.com/files/rest/sessions.json',
-        speakers: 'https://re-publica.com/files/rest/speakers.json',
+        sessions: 'https://18.re-publica.com/files/rest/sessions.json',
+        speakers: 'https://18.re-publica.com/files/rest/speakers.json',
       },
     },
     (result) => {
