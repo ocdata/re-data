@@ -116,6 +116,17 @@ class Session {
     return null;
   }
 
+  get location() {
+    const room = Helpers.nullIfEmpty(this.source.room);
+    const roomId = Helpers.nullIfEmpty(this.source.room_nid);
+    if (!room || !roomId) return null;
+    return {
+      label_de: room,
+      label_en: room,
+      id: roomId,
+    };
+  }
+
   get JSON() {
     const json = this.miniJSON;
     if (this.begin) json.begin = this.begin.format();
@@ -138,6 +149,7 @@ class Session {
     json.related_sessions = [];
     json.links = [];
     json.enclosures = [];
+    json.location = this.location;
     if (this.urlFunction) {
       json.url = this.urlFunction(this);
     }
