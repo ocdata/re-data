@@ -103,7 +103,8 @@ class Session {
   get begin() {
     const beginStr = Helpers.nullIfEmpty(this.source.datetime_start);
     if (beginStr) {
-      return moment(`${beginStr}Z`);
+      const begin = moment(`${beginStr}Z`, moment.ISO_8601);
+      return begin.isValid() ? begin : null;
     }
     return null;
   }
@@ -111,7 +112,8 @@ class Session {
   get end() {
     const endStr = Helpers.nullIfEmpty(this.source.datetime_end);
     if (endStr) {
-      return moment(`${endStr}Z`);
+      const end = moment(`${endStr}Z`, moment.ISO_8601);
+      return end.isValid() ? end : null;
     }
     return null;
   }
