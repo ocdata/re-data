@@ -26,6 +26,7 @@ class RPNewImporter {
     this.source.sessionUrlPrefix = options.sessionUrlPrefix;
     this.source.speakerUrlPrefix = options.speakerUrlPrefix;
     this.source.speakerPicturePrefix = options.speakerPicturePrefix;
+    this.source.recordedLocationIds = options.recordedLocationIds;
     
     this.tracks = {};
     this.locations = {};
@@ -113,6 +114,9 @@ class RPNewImporter {
         };
       }
       const session = new Session(sessionJSON, urlFunction);
+      if (session.location && this.source.recordedLocationIds) {
+        session.willBeRecorded = this.source.recordedLocationIds.include(session.location.id);
+      }
       this.sessions[session.id] = session;
     });
   }

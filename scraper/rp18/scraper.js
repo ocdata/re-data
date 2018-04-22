@@ -58,6 +58,17 @@ exports.scrape = (callback) => {
 
           ],
           trackColorMap: trackColors,
+          recordedLocationIds: [
+            '24458', // 1
+            '24459', // 2
+            '24460', // 3
+            '24461', // 4
+            '24462', // 5
+            '24465', // 8
+            '24462', // 9
+            '24466', // T
+            '24467', // J
+          ],
         },
       );
 

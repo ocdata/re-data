@@ -147,7 +147,9 @@ class Session {
       json.cancelled = false;
     }
     json.day = this.day;
-    json.will_be_recorded = false;
+    if (this.willBeRecorded) {
+      json.will_be_recorded = this.willBeRecorded;
+    }
     json.related_sessions = [];
     json.links = [];
     json.enclosures = [];
