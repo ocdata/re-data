@@ -115,7 +115,7 @@ class RPNewImporter {
       }
       const session = new Session(sessionJSON, urlFunction);
       if (session.location && this.source.recordedLocationIds) {
-        session.willBeRecorded = this.source.recordedLocationIds.include(session.location.id);
+        session.willBeRecorded = this.source.recordedLocationIds.includes(session.location.id);
       }
       this.sessions[session.id] = session;
     });
