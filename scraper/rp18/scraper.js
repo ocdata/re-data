@@ -56,6 +56,7 @@ exports.scrape = (callback) => {
             'Media Cube',
             'rp:International Space',
             'Xtra - rp18 side events',
+            'Speakers&amp;#039; Corner',
           ],
           trackColorMap: trackColors,
           recordedLocationIds: [
