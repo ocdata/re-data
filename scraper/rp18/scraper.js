@@ -55,7 +55,7 @@ exports.scrape = (callback) => {
             'POP-up Room',
             'Media Cube',
             'rp:International Space',
-
+            'Xtra - rp18 side events',
           ],
           trackColorMap: trackColors,
           recordedLocationIds: [
