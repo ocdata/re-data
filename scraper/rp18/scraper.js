@@ -57,6 +57,7 @@ exports.scrape = (callback) => {
             'rp:International Space',
             'Lab1886 Truck',
             'Speakers&#039; Corner',
+            'Technikmuseum',
             'Xtra - rp18 side events',
           ],
           trackColorMap: trackColors,
