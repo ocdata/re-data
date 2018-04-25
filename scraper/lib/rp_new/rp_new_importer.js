@@ -75,7 +75,10 @@ class RPNewImporter {
       const roomName = Helpers.nullIfEmpty(session.room);
       const roomId = Helpers.nullIfEmpty(session.room_nid);
       if (!roomName || !roomId) return;
-      const locationIndex = this.source.locationIndices.indexOf(roomName);
+      let locationIndex = this.source.locationIndices.indexOf(roomName);
+      if (locationIndex === -1) {
+        locationIndex = this.locations.length + 1;
+      }
       const location = new Location(roomName, roomId, locationIndex, (roomName.match(/Stage/i) != null));
       this.locations[location.id] = location;
     });
