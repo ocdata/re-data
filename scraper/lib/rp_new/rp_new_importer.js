@@ -65,7 +65,7 @@ class RPNewImporter {
       this.tracks[track.id] = track;
     });
 
-    const otherTrack = new Track('Other', [56, 56, 56, 1]);
+    const otherTrack = new Track('Other', [111, 111, 111, 1]);
     this.tracks[otherTrack.id] = otherTrack;
     this.source.otherTrack = otherTrack;
   }
