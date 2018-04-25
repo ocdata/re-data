@@ -130,10 +130,13 @@ describe('rp_new', () => {
 
     it('should parse all tracks', () => {
       const trackKeys = Object.keys(rpnew.tracks);
-      assert.equal(trackKeys.length, 2);
+      assert.equal(trackKeys.length, 3);
       
       const track = rpnew.tracks['media-convention-berlin'];
       assert.equal(track.name, "MEDIA CONVENTION Berlin");
+
+      const otherTrack = rpnew.tracks['other'];
+      assert.equal(otherTrack.name, "Other");
     });
 
     it('should parse all locations', () => {

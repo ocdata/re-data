@@ -64,6 +64,10 @@ class RPNewImporter {
       }
       this.tracks[track.id] = track;
     });
+
+    const otherTrack = new Track('Other', [56, 56, 56, 1]);
+    this.tracks[otherTrack.id] = otherTrack;
+    this.source.otherTrack = otherTrack;
   }
 
   _processLocations() {
@@ -155,6 +159,8 @@ class RPNewImporter {
       const track = this.tracks[trackId];
       if (track) {
         session.track = track.miniJSON;
+      } else {
+        session.track = this.source.otherTrack.miniJSON;
       }
 
       // Days
