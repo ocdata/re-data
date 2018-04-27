@@ -23,12 +23,12 @@ class Event {
     this.locations = json.locations.map(locationJSON => new EventLocation(locationJSON));
   }
 
-  days(names = {}) {
+  days(dayNames = {}) {
     const days = [];
     let day = this.begin;
     do {
-      const name = names[day.format('YYYY-MM-DD')];
-      const rpday = new Day(day, name);
+      const names = dayNames[day.format('YYYY-MM-DD')];
+      const rpday = new Day(day, names);
       days.push(rpday);
       day = day.add(1, 'd');
     } while (!day.isAfter(this.end));

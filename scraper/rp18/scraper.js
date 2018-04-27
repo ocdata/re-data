@@ -29,9 +29,9 @@ exports.scrape = (callback) => {
           speakerUrlPrefix: 'https://18.re-publica.com/de/member/',
           speakerPicturePrefix: 'https://re-publica.com',
           dayNames: {
-            '2018-05-02': 'Tag 1',
-            '2018-05-03': 'Tag 2',
-            '2018-05-04': 'Tag 3',
+            '2018-05-02': { de: 'Tag 1', en: 'Day 1' },
+            '2018-05-03': { de: 'Tag 2', en: 'Day 2' },
+            '2018-05-04': { de: 'Tag 3', en: 'Day 3' },
           },
           locationIndices: [
             'Stage 1',
