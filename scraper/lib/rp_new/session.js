@@ -153,8 +153,8 @@ class Session {
     }
     json.related_sessions = [];
     json.links = [];
-    const link = new Link('https://www.twitch.tv/gattaigames', 'recording', 'test 123');
-    json.links.push(link.JSON);
+    // const link = new Link('https://www.twitch.tv/gattaigames', 'recording', 'test 123');
+    // json.links.push(link.JSON);
     json.enclosures = [];
     json.location = this.location;
     if (this.urlFunction) {
