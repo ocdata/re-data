@@ -1,6 +1,7 @@
 const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
+const Link = require('./link');
 
 class Session {
   constructor(json, urlFunction = undefined, timezone = 'Etc/UTC') {
@@ -33,8 +34,8 @@ class Session {
     names.forEach((name, index) => {
       const id = ids[index];
       result.push({ id, name });
-    });
-    return result;
+    })
+    return result.filter(s => s.id != null && s.name != null);
   }
 
   get moderators() {
@@ -152,6 +153,8 @@ class Session {
     }
     json.related_sessions = [];
     json.links = [];
+    const link = new Link('https://www.twitch.tv/gattaigames', 'recording', 'test 123');
+    json.links.push(link.JSON);
     json.enclosures = [];
     json.location = this.location;
     if (this.urlFunction) {

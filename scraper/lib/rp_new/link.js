@@ -15,6 +15,7 @@ class Link {
   static get videoServiceLinkRegExes() {
     return {
       youtube: [/^https?:\/\/([\w-]+\.)?youtube\.com\//i],
+      twitch: [/^https?:\/\/([\w-]+\.)?twitch\.tv\//i],
     };
   }
 
@@ -47,7 +48,7 @@ class Link {
         const regexes = keyValue[1];
 
         regexes.forEach((regex) => {
-          if (service) return;
+          if (service && service !== 'web') return;
 
           const match = this.url.match(regex);
           if (match) {
@@ -66,7 +67,7 @@ class Link {
       url: this.url,
       type: this.type,
       title: this.title,
-      serivce: urlInfo.service,
+      service: urlInfo.service,
     };
     if (urlInfo.username) result.username = urlInfo.username;
 
