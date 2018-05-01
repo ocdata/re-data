@@ -11,6 +11,10 @@ const dumpFolder = `${path.resolve(__dirname, '../../web/data/')}/${EVENT_ID}/`;
 const event = events.find(eventJson => eventJson.id === EVENT_ID);
 if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 
+
+// Stage 7: https://alex-front.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8
+// Stage 6: https://alex-front.rosebud-media.de/event/smil:alexevent.smil/playlist.m3u8
+
 exports.scrape = (callback) => {
   JSONRequester.get(
     {
@@ -67,6 +71,8 @@ exports.scrape = (callback) => {
             '24460', // 3
             '24461', // 4
             '24462', // 5
+            '24463', // 6
+            '24464', // 7
             '24465', // 8
             '24462', // 9
             '24466', // T
