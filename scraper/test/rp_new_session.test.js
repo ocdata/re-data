@@ -57,6 +57,19 @@ describe('rp_new', () => {
       assert.equal(session.format.id, 'discussion');
       assert.equal(session.level.id, 'everyone');
     })
+
+
+    it('should parse youtube links', () => {
+      const { links } = session.JSON;
+      assert.equal(links.length, 1);
+
+      const [ recording ] = links;
+      assert.equal(recording.type, 'recording');
+      assert.equal(recording.title, session.title);
+      assert.equal(recording.url, 'https://www.youtube.com/v/OlIkGlTMUNE');
+      assert.equal(recording.thumbnail, 'https://img.youtube.com/vi/OlIkGlTMUNE/hqdefault.jpg');
+      assert.equal(recording.service, 'youtube');
+    });
   });
 
   describe('Speaker', () => {

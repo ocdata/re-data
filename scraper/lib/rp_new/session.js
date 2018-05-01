@@ -13,7 +13,7 @@ class Session {
   get id() {
     return this.source.nid;
   }
-  
+
   get title() {
     return Helpers.dehtml(this.source.title);
   }
@@ -153,6 +153,23 @@ class Session {
     }
     json.related_sessions = [];
     json.links = [];
+
+    if (this.source.video) {
+      const ytregex = /^https?\:\/\/www\.youtube\.com\/watch\?v=(.+)$/i;
+      const match = this.source.video.match(ytregex);
+      if (match && match[1]) {
+        const vid = match[1];
+        const ytrecording = {
+          thumbnail: `https://img.youtube.com/vi/${vid}/hqdefault.jpg`,
+          title: json.title,
+          url: `https://www.youtube.com/v/${vid}`,
+          service: 'youtube',
+          type: 'recording',
+        };
+        json.links.push(ytrecording);
+      }
+    }
+
     // const link = new Link('https://www.twitch.tv/gattaigames', 'recording', 'test 123');
     // json.links.push(link.JSON);
     json.enclosures = [];
