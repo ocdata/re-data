@@ -176,6 +176,11 @@ class Session {
     // const link = new Link('https://www.twitch.tv/gattaigames', 'recording', 'test 123');
     // json.links.push(link.JSON);
     json.enclosures = [];
+    if (this.streamEnclosure) {
+      const enclosure = this.streamEnclosure;
+      json.enclosures.push(enclosure.JSON);
+    }
+
     json.location = this.location;
     if (this.urlFunction) {
       json.url = this.urlFunction(this);

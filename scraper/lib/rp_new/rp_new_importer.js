@@ -5,6 +5,7 @@ const Location = require('./location');
 const Track = require('./track');
 const Event = require('./event');
 const Link = require('./link');
+const Enclosure = require('./enclosure');
 const { Level, Language, Format } = require('./mappings');
 const moment = require('moment-timezone');
 
@@ -127,12 +128,26 @@ class RPNewImporter {
       if (session.location && this.source.recordedLocationIds) {
         session.willBeRecorded = this.source.recordedLocationIds.includes(session.location.id);
       }
+      // add livestream links (yt, etc.)
       if (session.location && this.source.locationStreamLinks[session.location.id]) {
         const streamLink = this.source.locationStreamLinks[session.location.id];
         if (streamLink) {
           const link = new Link(streamLink.url, 'livestream', session.title);
-          console.log(link);
           session.streamLink = link;
+        }
+      }
+      // add livestream via HLS
+      if (session.location && this.source.locationLiveEnclosureUrls) {
+        const streamLink = this.source.locationLiveEnclosureUrls[session.location.id];
+        if (streamLink) {
+          const enclosure = new Enclosure(
+            streamLink.url,
+            'livestream',
+            session.title,
+            'application/x-mpegurl',
+            streamLink.thumb,
+          );
+          session.streamEnclosure = enclosure;
         }
       }
       this.sessions[session.id] = session;

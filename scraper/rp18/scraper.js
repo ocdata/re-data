@@ -84,16 +84,18 @@ exports.scrape = (callback) => {
               service: 'twitch',
             },
             24459: {
-              url: 'https://www.youtube.com/watch?v=F_ACezLru_U', 
+              url: 'https://www.youtube.com/watch?v=F_ACezLru_U',
               service: 'youtube',
             },
           },
           locationLiveEnclosureUrls: {
             24464: {
               url: 'https://alex-front.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8',
+              thumb: 'https://www.alex-berlin.de/files/theme/img/livestream/tvlivestream.jpg',
             },
             24463: {
               url: 'https://alex-front.rosebud-media.de/event/smil:alexevent.smil/playlist.m3u8',
+              thumb: 'https://www.alex-berlin.de/files/theme/img/livestream/tvlivestream.jpg',
             },
           },
         },
