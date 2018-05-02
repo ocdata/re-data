@@ -31,6 +31,7 @@ class RPNewImporter {
     this.source.recordedLocationIds = options.recordedLocationIds;
     this.source.locationStreamLinks = options.locationStreamLinks;
     this.source.locationLiveEnclosureUrls = options.locationLiveEnclosureUrls;
+    this.source.ytrecordings = options.ytrecordings;
 
     this.tracks = {};
     this.locations = {};
@@ -136,6 +137,13 @@ class RPNewImporter {
           session.streamLink = link;
         }
       }
+
+      // add recording from YT
+      const ytrecording = this.source.ytrecordings[session.title.toLowerCase()];
+      if (ytrecording) {
+        session.recordingLink = new Link(ytrecording, 'recording', session.title);
+      }
+
       // add livestream via HLS
       if (session.location && this.source.locationLiveEnclosureUrls) {
         const streamLink = this.source.locationLiveEnclosureUrls[session.location.id];
@@ -150,6 +158,7 @@ class RPNewImporter {
           session.streamEnclosure = enclosure;
         }
       }
+
       this.sessions[session.id] = session;
     });
   }
