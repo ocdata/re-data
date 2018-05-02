@@ -4,6 +4,7 @@ const Speaker = require('./speaker');
 const Location = require('./location');
 const Track = require('./track');
 const Event = require('./event');
+const Link = require('./link');
 const { Level, Language, Format } = require('./mappings');
 const moment = require('moment-timezone');
 
@@ -27,7 +28,9 @@ class RPNewImporter {
     this.source.speakerUrlPrefix = options.speakerUrlPrefix;
     this.source.speakerPicturePrefix = options.speakerPicturePrefix;
     this.source.recordedLocationIds = options.recordedLocationIds;
-    
+    this.source.locationStreamLinks = options.locationStreamLinks;
+    this.source.locationLiveEnclosureUrls = options.locationLiveEnclosureUrls;
+
     this.tracks = {};
     this.locations = {};
     this.speakers = {};
@@ -123,6 +126,14 @@ class RPNewImporter {
       const session = new Session(sessionJSON, urlFunction);
       if (session.location && this.source.recordedLocationIds) {
         session.willBeRecorded = this.source.recordedLocationIds.includes(session.location.id);
+      }
+      if (session.location && this.source.locationStreamLinks[session.location.id]) {
+        const streamLink = this.source.locationStreamLinks[session.location.id];
+        if (streamLink) {
+          const link = new Link(streamLink.url, 'livestream', session.title);
+          console.log(link);
+          session.streamLink = link;
+        }
       }
       this.sessions[session.id] = session;
     });

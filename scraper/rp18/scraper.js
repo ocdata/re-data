@@ -78,6 +78,24 @@ exports.scrape = (callback) => {
             '24466', // T
             '24467', // J
           ],
+          locationStreamLinks: {
+            24458: {
+              url: 'https://www.twitch.tv/re_publica',
+              service: 'twitch',
+            },
+            24459: {
+              url: 'https://www.youtube.com/watch?v=F_ACezLru_U', 
+              service: 'youtube',
+            },
+          },
+          locationLiveEnclosureUrls: {
+            24464: {
+              url: 'https://alex-front.rosebud-media.de/live/smil:alexlivetv.smil/playlist.m3u8',
+            },
+            24463: {
+              url: 'https://alex-front.rosebud-media.de/event/smil:alexevent.smil/playlist.m3u8',
+            },
+          },
         },
       );
 

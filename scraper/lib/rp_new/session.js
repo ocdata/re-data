@@ -9,7 +9,7 @@ class Session {
     this.urlFunction = urlFunction;
     this.timezone = timezone;
   }
-
+  
   get id() {
     return this.source.nid;
   }
@@ -153,6 +153,9 @@ class Session {
     }
     json.related_sessions = [];
     json.links = [];
+    if (this.streamLink) {
+      json.links.push(this.streamLink.JSON);
+    }
 
     if (this.source.video) {
       const ytregex = /^https?\:\/\/www\.youtube\.com\/watch\?v=(.+)$/i;

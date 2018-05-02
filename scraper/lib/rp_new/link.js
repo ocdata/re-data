@@ -49,7 +49,7 @@ class Link {
 
         regexes.forEach((regex) => {
           if (service && service !== 'web') return;
-
+          
           const match = this.url.match(regex);
           if (match) {
             service = serviceIdentifier;
