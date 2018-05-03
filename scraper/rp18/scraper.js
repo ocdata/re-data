@@ -101,7 +101,7 @@ function praseData(result, ytrecordings = {}, callback) {
           service: 'twitch',
         },
         24459: {
-          url: 'https://www.youtube.com/watch?v=F_ACezLru_U',
+          url: 'https://www.youtube.com/v/F_ACezLru_U',
           service: 'youtube',
         },
       },
