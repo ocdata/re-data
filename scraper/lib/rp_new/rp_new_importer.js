@@ -140,8 +140,9 @@ class RPNewImporter {
 
       // add recording from YT
       const ytrecording = this.source.ytrecordings[session.title.toLowerCase()];
-      if (ytrecording) {
-        session.recordingLink = new Link(ytrecording, 'recording', session.title);
+      if (ytrecording && ytrecording.match(/v=(.+)$/)) {
+        const link = `https://youtube.com/v/${RegExp.$1}`
+        session.recordingLink = new Link(link, 'recording', session.title);
       }
 
       // add livestream via HLS
