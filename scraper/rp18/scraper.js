@@ -5,7 +5,8 @@ const RpNewImporter = require('./../lib/rp_new/rp_new_importer');
 const events = require('./../config/events');
 const JSONRequester = require('../lib/json_requester');
 const trackColors = require('./track_colors');
-const cheerio = require("cheerio");
+const cheerio = require('cheerio');
+
 const EVENT_ID = 'rp18';
 const dumpFolder = `${path.resolve(__dirname, '../../web/data/')}/${EVENT_ID}/`;
 
@@ -28,7 +29,7 @@ async function updateSessionsWithYoutubeVideosByTitle(userId, prefix = 're:publi
         const text = a.text().trim();
 
         if (text.startsWith(prefix)) {
-          const textTitle = text.replace(prefix, '').toLowerCase();
+          const textTitle = text.replace(prefix, '').toLowerCase().slice(0, 20);
           links[textTitle] = `https://www.youtube.com${href}`;
         }
       });
