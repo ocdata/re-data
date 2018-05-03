@@ -13,9 +13,8 @@ const dumpFolder = `${path.resolve(__dirname, '../../web/data/')}/${EVENT_ID}/`;
 const event = events.find(eventJson => eventJson.id === EVENT_ID);
 if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 
-async function updateSessionsWithYoutubeVideosByTitle(userId, prefix = 're:publica 2018 – ') {
-  const url = `https://www.youtube.com/user/${userId}/videos`;
-
+async function updateSessionsWithYoutubeVideosByTitle(url, prefix = 're:publica 2018 – ', suffix = null) {
+  
   const promise = new Promise((resolve, reject) => {
     request(url, (error, response, body) => {
       if (error) { reject(error); return; }
@@ -28,7 +27,8 @@ async function updateSessionsWithYoutubeVideosByTitle(userId, prefix = 're:publi
         const href = a.attr('href');
         const text = a.text().trim();
 
-        if (text.startsWith(prefix)) {
+        if ((prefix && text.startsWith(prefix))
+            || (suffix && text.endsWith(suffix))) {
           const textTitle = text.replace(prefix, '').toLowerCase().slice(0, 20);
           links[textTitle] = `https://www.youtube.com${href}`;
         }
@@ -137,8 +137,22 @@ exports.scrape = (callback) => {
       },
     },
     (result) => {
-      updateSessionsWithYoutubeVideosByTitle('republica2010')
-        .then(ytmap => praseData(result, ytmap, callback))
+
+      const rpvideos = updateSessionsWithYoutubeVideosByTitle('https://www.youtube.com/user/republica2010/videos');
+      const mcbvideos = updateSessionsWithYoutubeVideosByTitle(
+        'https://www.youtube.com/playlist?list=PLQOns7rQTDGN7hkQfBfMFFT8Z5m_Bs81z',
+        null,
+        ' | Media Convention 2018',
+      );
+
+      Promise.all([rpvideos, mcbvideos])
+        .then(([rp, mcb]) => {
+          const ytmap = {};
+          Object.entries(rp).forEach(([k, v]) => { ytmap[k] = v;});
+          Object.entries(mcb).forEach(([k, v]) => { ytmap[k] = v; });
+
+          praseData(result, ytmap, callback);
+        })
         .catch(() => praseData(result, {}, callback));
     },
   );
