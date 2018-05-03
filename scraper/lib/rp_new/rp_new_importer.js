@@ -141,7 +141,7 @@ class RPNewImporter {
       // add recording from YT
       const ytrecording = this.source.ytrecordings[session.title.toLowerCase()];
       if (ytrecording && ytrecording.match(/v=(.+)$/)) {
-        const link = `https://youtube.com/v/${RegExp.$1}`
+        const link = `https://www.youtube.com/v/${RegExp.$1}`
         session.recordingLink = new Link(link, 'recording', session.title);
       }
 
