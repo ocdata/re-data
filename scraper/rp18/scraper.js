@@ -13,7 +13,7 @@ const event = events.find(eventJson => eventJson.id === EVENT_ID);
 if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 
 async function updateSessionsWithYoutubeVideosByTitle(userId, prefix = 're:publica 2018 – ') {
-  const url = `https://www.youtube.com/user/${userId}/videos?flow=grid&view=57`;
+  const url = `https://www.youtube.com/user/${userId}/videos`;
 
   const promise = new Promise((resolve, reject) => {
     request(url, (error, response, body) => {
@@ -32,7 +32,7 @@ async function updateSessionsWithYoutubeVideosByTitle(userId, prefix = 're:publi
           links[textTitle] = `https://www.youtube.com${href}`;
         }
       });
-
+      console.log('found videos: ', Object.keys(links).length);
       resolve(links);
     });
   });
