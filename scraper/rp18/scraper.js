@@ -112,7 +112,6 @@ exports.scrape = (callback) => {
       },
     },
     (result) => {
-      
       const rpvideosPop = youTubeLinks('https://www.youtube.com/watch?v=Rl9JX5jmY0M&list=PLAR_6-tD7IZWKEZImhoGQEsNZmBgFpfle');
       const rpvideosCancelAppocalypse = youTubeLinks('https://www.youtube.com/watch?v=oUExsJ1XavE&list=PLAR_6-tD7IZXmGQsMyPe01D0BygzBvivq');
       const rpvideosFemaleFootprint = youTubeLinks('https://www.youtube.com/watch?v=BC8IznMVGs4&list=PLAR_6-tD7IZUsRa06XaiuvCRa6PusSa34');

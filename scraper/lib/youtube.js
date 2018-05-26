@@ -23,7 +23,7 @@ function linksFromYouTubeWithPrefix(url, prefix = 're:publica 2018 – ', suffix
 
         if (matches) {
           const [textTitle] = text.replace(prefix, '').split('\n');
-          links[textTitle.toLowerCase()] = `https://www.youtube.com${href}`;
+          links[textTitle.toLowerCase().slice(0, 20)] = `https://www.youtube.com${href}`;
         }
       });
 
