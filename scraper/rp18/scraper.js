@@ -6,6 +6,7 @@ const events = require('./../config/events');
 const JSONRequester = require('../lib/json_requester');
 const trackColors = require('./track_colors');
 const cheerio = require('cheerio');
+const youTubeLinks = require('../lib/youtube');
 
 const EVENT_ID = 'rp18';
 const dumpFolder = `${path.resolve(__dirname, '../../web/data/')}/${EVENT_ID}/`;
@@ -13,32 +14,6 @@ const dumpFolder = `${path.resolve(__dirname, '../../web/data/')}/${EVENT_ID}/`;
 const event = events.find(eventJson => eventJson.id === EVENT_ID);
 if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 
-async function updateSessionsWithYoutubeVideosByTitle(url, prefix = 're:publica 2018 – ', suffix = null) {
-  
-  const promise = new Promise((resolve, reject) => {
-    request(url, (error, response, body) => {
-      if (error) { reject(error); return; }
-
-      const $ = cheerio.load(body);
-      
-      const links = {};
-      $('a').each((i, link) => {
-        const a = $(link);
-        const href = a.attr('href');
-        const text = a.text().trim();
-
-        if ((prefix && text.startsWith(prefix))
-            || (suffix && text.endsWith(suffix))) {
-          const textTitle = text.replace(prefix, '').toLowerCase().slice(0, 20);
-          links[textTitle] = `https://www.youtube.com${href}`;
-        }
-      });
-      console.log('found videos: ', Object.keys(links).length);
-      resolve(links);
-    });
-  });
-  return promise;
-}
 
 function praseData(result, ytrecordings = {}, callback) {
   const importer = new RpNewImporter(
@@ -137,20 +112,44 @@ exports.scrape = (callback) => {
       },
     },
     (result) => {
+      
+      const rpvideosPop = youTubeLinks('https://www.youtube.com/watch?v=Rl9JX5jmY0M&list=PLAR_6-tD7IZWKEZImhoGQEsNZmBgFpfle');
+      const rpvideosCancelAppocalypse = youTubeLinks('https://www.youtube.com/watch?v=oUExsJ1XavE&list=PLAR_6-tD7IZXmGQsMyPe01D0BygzBvivq');
+      const rpvideosFemaleFootprint = youTubeLinks('https://www.youtube.com/watch?v=BC8IznMVGs4&list=PLAR_6-tD7IZUsRa06XaiuvCRa6PusSa34');
+      const rpvideosFintech = youTubeLinks('https://www.youtube.com/watch?v=zlmgR0e-nAQ&list=PLAR_6-tD7IZWSEMVR5-qTiBpZ3eTK4lBc');
+      const rpvideosImmersive = youTubeLinks('https://www.youtube.com/watch?v=EYzKOjyV-h4&list=PLAR_6-tD7IZXOdP1rfCdH89hgfd3YoPHq');
+      const rpvideosLawlabs = youTubeLinks('https://www.youtube.com/watch?v=Aku0Bo5wcVo&list=PLAR_6-tD7IZVKYvtjgKmOxBkl9oexroXN');
+      const rpvideosMusic = youTubeLinks('https://www.youtube.com/watch?v=6ywZQ8QlmQY&list=PLAR_6-tD7IZUowDKMFWR8jS7_EYtDS3jn');
+      const rpvideosRehealth = youTubeLinks('https://www.youtube.com/watch?v=wcSRCPpnt34&list=PLAR_6-tD7IZU24HcE0NV1ZWo3tv6WdpDd');
+      const rpvideosRelearn = youTubeLinks('https://www.youtube.com/watch?v=WtWMVyn2K4I&list=PLAR_6-tD7IZWuWKuWg9VxyqHhge9ikk5N');
+      const rpvideosSmartCities = youTubeLinks('https://www.youtube.com/watch?v=4tvRgDtzBak&list=PLAR_6-tD7IZXdGQ3F9872k-RRL_JwthcT');
 
-      const rpvideos = updateSessionsWithYoutubeVideosByTitle('https://www.youtube.com/user/republica2010/videos');
-      const mcbvideos = updateSessionsWithYoutubeVideosByTitle(
+      const mcbvideos = youTubeLinks(
         'https://www.youtube.com/playlist?list=PLQOns7rQTDGN7hkQfBfMFFT8Z5m_Bs81z',
         null,
         ' | Media Convention 2018',
       );
 
-      Promise.all([rpvideos, mcbvideos])
-        .then(([rp, mcb]) => {
+      Promise.all([
+        rpvideosPop,
+        rpvideosCancelAppocalypse,
+        rpvideosFemaleFootprint,
+        rpvideosFintech,
+        rpvideosImmersive,
+        rpvideosLawlabs,
+        rpvideosMusic,
+        rpvideosRehealth,
+        rpvideosRelearn,
+        rpvideosSmartCities,
+        mcbvideos,
+      ])
+        .then((videos) => {
           const ytmap = {};
-          Object.entries(rp).forEach(([k, v]) => { ytmap[k] = v;});
-          Object.entries(mcb).forEach(([k, v]) => { ytmap[k] = v; });
 
+          videos.forEach((res) => {
+            Object.entries(res).forEach(([k, v]) => { ytmap[k] = v; });
+          });
+          
           praseData(result, ytmap, callback);
         })
         .catch(() => praseData(result, {}, callback));
