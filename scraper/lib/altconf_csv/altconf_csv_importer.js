@@ -40,12 +40,14 @@ class AltconfCsvImporter {
     this.data = result;
     this.speakers = {};
     this.days = {};
-    this.locations = {};
     this.tracks = {};
+    this.timezone = this.event.locations[0].timezone;
 
     this._processSessions();
     this._processDays();
     this._processTracks();
+    this._processLocations();
+    this._processSessionRelations();
   }
 
   _processDays() {
@@ -66,8 +68,45 @@ class AltconfCsvImporter {
     this.sessions = sessions;
   }
 
+  _processLocations() {
+    const locations = {};
+
+    this.data.forEach((row, index) => {
+      const location = new Location(row, index);
+
+      locations[location.id] = location;
+    });
+
+    this.locations = locations;
+  }
+
   _processTracks() {
     this.tracks[Track.altConf.id] = Track.altConf;
+  }
+
+  _processSessionRelations() {
+    const dayIdForSession = (session, timezone, dayBeginHour) => {
+      if (!moment.isMoment(session.begin) && timezone && dayBeginHour) return null;
+      let { begin } = session;
+
+      const hour = begin.tz(timezone).hour();
+      if (hour < dayBeginHour) {
+        begin = begin.subtract(24, 'h');
+      }
+
+      return begin.format('YYYY-MM-DD');
+    };
+
+    Object.keys(this.sessions).forEach((sessionId) => {
+      const session = this.sessions[sessionId];
+      const dayId = dayIdForSession(session, this.timezone, this.dayStartHour);
+      if (dayId) {
+        const day = this.days[dayId];
+        if (day) {
+          session.day = day.miniJSON;
+        }
+      }
+    });
   }
 
   get JSON() {

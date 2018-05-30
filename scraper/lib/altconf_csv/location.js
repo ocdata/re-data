@@ -1,9 +1,14 @@
+const Helpers = require('./../helpers');
+
 class Location {
-  constructor(name, roomId, orderIndex = 1000, isStage = false) {
+  constructor(row, orderIndex = 1000, isStage = false) {
+    const [, , , , location] = row;
+
     this.isStage = isStage;
-    this.label_de = name;
-    this.label_en = name;
-    this.id = roomId;
+
+    this.label_de = location;
+    this.label_en = location;
+    this.id = Helpers.mkId(location);
     this.orderIndex = orderIndex;
   }
 

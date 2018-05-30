@@ -18,21 +18,23 @@ class Event {
     this.title = json.title;
     this.url = json.url;
     this.hashtag = json.hashtag;
-    
     this.locations = json.locations.map(locationJSON => new EventLocation(locationJSON));
-    this.begin = moment.tz(json.date[0], this.locations[0].timezone);
-    this.end = moment.tz(json.date[1], this.locations[0].timezone);
+    this.timezone = this.locations[0].timezone;
+    this.begin = moment.tz(json.date[0], this.timezone);
+    this.end = moment.tz(json.date[1], this.timezone);
   }
 
   days(dayNames = {}) {
     const days = [];
-    let day = this.begin;
+    const day = moment.tz(this.begin, this.timezone);
+    const endDay = moment.tz(this.end, this.timezone);
+    endDay.add(1, 'd');
     do {
       const names = dayNames[day.format('YYYY-MM-DD')];
       const rpday = new Day(day, names);
       days.push(rpday);
-      day = day.add(1, 'd');
-    } while (!day.isAfter(this.end));
+      day.add(1, 'd');
+    } while (!day.isAfter(endDay));
     return days;
   }
 }
