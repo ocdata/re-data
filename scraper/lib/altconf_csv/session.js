@@ -38,7 +38,7 @@ class Session {
         id: Helpers.mkId(name),
       };
     });
-    this.abstract = afterMatch;
+    this.description = afterMatch;
   }
 
   get miniJSON() {
@@ -63,7 +63,7 @@ class Session {
     json.track = this.track;
     json.format = this.format;
     json.abstract = this.abstract;
-    json.description = null;
+    json.description = this.description;
     json.format = Format.Talk;
     json.level = Level.Everyone;
     json.lang = Language.English;

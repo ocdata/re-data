@@ -25,7 +25,7 @@ class Track {
   }
 
   static get altConf() {
-    return new Track('AltConf', [0, 255, 0, 1]);
+    return new Track('AltConf', [121, 33, 30, 1]);
   }
 }
 
