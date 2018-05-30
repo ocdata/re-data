@@ -24,10 +24,12 @@ class Session {
   }
 
   _processContent() {
-    const regex = /<div class="schedule__speaker">(.+)<\/div>/;
+    const regex = /<div .+>(.+)<\/div>/;
 
     const match = this.content.match(regex);
-    if (!match || match.length < 2) return;
+    if (!match || match.length < 2) {
+      return;
+    }
     const afterMatch = this.content.replace(match[0], '');
     const speakerList = match[1];
     const speakerNames = speakerList.split(/ ?[&,] /);
@@ -38,7 +40,8 @@ class Session {
         id: Helpers.mkId(name),
       };
     });
-    this.description = afterMatch;
+    this.description = null;
+    this.abstract = afterMatch.trim();
   }
 
   get miniJSON() {
