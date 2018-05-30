@@ -1,0 +1,29 @@
+"sep=,",,,,,
+title,startdate,enddate,starttime,location,content
+Adding Visual Recognition Capabilities to Your iOS App using Watson Studio and Core ML,2018-06-05,2018-06-05,10:00-11:00,Lab Room 1,"<div class=""schedule__speaker"">Joshua Zheng, Devin Conley, Nicholas Bourdakas & Tom Markiewicz</div>
+Think you can build an awesome AI-powered app for iOS in an hour? You can with IBM’s Watson and Apple’s Core ML. You’ll train your own machine learning models and use them in your apps quickly. Your challenge? Build an app that couples AI with videos and photos to identify and classify real world objects. At the end of the lab, you will have a working iOS app that is able to detect different types of connectors (USB, HDMI, Thunderbolt, etc). Sign up here: http://ibm.biz/IBM_AltConf_Labs."
+Core Data,2018-06-05,2018-06-05,10:00-12:00,Lab Room 2,<div class=“schedule__speaker”>Florian Burger</div> TBD
+ARKit meets Watson for Core ML,2018-06-05,2018-06-05,12:00-13:00,Lab Room 2,"<div class=“schedule__speaker”>Sanjeev Ghimire & Anamita Guha</div> 
+In this hands-on lab you'll get quickly up to speed on the capabilities of server-side Swift with the Kitura web framework, and how you can build a real application that an iOS client can connect to. Learn about routing, middleware and web APIs, and how server-side Swift is a flexible and powerful choice for your next project. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
+Cloud Firestore Workshop,2018-06-05,2018-06-05,13:30-16:00,Lab Room 1,"<div class=“schedule__speaker”>James Daniels</div> Cloud Firestore is the next-generation document-object database in the cloud from Firebase. In this workshop, we'll help you understand all of the features of Cloud Firestore, and how to best use it in developing production ready scalable apps. This workshop will provide you with a general introduction to NoSQL databases, and then will cover more advanced topics like querying, transactions, security rules, offline support, pagination, and more!"
+The How-To Workshop on Finding Product Market Fit,2018-06-05,2018-06-05,14:00-16:00,Lab Room 2,<div class=“schedule__speaker”>Yaroslav Stepanenko</div> 
+Build a virtual assistant into your iOS apps,2018-06-06,2018-06-06,10:00-11:00,Lab Room 1,"<div class=“schedule__speaker”>Marek Sadowski, Emma Tucker, Norton Stanley & Vittal Pai</div> 
+Anantha Kk GirijakumariQuickly build a virtual assistant across a variety of channels using the Apple platform developer tools. In this lab you'll get started building a natural language interface with the trusted Apple platform. You can be talking with Watson within minutes. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
+Fix Data Privacy & Password Security in your Apps!,2018-06-06,2018-06-06,10:00-12:00,Lab Room 2,"<div class=“schedule__speaker”>David Szabo</div> 
+Like Smokey the Bear says, only YOU can prevent password breaches!
+The world is shifting. Users and governments are demanding more privacy and security.
+Developers: you can and should leverage this as an advantage for your product.
+On June 6th, join us for a practical, hands-on workshop to learn how to use existing code to build encryption and password security into your tech without having to become an security expert.
+
+This free workshop will consist of two parts: 1) How to implement End-to-End Encryption to keep your product's data secure from cloud providers, hackers and curious eyes and 2) How to implement a password hashing technique that can't be breached. Sign Up here: https://virgilworldtour.squarespace.com"
+TBD,2018-06-06,2018-06-06,11:00-13:00,Lab Room 1,"<div class=“schedule__speaker”>Liz Marley</div> 
+TBD"
+How to Avoid Massive View Controllers when Building iOS apps using MVC in Swift,2018-06-06,2018-06-06,13:00-15:00,Lab Room 2,<div class=“schedule__speaker”>Zubair Asgar</div> TBD
+Build an iOS backend in Swift with Kitura,2018-06-06,2018-06-06,15:00-16:00,Lab Room 1,"<div class=“schedule__speaker”>Ian Partridge, Chris Bailey, Lloyd Roseblade & David Okun</div> 
+It's time to take your app into the Augmented Reality and Machine Learning era. Learn how to create an app that delivers augmented reality-based résumés with Visual Recognition. The iOS app recognizes the face and presents you with the AR view that displays a résumé of the person in the camera view. The app uses Watson Visual Recognition and Core ML to classify the image and then uses that classification to get details about the person from data stored in an IBM Cloudant NoSQL database. The images are classified offline using a deep neural network that is trained by Visual Recognition. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
+"CI/CD (CircleCI, Jenkins, Fastlane, App Center, BitRise...)",2018-06-07,2018-06-07,10:00-12:00,Lab Room 1,<div class=“schedule__speaker”>Josh Holtz</div> TBD
+Questions on UIKit or Swift,2018-06-07,2018-06-07,10:00-12:00,Lab Room 2,<div class=“schedule__speaker”>Daniel Tull & Daniel Kennett</div> TBD
+"Convolutional Neural Networks, Swift & iOS 12",2018-06-07,2018-06-07,12:00-14:00,Lab Room 1,"<div class=“schedule__speaker”>Brett Koonce</div>
+We will discuss different neural network architechtures and how to build, train and use different models to solve problems with Swift and iOS 12. Bring your own problem and I will suggest how to tackle it!"
+TBD,2018-06-07,2018-06-07,12:00-14:00,Lab Room 2,<div class=“schedule__speaker”>Heberti Almeida</div> TBD
+Server-Side Swift with Vapor,2018-06-07,2018-06-07,14:00-16:00,Lab Room 1,<div class=“schedule__speaker”>Tim Condon</div> TBD

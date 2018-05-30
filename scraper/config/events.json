@@ -259,5 +259,19 @@
 		],
 		"url": "http://18.re-publica.de/",
 		"hashtag": "rp18"
+	},
+	{
+		"type": "event",
+		"id": "altconf18",
+		"label": "AltConf",
+		"title": "AltConf 18",
+		"date": ["2018-06-04","2018-06-07"],
+		"locations": [{
+			"label": "San Jose Marriott",
+			"coords": [37.783273, -122.401827],
+			"timezone": "America/Los_Angeles"
+		}],
+		 "hashtag": "altconf",
+		"url": "http://altconf.com/"
 	}
 ]
