@@ -9,7 +9,8 @@ if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 
 const importer = new CSVImporter(
   event,
-  path.join(__dirname, 'altconf18.csv'),
+  path.join(__dirname, 'altconf18-sessions.csv'),
+  path.join(__dirname, 'altconf18-labs.csv'),
   {
     dayNames: {
       '2018-06-04': { de: 'Mo', en: 'Mon' },

@@ -16,28 +16,26 @@ const parse = require('csv-parse/lib/sync');
 class AltconfCsvImporter {
   constructor(
     eventJson,
-    csvFile,
+    csvFileSessions,
+    csvFileLabs,
     options,
   ) {
     this.event = new Event(eventJson);
-    this.csvFile = csvFile;
+    
     this.dayNames = options.dayNames;
 
-    const data = fs.readFileSync(csvFile);
-    const result = parse(
-      data,
-      {
-        delimiter: ',',
-        auto_parse: false,
-        skip_empty_lines: true,
-      },
-      null,
-    );
+    const dataLabs = fs.readFileSync(csvFileLabs);
+    const dataSessions = fs.readFileSync(csvFileSessions);
+    const resultLabs = parse(dataLabs, { delimiter: ',', auto_parse: false, skip_empty_lines: true }, null);
+    const resultSessions = parse(dataSessions, { delimiter: ',', auto_parse: false, skip_empty_lines: true }, null);
     // no need for the frist two lines
-    result.shift();
-    result.shift();
+    resultLabs.shift();
+    resultLabs.shift();
+    resultSessions.shift();
+    resultSessions.shift();
 
-    this.data = result;
+    this.dataLabs = resultLabs;
+    this.dataSessions = resultSessions;
     this.speakers = {};
     this.days = {};
     this.tracks = {};
@@ -59,9 +57,16 @@ class AltconfCsvImporter {
   _processSessions() {
     const sessions = {};
 
-    this.data.forEach((row) => {
-      const session = new Session(row, null, this.event.locations[0].timezone);
+    this.dataLabs.forEach((row) => {
+      const session = new Session(row, Track.altConfLabs, null, this.event.locations[0].timezone);
 
+      sessions[session.id] = session;
+    });
+
+    this.dataSessions.forEach((row) => {
+      const session = new Session(row, Track.altConf, null, this.event.locations[0].timezone);
+
+      if (!session.id || session.id === '') return;
       sessions[session.id] = session;
     });
 
@@ -71,17 +76,26 @@ class AltconfCsvImporter {
   _processLocations() {
     const locations = {};
 
-    this.data.forEach((row, index) => {
+    this.dataLabs.forEach((row, index) => {
       const location = new Location(row, index);
 
       locations[location.id] = location;
     });
+
+    this.dataSessions.forEach((row, index) => {
+      const location = new Location(row, index);
+
+      locations[location.id] = location;
+    });
+
+    
 
     this.locations = locations;
   }
 
   _processTracks() {
     this.tracks[Track.altConf.id] = Track.altConf;
+    this.tracks[Track.altConfLabs.id] = Track.altConfLabs;
   }
 
   _processSessionRelations() {

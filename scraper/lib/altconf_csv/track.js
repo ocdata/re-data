@@ -27,6 +27,10 @@ class Track {
   static get altConf() {
     return new Track('AltConf', [121, 33, 30, 1]);
   }
+
+  static get altConfLabs() {
+    return new Track('Labs', [121, 33, 30, 1]);
+  }
 }
 
 module.exports = Track;
