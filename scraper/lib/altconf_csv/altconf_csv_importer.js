@@ -76,19 +76,23 @@ class AltconfCsvImporter {
   _processLocations() {
     const locations = {};
 
-    this.dataLabs.forEach((row, index) => {
-      const location = new Location(row, index);
-
-      locations[location.id] = location;
-    });
+    const labsCount = this.dataSessions.length;
 
     this.dataSessions.forEach((row, index) => {
-      const location = new Location(row, index);
-
-      locations[location.id] = location;
+      const newLocation = new Location(row, index);
+      const location = locations[newLocation.id];
+      if (!location) {
+        locations[newLocation.id] = newLocation;
+      }
     });
 
-    
+    this.dataLabs.forEach((row, index) => {
+      const newLocation = new Location(row, index + labsCount);
+      const location = locations[newLocation.id];
+      if (!location) {
+        locations[newLocation.id] = newLocation;
+      }
+    });
 
     this.locations = locations;
   }
