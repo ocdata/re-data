@@ -2,11 +2,23 @@
 title,startdate,enddate,starttime,location,content
 Adding Visual Recognition Capabilities to Your iOS App using Watson Studio and Core ML,2018-06-05,2018-06-05,10:00-11:00,Lab Room 1,"<div class=""schedule__speaker"">Joshua Zheng, Devin Conley, Nicholas Bourdakas & Tom Markiewicz</div>
 Think you can build an awesome AI-powered app for iOS in an hour? You can with IBM’s Watson and Apple’s Core ML. You’ll train your own machine learning models and use them in your apps quickly. Your challenge? Build an app that couples AI with videos and photos to identify and classify real world objects. At the end of the lab, you will have a working iOS app that is able to detect different types of connectors (USB, HDMI, Thunderbolt, etc). Sign up here: http://ibm.biz/IBM_AltConf_Labs."
-Core Data,2018-06-05,2018-06-05,10:00-12:00,Lab Room 2,<div class=“schedule__speaker”>Florian Burger</div> TBD
+Core Data,2018-06-05,2018-06-05,10:00-12:00,Lab Room 2,"<div class=“schedule__speaker”>Florian Burger</div><br/>A lot of people are struggling with Core Data. At first sight, Apple’s persistence framework seems complicated, requires a lot of overhead in your code and there have been reports that it is slow (anyone remember Brent’s [infamous article for NetNewsWire’s mark-as-read problem](http://inessential.com/2010/02/26/on_switching_away_from_core_data) from 8 years ago?) and that it shouldn’t be used in “simple” apps.
+
+I’ve been developing for iOS (née iPhone OS) since 1.0 for clients of all sizes, and in almost every project, Core Data was used with great success! I am a big fan. 🙂
+
+Come to my Core Data lab and ask me anything regarding everyone’s favorite persistent layer. Or share war stories. Or bring your code and we can try to fix the problem together."
 ARKit meets Watson for Core ML,2018-06-05,2018-06-05,12:00-13:00,Lab Room 2,"<div class=“schedule__speaker”>Sanjeev Ghimire & Anamita Guha</div> 
 In this hands-on lab you'll get quickly up to speed on the capabilities of server-side Swift with the Kitura web framework, and how you can build a real application that an iOS client can connect to. Learn about routing, middleware and web APIs, and how server-side Swift is a flexible and powerful choice for your next project. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
-Cloud Firestore Workshop,2018-06-05,2018-06-05,13:30-16:00,Lab Room 1,"<div class=“schedule__speaker”>James Daniels</div> Cloud Firestore is the next-generation document-object database in the cloud from Firebase. In this workshop, we'll help you understand all of the features of Cloud Firestore, and how to best use it in developing production ready scalable apps. This workshop will provide you with a general introduction to NoSQL databases, and then will cover more advanced topics like querying, transactions, security rules, offline support, pagination, and more!"
-The How-To Workshop on Finding Product Market Fit,2018-06-05,2018-06-05,14:00-16:00,Lab Room 2,<div class=“schedule__speaker”>Yaroslav Stepanenko</div> 
+Cloud Firestore Workshop,2018-06-05,2018-06-05,12:30-16:00,Lab Room 1,"<div class=“schedule__speaker”>James Daniels</div> Cloud Firestore is the next-generation document-object database in the cloud from Firebase. In this workshop, we'll help you understand all of the features of Cloud Firestore, and how to best use it in developing production ready scalable apps. This workshop will provide you with a general introduction to NoSQL databases, and then will cover more advanced topics like querying, transactions, security rules, offline support, pagination, and more!"
+The How-To Workshop on Finding Product Market Fit,2018-06-05,2018-06-05,14:00-16:00,Lab Room 2,"<div class=“schedule__speaker”>Yaroslav Stepanenko</div> <br/>In this workshop, Setapp product team members Yaroslav Stepanenko and Pavlo Pedenko will walk you through a simple yet effective process for achieving product/market fit.
+What You'll Learn:
+What is Product/Market Fit
+Why your app business needs it
+How to measure the Product-Market Fit of your product or feature
+How to understand your loyal customers
+Who Should Attend: Mac developers, iOS developers, business development executives, product/marketing managers. We welcome participants at any level of experience with product marketing. This interactive workshop will be filled with practical exercises, real-life examples, and case studies.
+After the workshop, you’ll be armed with pragmatic advice and tools you can put to work to promote your product/app.
+"
 Build a virtual assistant into your iOS apps,2018-06-06,2018-06-06,10:00-11:00,Lab Room 1,"<div class=“schedule__speaker”>Marek Sadowski, Emma Tucker, Norton Stanley & Vittal Pai</div> 
 Anantha Kk GirijakumariQuickly build a virtual assistant across a variety of channels using the Apple platform developer tools. In this lab you'll get started building a natural language interface with the trusted Apple platform. You can be talking with Watson within minutes. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
 Fix Data Privacy & Password Security in your Apps!,2018-06-06,2018-06-06,10:00-12:00,Lab Room 2,"<div class=“schedule__speaker”>David Szabo</div> 
@@ -16,14 +28,28 @@ Developers: you can and should leverage this as an advantage for your product.
 On June 6th, join us for a practical, hands-on workshop to learn how to use existing code to build encryption and password security into your tech without having to become an security expert.
 
 This free workshop will consist of two parts: 1) How to implement End-to-End Encryption to keep your product's data secure from cloud providers, hackers and curious eyes and 2) How to implement a password hashing technique that can't be breached. Sign Up here: https://virgilworldtour.squarespace.com"
-TBD,2018-06-06,2018-06-06,11:00-13:00,Lab Room 1,"<div class=“schedule__speaker”>Liz Marley</div> 
-TBD"
-How to Avoid Massive View Controllers when Building iOS apps using MVC in Swift,2018-06-06,2018-06-06,13:00-15:00,Lab Room 2,<div class=“schedule__speaker”>Zubair Asgar</div> TBD
+How to Avoid Massive View Controllers when Building iOS apps using MVC in Swift,2018-06-06,2018-06-06,12:00-14:00,Lab Room 2,<div class=“schedule__speaker”>Zubair Asgar</div> TBD
 Build an iOS backend in Swift with Kitura,2018-06-06,2018-06-06,15:00-16:00,Lab Room 1,"<div class=“schedule__speaker”>Ian Partridge, Chris Bailey, Lloyd Roseblade & David Okun</div> 
 It's time to take your app into the Augmented Reality and Machine Learning era. Learn how to create an app that delivers augmented reality-based résumés with Visual Recognition. The iOS app recognizes the face and presents you with the AR view that displays a résumé of the person in the camera view. The app uses Watson Visual Recognition and Core ML to classify the image and then uses that classification to get details about the person from data stored in an IBM Cloudant NoSQL database. The images are classified offline using a deep neural network that is trained by Visual Recognition. Sign up here: http://ibm.biz/IBM_AltConf_Labs."
-"CI/CD (CircleCI, Jenkins, Fastlane, App Center, BitRise...)",2018-06-07,2018-06-07,10:00-12:00,Lab Room 1,<div class=“schedule__speaker”>Josh Holtz</div> TBD
-Questions on UIKit or Swift,2018-06-07,2018-06-07,10:00-12:00,Lab Room 2,<div class=“schedule__speaker”>Daniel Tull & Daniel Kennett</div> TBD
+Testing,2018-06-06,2018-06-06,11:00-13:00,Lab Room 1,"<div class=“schedule__speaker”>Daniel Tull & Liz Marley</div>Bring your app, and we'll talk about bug hunting strategies. Bring your questions about XCTest, XCUITest, manual testing, or filing radars. We may not have all the answers, but there are no dumb questions here.
+Liz Marley is a Software Engineer at the Omni Group. She also has 10 years of experience testing Omni’s software. Her idea of summer vacation is to help middle schoolers learn to make software at App Camp for Girls.
+Daniel Tull is a contract iOS developer who has been involved in projects with the BBC, Nespresso and a small-time British celebrity."
+"CI/CD (CircleCI, Jenkins, Fastlane, App Center, BitRise...)",2018-06-07,2018-06-07,10:00-12:00,Lab Room 1,"<div class=“schedule__speaker”>Josh Holtz</div> <br/>For the first hour, Josh Holtz will walk through fastlane best practices and patterns for writing a Fastfile, configuring environments, using actions/plugins, and writing custom logic in your own actions. These best practices will lead into a quick demo of the fastlane.ci (https://github.com/fastlane/ci) which is currently in alpha.
+The second hour will be a Q&A help session where Josh will answer questions you have about fastlane or issues you are having with your own fastlane setup."
+Questions on UIKit or Swift,2018-06-07,2018-06-07,10:00-12:00,Lab Room 2,"<div class=“schedule__speaker”>Daniel Tull & Daniel Kennett</div><br/>Daniel Kennett and Daniel Tull are experienced iOS developers that have been working on the platform for years.
+
+Daniel Kennett is an indie developer who previously spent over four years working at Spotify. Daniel Tull is a contract iOS developer who has been involved in projects with the BBC, Nespresso and a small-time British celebrity.
+
+Come talk to Daniel & Daniel about Swift, UIKit, or both at their session on Thursday morning."
 "Convolutional Neural Networks, Swift & iOS 12",2018-06-07,2018-06-07,12:00-14:00,Lab Room 1,"<div class=“schedule__speaker”>Brett Koonce</div>
 We will discuss different neural network architechtures and how to build, train and use different models to solve problems with Swift and iOS 12. Bring your own problem and I will suggest how to tackle it!"
-TBD,2018-06-07,2018-06-07,12:00-14:00,Lab Room 2,<div class=“schedule__speaker”>Heberti Almeida</div> TBD
-Server-Side Swift with Vapor,2018-06-07,2018-06-07,14:00-16:00,Lab Room 1,<div class=“schedule__speaker”>Tim Condon</div> TBD
+Designing Apps for Performance,2018-06-07,2018-06-07,12:00-13:00,Lab Room 2,"<div class=“schedule__speaker”>Heberti Almeida</div><br/>From design to code there is always something that we can do to improve the performance of our apps.
+
+Have you asked yourself why so many apps don’t achieve a smooth scrolling? How does it impact your user’s experience?
+
+All this and more will be explored in this lab!"
+Server-Side Swift with Vapor,2018-06-06,2018-06-06,14:00-16:00,Lab Room 2,<div class=“schedule__speaker”>Tim Condon</div> <br/>Come along to this lab to get a crash course in server-side Swift with Vapor! Confused by Vapor 3's async architecture? Unsure how to use SPM? Don't know how to write tests for server-side Swift? Get help with your projects and ask any questions you have!
+MLMeetup @ AltConf,2018-06-06,2018-06-06,13:00-15:00,Lab Room 1,"<div class=“schedule__speaker”>Joe Pezzillo & Dan Burcaw</div> Are you one of the many lucky folks working in the exciting and emerging field of Artificial Intelligence and Machine Learning (AI/ML)? Or are you interested in learning more and finding out how to get started? This Lab is an opportunity to meet with like minded developers and others working with AI/ML to learn what's new, share your experiences and get insights into what's happening in this blossoming space. Bring your projects or ideas and benefit from the experience and insights of others in attendance.
+Experience with Apple's CoreML not required, but eagerly welcome, as are all other AI/ML platforms and technologies.
+The Lab is hosted by Dan Burcaw and Joe Pezzillo, the Co-Founders of Push IO, who have spent years at the forefront of technology and are excited to discover more about what people are doing in the industry.
+Followed by an informal happy hour."
