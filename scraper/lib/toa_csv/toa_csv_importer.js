@@ -21,6 +21,7 @@ class ToaCsvImporter {
   ) {
     this.event = new Event(eventJson);
 
+    this.stageNameOrder = options.stageNameOrder;
     this.dayNames = options.dayNames;
 
     const dataSessions = fs.readFileSync(csvFileSessions);
@@ -89,9 +90,15 @@ class ToaCsvImporter {
     const locations = {};
 
     this.dataSessions.forEach((row, index) => {
+      
       const newLocation = new Location(row, index);
       const location = locations[newLocation.id];
+      
       if (!location && newLocation.id !== '') {
+        const locationIndex = this.stageNameOrder.indexOf(newLocation.label_en);
+        if (locationIndex !== -1) {
+          newLocation.orderIndex = locationIndex;
+        }
         locations[newLocation.id] = newLocation;
       }
     });

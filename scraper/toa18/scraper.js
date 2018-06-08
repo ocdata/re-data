@@ -15,6 +15,12 @@ const importer = new CSVImporter(
       '2018-06-20': { de: 'Day 1', en: 'Day 1' },
       '2018-06-21': { de: 'Day 2', en: 'Day 2' },
     },
+    stageNameOrder: [
+      'Studio 1',
+      'Studio 2',
+      'Studio 3',
+      'Forrest Stage',
+    ]
   },
 );
 
