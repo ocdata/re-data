@@ -25,7 +25,7 @@ class Track {
   }
 
   static get toa() {
-    return new Track('Tech Open Air', 'toa');
+    return new Track('Tech Open Air', 'toa', [200, 46, 64, 1]);
   }
 
   static get all() {
