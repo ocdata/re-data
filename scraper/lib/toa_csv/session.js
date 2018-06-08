@@ -54,8 +54,9 @@ class Session {
   addSpeakerFromRow(row) {
     const firstName = row['First Name'];
     const lastName = row['Last Name'];
+    const id = row['Contact ID'];
     const name = `${firstName} ${lastName}`.trim();
-    const speaker = new Speaker(name);
+    const speaker = new Speaker(id, name);
     
     const speakerIds = this.speakers.map(s => s.id);
     if (!speakerIds.includes(speaker.id)) {
@@ -77,7 +78,9 @@ class Session {
     this.id = id;
     this.urlFunction = urlFunction;
     this.timezone = timezone;
-    this.locationName = locationName;
+    if (locationName !== '') {
+      this.locationName = locationName;
+    }
     this.abstract = abstract;
     this.speakers = [];
   }
@@ -90,6 +93,8 @@ class Session {
   }
 
   get location() {
+    if (!this.locationName) return undefined;
+
     return {
       label_de: this.locationName,
       label_en: this.locationName,

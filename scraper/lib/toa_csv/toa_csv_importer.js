@@ -151,7 +151,7 @@ class ToaCsvImporter {
 
     const sessions = values(this.sessions)
       .map(object => addTypeAndEvent(object.JSON, this.event.id, 'session'))
-      .filter(session => session.track);
+      .filter(session => session.track && session.location);
     result = result.concat(sessions);
 
     const speakers = values(this.speakers)

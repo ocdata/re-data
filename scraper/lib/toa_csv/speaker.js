@@ -7,11 +7,12 @@ class Speaker {
     const bio = row.Bio;
     const position = row.Position;
     const org = row['Company Name'];
-    return new Speaker(`${firstName} ${lastName}`.trim(), bio, position, org, urlFunction, pictureFunction);
+    const id = row['Contact ID'];
+    return new Speaker(id, `${firstName} ${lastName}`.trim(), bio, position, org, urlFunction, pictureFunction);
   }
 
-  constructor(name, biography, position, organization, urlFunction = null, pictureFunction = null) {
-    this.id = Helpers.mkId(name);
+  constructor(id, name, biography, position, organization, urlFunction = null, pictureFunction = null) {
+    this.id = id;
     this.name = name;
     this.biography = biography || '';
     this.position = position;
