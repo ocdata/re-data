@@ -1,4 +1,5 @@
 scraper/config/scrapers.js
+scraper/toa18/*.csv
 node_modules
 web/data/
 .cache

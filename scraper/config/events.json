@@ -273,5 +273,19 @@
 		}],
 		 "hashtag": "altconf",
 		"url": "http://altconf.com/"
+	},
+	{
+		"type": "event",
+		"id": "toa18",
+		"label": "TOA",
+		"title": "Tech Open Air",
+		"date": ["2018-06-20","2018-06-21"],
+		"locations": [{
+			"label": "Funkhaus Berlin",
+			"coords": [52.479444, 13.5],
+			"timezone": "Europe/Paris"
+		}],
+		 "hashtag": "toa",
+		"url": "http://toa.berlin/"
 	}
 ]
