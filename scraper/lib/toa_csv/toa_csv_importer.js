@@ -134,6 +134,13 @@ class ToaCsvImporter {
         session.addSpeakerFromRow(row);
       }
     });
+
+    Object.keys(this.speakers).forEach((speakerId) => {
+      const speaker = this.speakers[speakerId];
+      const sessionsBySpeaker = Object.values(this.sessions).filter(s => s.speakers.map(sp => sp.id).includes(speaker.id));
+      sessionsBySpeaker.forEach(session => speaker.sessions.push(session));
+      this.speakers[speaker.id] = speaker;
+    });
   }
 
   get JSON() {
