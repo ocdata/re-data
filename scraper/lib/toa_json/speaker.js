@@ -17,7 +17,7 @@ class Speaker {
   }
 
   constructor(id, name, biography, position, organization, urlFunction = null, pictureFunction = null) {
-    this.id = id;
+    this.id = `${id}`;
     this.name = name;
     this.biography = biography || '';
     this.position = position;

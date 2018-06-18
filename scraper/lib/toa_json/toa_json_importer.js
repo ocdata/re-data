@@ -23,7 +23,8 @@ class ToaJsonImporter {
     this._processLocations(sessions);
     this._processSessions(sessions);
     this._processSpeakers(speakers);
-    this._processSessionRelations(sessions, options.oldSpeakerIds);
+    this._processSessionRelations(sessions);
+    this._fixSpeakerIds(options.oldSpeakerIds);
   }
 
   get location() {
@@ -96,7 +97,7 @@ class ToaJsonImporter {
     const nameToOldSpeakerId = {};
 
     oldSpeakerIds.forEach((oldJson) => {
-      nameToOldSpeakerId[oldJson.name] = oldJson.id;
+      nameToOldSpeakerId[oldJson.name] = `${oldJson.id}`;
     });
 
     Object.keys(this.speakers).forEach((speakerId) => {
@@ -104,7 +105,8 @@ class ToaJsonImporter {
       const oldId = nameToOldSpeakerId[speaker.name];
       if (oldId) {
         speaker.id = oldId;
-        this.speakers[speakerId] = speaker;
+        this.speakers[speakerId] = null;
+        this.speakers[speaker.id] = speaker;
       }
     });
 
@@ -125,7 +127,7 @@ class ToaJsonImporter {
 
   }
 
-  _processSessionRelations(dataSessions, oldSpeakerIds) {
+  _processSessionRelations(dataSessions) {
     const dayIdForSession = (session, timezone, dayBeginHour) => {
       if (!moment.isMoment(session.begin) && timezone && dayBeginHour) return null;
       let { begin } = session;
@@ -157,29 +159,12 @@ class ToaJsonImporter {
       }
     });
 
-    Object.keys(this.sessions).forEach((sessionId) => {
-      const session = this.sessions[sessionId];
-      session.speakers.forEach((speaker) => {
-        const origSpeaker = this.speakers[speaker.id];
-        if (origSpeaker) {
-          const { id, title } = session;
-          const sessionIds = origSpeaker.sessions.map(s => s.id);
-          if (id && title && !sessionIds.includes(id)) {
-            origSpeaker.sessions.push(new Session(id, title));
-          }
-          this.speakers[speaker.id] = origSpeaker;
-        }
-      });
-    });
-
     Object.keys(this.speakers).forEach((speakerId) => {
       const speaker = this.speakers[speakerId];
       const sessionsBySpeaker = Object.values(this.sessions).filter(s => s.speakers.map(sp => sp.id).includes(speaker.id));
       sessionsBySpeaker.forEach(session => speaker.sessions.push(session));
       this.speakers[speaker.id] = speaker;
     });
-
-    // this._fixSpeakerIds(oldSpeakerIds);
   }
 
   get JSON() {
@@ -196,11 +181,13 @@ class ToaJsonImporter {
     let result = [];
 
     const sessions = values(this.sessions)
+      .filter(s => s != null)
       .map(object => addTypeAndEvent(object.JSON, this.event.id, 'session'))
       .filter(session => session.track && session.location);
     result = result.concat(sessions);
 
     const speakers = values(this.speakers)
+      .filter(s => s != null)
       .map(object => addTypeAndEvent(object.JSON, this.event.id, 'speaker'))
       .filter(speaker => speaker.name);
     result = result.concat(speakers);
