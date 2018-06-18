@@ -22,8 +22,9 @@ class ToaJsonImporter {
     this._processTracks();
     this._processLocations(sessions);
     this._processSessions(sessions);
-    this._processSpeakers(speakers, options.oldSpeakerIds);
+    this._processSpeakers(speakers);
     this._processSessionRelations(sessions);
+    this._fixSpeakerIds(options.oldSpeakerIds);
   }
 
   get location() {
@@ -78,19 +79,11 @@ class ToaJsonImporter {
     this.sessions = sessions;
   }
 
-  _processSpeakers(dataSpeakers, oldSpeakerIds = []) {
+  _processSpeakers(dataSpeakers) {
     const speakers = {};
-
-    const nameToOldSpeakerId = {};
-    
-    oldSpeakerIds.forEach((oldJson) => {
-      nameToOldSpeakerId[oldJson.name] = oldJson.id;
-    });
 
     dataSpeakers.forEach((row) => {
       const newSpeaker = Speaker.fromJson(row);
-      const oldId = nameToOldSpeakerId[newSpeaker.name];
-      if (oldId) newSpeaker.id = oldId;
       const existingSpeaker = speakers[newSpeaker.id];
       if (!existingSpeaker && newSpeaker.id !== '') {
         speakers[newSpeaker.id] = newSpeaker;
@@ -99,6 +92,39 @@ class ToaJsonImporter {
 
     this.speakers = speakers;
   }
+
+  _fixSpeakerIds(oldSpeakerIds) {
+    const nameToOldSpeakerId = {};
+
+    oldSpeakerIds.forEach((oldJson) => {
+      nameToOldSpeakerId[oldJson.name] = oldJson.id;
+    });
+
+    Object.keys(this.speakers).forEach((speakerId) => {
+      const speaker = this.speakers[speakerId];
+      const oldId = nameToOldSpeakerId[speaker.name];
+      if (oldId) {
+        speaker.id = oldId;
+        this.speakers[speakerId] = speaker;
+      }
+    });
+    
+    Object.keys(this.sessions).forEach((sessionId) => {
+      const session = this.sessions[sessionId];
+
+      session.speakers = session.speakers.map((sessionSpeaker) => {
+        const speaker = sessionSpeaker;
+        const oldId = nameToOldSpeakerId[speaker.name];
+        if (oldId) {
+          speaker.id = oldId;
+        }
+        return speaker;
+      });
+      
+      this.sessions[sessionId] = session;
+    });
+    
+  } 
 
   _processSessionRelations(dataSessions) {
     const dayIdForSession = (session, timezone, dayBeginHour) => {
