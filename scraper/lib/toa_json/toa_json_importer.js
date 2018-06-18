@@ -23,8 +23,7 @@ class ToaJsonImporter {
     this._processLocations(sessions);
     this._processSessions(sessions);
     this._processSpeakers(speakers);
-    this._processSessionRelations(sessions);
-    this._fixSpeakerIds(options.oldSpeakerIds);
+    this._processSessionRelations(sessions, options.oldSpeakerIds);
   }
 
   get location() {
@@ -48,7 +47,7 @@ class ToaJsonImporter {
     dataSessions.forEach((sessionJson, index) => {
       const newLocation = Location.fromSessionJson(sessionJson, index);
       const location = locations[newLocation.id];
-      
+
       if (!location && newLocation.id !== '') {
         const locationIndex = this.stageNameOrder.indexOf(newLocation.label_en);
         if (locationIndex !== -1) {
@@ -108,7 +107,7 @@ class ToaJsonImporter {
         this.speakers[speakerId] = speaker;
       }
     });
-    
+
     Object.keys(this.sessions).forEach((sessionId) => {
       const session = this.sessions[sessionId];
 
@@ -120,13 +119,13 @@ class ToaJsonImporter {
         }
         return speaker;
       });
-      
+
       this.sessions[sessionId] = session;
     });
-    
-  } 
 
-  _processSessionRelations(dataSessions) {
+  }
+
+  _processSessionRelations(dataSessions, oldSpeakerIds) {
     const dayIdForSession = (session, timezone, dayBeginHour) => {
       if (!moment.isMoment(session.begin) && timezone && dayBeginHour) return null;
       let { begin } = session;
@@ -158,12 +157,29 @@ class ToaJsonImporter {
       }
     });
 
+    Object.keys(this.sessions).forEach((sessionId) => {
+      const session = this.sessions[sessionId];
+      session.speakers.forEach((speaker) => {
+        const origSpeaker = this.speakers[speaker.id];
+        if (origSpeaker) {
+          const { id, title } = session;
+          const sessionIds = origSpeaker.sessions.map(s => s.id);
+          if (id && title && !sessionIds.includes(id)) {
+            origSpeaker.sessions.push(new Session(id, title));
+          }
+          this.speakers[speaker.id] = origSpeaker;
+        }
+      });
+    });
+
     Object.keys(this.speakers).forEach((speakerId) => {
       const speaker = this.speakers[speakerId];
       const sessionsBySpeaker = Object.values(this.sessions).filter(s => s.speakers.map(sp => sp.id).includes(speaker.id));
       sessionsBySpeaker.forEach(session => speaker.sessions.push(session));
       this.speakers[speaker.id] = speaker;
     });
+
+    // this._fixSpeakerIds(oldSpeakerIds);
   }
 
   get JSON() {
