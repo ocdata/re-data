@@ -22,7 +22,7 @@ class ToaJsonImporter {
     this._processTracks();
     this._processLocations(sessions);
     this._processSessions(sessions);
-    this._processSpeakers(speakers);
+    this._processSpeakers(speakers, options.oldSpeakerIds);
     this._processSessionRelations(sessions);
   }
 
@@ -78,11 +78,19 @@ class ToaJsonImporter {
     this.sessions = sessions;
   }
 
-  _processSpeakers(dataSpeakers) {
+  _processSpeakers(dataSpeakers, oldSpeakerIds = []) {
     const speakers = {};
+
+    const nameToOldSpeakerId = {};
+    
+    oldSpeakerIds.forEach((oldJson) => {
+      nameToOldSpeakerId[oldJson.name] = oldJson.id;
+    });
 
     dataSpeakers.forEach((row) => {
       const newSpeaker = Speaker.fromJson(row);
+      const oldId = nameToOldSpeakerId[newSpeaker.name];
+      if (oldId) newSpeaker.id = oldId;
       const existingSpeaker = speakers[newSpeaker.id];
       if (!existingSpeaker && newSpeaker.id !== '') {
         speakers[newSpeaker.id] = newSpeaker;

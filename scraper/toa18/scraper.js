@@ -1,5 +1,5 @@
 const events = require('./../config/events');
-const path = require('path');
+const oldSpeakerIds = require('./speaker_id_mapping');
 const JSONRequester = require('../lib/json_requester');
 const ToaImporter = require('../lib/toa_json/toa_json_importer');
 
@@ -13,6 +13,8 @@ if (!event) throw new Error(`Could not find event ${EVENT_ID}`);
 //   path.join(__dirname, 'toa18.csv'),
   
 // );
+
+const { data } = oldSpeakerIds;
 
 exports.scrape = (callback) => {
   JSONRequester.get(
@@ -53,6 +55,7 @@ exports.scrape = (callback) => {
             'Studio 3',
             'Forrest Stage',
           ],
+          oldSpeakerIds: data,
         },
       );
 
