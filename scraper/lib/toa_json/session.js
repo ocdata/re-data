@@ -9,7 +9,7 @@ class Session {
 
   static fromJson(json, timezone) {
     const { data, date, id } = json;
-    const begin = moment.tz(date.startDate, 'YYYY-MM-dd HH:mm:ss', timezone);
+    const begin = moment.tz(date.startDate, 'YYYY-MM-DD HH:mm:ss', timezone);
     const {
       duration,
       title,
