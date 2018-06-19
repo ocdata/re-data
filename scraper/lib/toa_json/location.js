@@ -4,7 +4,7 @@ class Location {
   static fromSessionJson(json, orderIndex = 1000, isStage = true) {
     const { data } = json;
     const { stage } = data;
-    const { name, slug } = stage;
+    const { name, slug } = stage[0];
     return new Location(slug, name, orderIndex, isStage);
   }
 
