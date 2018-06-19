@@ -20,11 +20,11 @@ class Session {
     const locationName = firstStage.name;
     return new Session(
       `${id}`,
-      title,
+      Helpers.dehtml(title),
       begin,
       duration,
       locationName,
-      description,
+      Helpers.dehtml(description),
       Track.toa,
       () => url,
       timezone,
