@@ -18,6 +18,8 @@ class ToaJsonImporter {
     this.locations = {};
     this.tracks = {};
 
+    this.liveStreamsPerLocation = options.liveStreams;
+
     this._processDays();
     this._processTracks();
     this._processLocations(sessions);
@@ -156,6 +158,7 @@ class ToaJsonImporter {
       const session = this.sessions[`${id}`];
       if (session) {
         session.updateSpeakersFromJson(sessionJson);
+        session.updateLiveStreamFromMapping(this.liveStreamsPerLocation);
       }
     });
 

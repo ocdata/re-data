@@ -56,6 +56,12 @@ exports.scrape = (callback) => {
             'Forrest Stage',
           ],
           oldSpeakerIds: data,
+          liveStreams: {
+            'studio-1': {
+              service: 'youtube',
+              url: 'https://www.youtube.com/watch?v=r5y9SeGqa-4',
+            },
+          },
         },
       );
 

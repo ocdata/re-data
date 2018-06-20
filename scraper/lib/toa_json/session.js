@@ -2,6 +2,7 @@ const moment = require('moment-timezone');
 const Helpers = require('./../helpers');
 const { Language, Format, Level } = require('./mappings');
 const Track = require('./track');
+const Link = require('./link');
 const Speaker = require('./speaker');
 
 
@@ -40,6 +41,15 @@ class Session {
       .map(speakerJson => new Speaker(speakerJson.ID, speakerJson.post_title));
   }
 
+  updateLiveStreamFromMapping(mapping) {
+    if (!this.location) return;
+    const stream = mapping[this.location.id];
+    if (stream) {
+      const link = new Link(stream.url, 'livestream', this.title);
+      this.links.push(link.JSON);
+    }
+  }
+
   constructor(id, title, begin, durationMinutesString, locationName, abstract, track, urlFunction = undefined, timezone = 'Etc/UTC') {
     this.track = track;
     this.begin = begin;
@@ -55,6 +65,7 @@ class Session {
     if (locationName !== '') {
       this.locationName = locationName;
     }
+    this.links = [];
     this.abstract = abstract;
     this.speakers = [];
   }
@@ -95,7 +106,7 @@ class Session {
     }
     json.related_sessions = [];
     json.track = this.track;
-    json.links = [];
+    json.links = this.links;
     json.enclosures = [];
 
     json.location = this.location;
