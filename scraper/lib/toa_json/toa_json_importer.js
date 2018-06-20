@@ -153,8 +153,8 @@ class ToaJsonImporter {
     });
 
     dataSessions.forEach((sessionJson) => {
-      const { id } = sessionJson;
-      const session = this.sessions[`${id}`];
+      const parsedSession = Session.fromJson(sessionJson, this.timezone);
+      const session = this.sessions[parsedSession.id];
       if (session) {
         session.updateSpeakersFromJson(sessionJson);
         session.updateLiveStreamFromMapping(this.liveStreamsPerLocation);

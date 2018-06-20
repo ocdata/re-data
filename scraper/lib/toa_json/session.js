@@ -24,7 +24,7 @@ class Session {
     const generatedid = `${Helpers.mkId(locationName)}-${begin.format('YYYYMMDDHHmm')}`
 
 
-    return new Session(
+    const session = new Session(
       `${generatedid}`,
       Helpers.dehtml(title),
       begin,
@@ -35,6 +35,8 @@ class Session {
       () => url,
       timezone,
     );
+    session.origId = id;
+    return session;
   }
 
   updateSpeakersFromJson(json) {
