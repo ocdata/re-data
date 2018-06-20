@@ -4,8 +4,8 @@ class Location {
   static fromSessionJson(json, orderIndex = 1000, isStage = true) {
     const { data } = json;
     const { stage } = data;
-    const { name, slug } = stage[0];
-    return new Location(slug, name, orderIndex, isStage);
+    const { name } = stage[0];
+    return new Location(Helpers.mkId(name), name, orderIndex, isStage);
   }
 
   constructor(id, name, orderIndex = 1000, isStage = true) {
