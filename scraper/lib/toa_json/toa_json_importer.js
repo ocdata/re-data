@@ -17,6 +17,7 @@ class ToaJsonImporter {
     this.days = {};
     this.locations = {};
     this.tracks = {};
+    this.allowedLocationIds = options.allowedLocationIds;
 
     this.liveStreamsPerLocation = options.liveStreams;
 
@@ -72,9 +73,11 @@ class ToaJsonImporter {
 
     dataSessions.forEach((sessionJson) => {
       const newSession = Session.fromJson(sessionJson, this.timezone);
-      const existingSession = sessions[newSession.id];
-      if (!existingSession && newSession.id !== '') {
-        sessions[newSession.id] = newSession;
+      if (newSession.location && this.allowedLocationIds.includes(newSession.location.id)) {
+        const existingSession = sessions[newSession.id];
+        if (!existingSession && newSession.id !== '') {
+          sessions[newSession.id] = newSession;
+        }
       }
     });
 

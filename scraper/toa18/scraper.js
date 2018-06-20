@@ -62,6 +62,7 @@ exports.scrape = (callback) => {
               url: 'https://www.youtube.com/watch?v=r5y9SeGqa-4',
             },
           },
+          allowedLocationIds: ['studio-1', 'studio-2', 'studio-3', 'forest-stage'],
         },
       );
 
