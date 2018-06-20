@@ -7,6 +7,7 @@ const Speaker = require('./speaker');
 
 
 class Session {
+
   static fromJson(json, timezone) {
     const { data, date, id } = json;
     const begin = moment.tz(date.startDate, 'YYYY-MM-DD HH:mm:ss', timezone);
@@ -17,10 +18,14 @@ class Session {
       description,
       stage,
     } = data;
+
     const [firstStage] = stage;
     const locationName = firstStage.name;
+    const generatedid = `${Helpers.mkId(locationName)}-${begin.format('YYYYMMDDHHmm')}`
+
+
     return new Session(
-      `${id}`,
+      `${generatedid}`,
       Helpers.dehtml(title),
       begin,
       duration,
