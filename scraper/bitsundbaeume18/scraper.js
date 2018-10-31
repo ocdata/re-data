@@ -314,25 +314,15 @@ function parseDay(dayXML) {
   var index = 0;
   var monthDay = parseDate.getUTCDate();
   switch (monthDay) {
-    case 27:
+    case 17:
       index = 1;
       dateLabelDe = "Tag 1";
       dateLabelEn = "Day 1";
       break;
-    case 28:
+    case 18:
       index = 2;
       dateLabelDe = "Tag 2";
       dateLabelEn = "Day 2";
-      break;
-    case 29:
-      index = 3;
-      dateLabelDe = "Tag 3";
-      dateLabelEn = "Day 3";
-      break;
-    case 30:
-      index = 4;
-      dateLabelDe = "Tag 4";
-      dateLabelEn = "Day 4";
       break;
     default:
       return null;
@@ -728,10 +718,6 @@ function parseEvent(
     links: links
   };
 
-  let recommendations = allRecommendations[id];
-  if (!recommendations) recommendations = [];
-  session["related_sessions"] = recommendations;
-
   if (
     session.title.match(/\bcancelled\b/i) ||
     session.title.match(/\babgesagt\b/i)
@@ -913,7 +899,7 @@ function handleResult(
           trackJSON,
           streamMap,
           idPrefix,
-          linkMakerFunction,
+          (session, sourceJSON) => { return "https://fahrplan.bits-und-baeume.org/events/" + sourceJSON.id + ".html"; },
           idField
         );
         // if event could not be parse skip it
@@ -1291,10 +1277,12 @@ exports.scrape = function(callback) {
   });
 
   json_requester.get(
-    {urls: {
-      speakers: speakers_url,
-      schedule: schedule_url
-    }},
+    {
+      urls: {
+        speakers: speakers_url,
+        schedule: schedule_url
+      }
+    },
     function(result) {
       // Main Events
       const speakers = result.speakers.schedule_speakers.speakers;
@@ -1305,9 +1293,9 @@ exports.scrape = function(callback) {
         color: [97.0, 97.0, 97.0, 1.0], // grey
         label_de: "Other",
         label_en: "Other"
-			};
-			
-			const streamMap = {};
+      };
+
+      const streamMap = {};
 
       // Frap
       handleResult(
@@ -1316,15 +1304,15 @@ exports.scrape = function(callback) {
         [],
         "",
         defaultTrack,
-        "https://fahrplan.events.ccc.de/congress/2017/Fahrplan",
+        "https://fahrplan.bits-und-baeume.org/events",
         streamMap,
         null,
         null,
         null
       );
 
-      const allSessions = data.filter(i => i.type == 'session');
-      
+      const allSessions = data.filter(i => i.type == "session");
+
       // Generate iCal Feeds
       generateIcalData(allSessions);
 
