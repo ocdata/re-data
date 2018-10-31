@@ -12,7 +12,6 @@ const cheerio = require("cheerio");
 const sanitizeHtml = require("sanitize-html");
 const parseCSV = require("csv-parse");
 const async = require("async");
-const md5 = require("MD5");
 const ical = require("ical");
 const months = [
   "Jan",
