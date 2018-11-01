@@ -99,16 +99,6 @@ const streamURLs = {};
 
 const testVideoURLs = {};
 
-// Security #5057af blue
-// Politics #b550bd violett
-// Science #45b9b3 turqise
-// Hardware #a8563f brown
-// Art #b99745 orange
-// Failosophy #c0ba59 yellow
-// CCC #45b964 green
-// Entertainment #45b964 (same as CCC) green
-//
-// official from https://events.ccc.de/congress/2017/wiki/Static:Design
 const blue = [80.0, 87.0, 175.0, 1.0];
 const violett = [181.0, 80.0, 189.0, 1.0];
 const turquise = [69.0, 185.0, 179.0, 1.0];
@@ -124,18 +114,15 @@ const black = [0.0, 0.0, 0.0, 1.0];
 const cream = [135.0, 81.0, 86.0, 1.0];
 
 const colors = {};
-colors[eventId + "-security"] = blue;
-colors[eventId + "-ethics-society-politics"] = violett;
-colors[eventId + "-science"] = turquise;
-colors[eventId + "-hardware-making"] = brown;
-colors[eventId + "-art-culture"] = orange;
-colors[eventId + "-failosophy"] = yellow;
-colors[eventId + "-ccc"] = green;
-colors[eventId + "-entertainment"] = green;
-colors[eventId + "-self-organized-sessions"] = grey;
-colors[eventId + "-podcast"] = red;
-colors[eventId + "-sendezentrum"] = red;
-colors[eventId + "-other"] = grey;
+colors[mkID('Reclaim Smart City!')] = blue;
+colors[mkID('Die materielle Basis')] = yellow;
+colors[mkID('Bits & Bäume')] = green;
+colors[mkID('Alternatives Wirtschaften')] = orange;
+colors[mkID('Daten & Umwelt')] = turquise;
+colors[mkID('Zivilgesellschaft & Communities')] = violett;
+colors[mkID('Digitaler Kapitalismus')] = red;
+colors[mkID('Die ganz großen Fragen')] = grey;
+colors[mkID('Other')] = grey;
 
 const allFormats = {
   discussion: { id: "discussion", label_en: "Discussion" },
