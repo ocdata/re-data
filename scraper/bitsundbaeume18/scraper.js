@@ -380,7 +380,8 @@ function parseSpeaker(speakerJSON, imageURLPrefix) {
   }
   if (speakerJSON.image) {
     var path = speakerJSON.image;
-    path = path.replace(/\/medium\//, "/large/");
+		path = path.replace(/\/medium\//, "/large/");
+		path = path.replace(/\/original\//, "/large/");
     result["photo"] = imageHost + path;
   }
   return result;
@@ -1293,7 +1294,7 @@ exports.scrape = function(callback) {
         [],
         "",
         defaultTrack,
-        "https://fahrplan.bits-und-baeume.org/events",
+        "https://fahrplan.bits-und-baeume.org",
         streamMap,
         null,
         null,
