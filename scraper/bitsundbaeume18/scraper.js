@@ -45,18 +45,21 @@ const dayMonthChange = 0;
 const dayDayChange = 0;
 
 const sortOrderOfLocations = [
-  mkID("Lecture room 11"),
-  mkID("Seminar room 14-15"),
-  mkID("Lecture room 12"),
-  mkID("Seminar room 13"),
-  mkID("CCL Hall 3"),
-  mkID("Chaos West Stage"),
-  mkID("Hive Stage"),
-  mkID("Komona Aquarius"),
-  mkID("Komona Coral Reef"),
-  mkID("Komona D.Ressrosa"),
-  mkID("Komona Blue Princess"),
-  mkID("Kidspace")
+	'bitsundbaeume18-bits-b-ume-b-hne',
+	mkID('Bühne 1'),
+	mkID('Bühne 2'),
+	mkID('Bühne 3'),
+	mkID('Bühne 4'),
+  mkID('Raum 1'),
+	mkID('Raum 2'),
+	mkID('Raum 3'),
+	mkID('Raum 4'),
+	mkID('Raum 5'),
+	mkID('Raum 6'),
+	mkID('Raum 7'),
+  mkID('Forum'),
+  mkID('JugendForum'),
+  mkID('Chatraum'),
 ];
 
 // to map VOC API output to our rooms
