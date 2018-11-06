@@ -1,9 +1,5 @@
-/* get node modules */
 const fs = require("fs");
 const path = require("path");
-const eventId = "bitsundbaeume18";
-
-/* get npm modules */
 const scrapyard = require("scrapyard");
 const http = require("http");
 const moment = require("moment");
@@ -13,26 +9,13 @@ const sanitizeHtml = require("sanitize-html");
 const parseCSV = require("csv-parse");
 const async = require("async");
 const ical = require("ical");
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec"
-];
-const icalendar = require("icalendar");
-
+const icalendar = require('icalendar');
 const log = require(path.resolve(__dirname, "../../api/lib/log.js"));
 const json_requester = require("../lib/json_requester");
-const schedule_url = "https://fahrplan.bits-und-baeume.org/schedule.json"; //"http://data.conference.bits.io/data/32c3/schedule.json"; //
-const speakers_url = "https://fahrplan.bits-und-baeume.org/speakers.json"; // "http://data.conference.bits.io/data/32c3/speakers-frap.json";  //
+
+const EVENT_ID = 'bitsundbaeume18';
+const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
+const SPEAKERS_URL = 'https://fahrplan.bits-und-baeume.org/speakers.json';
 
 // for debugging we can just pretend rp14 was today
 const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
@@ -152,7 +135,7 @@ const allSpeakers = {};
 const allTracks = {};
 
 function addEntry(type, obj) {
-  obj.event = eventId;
+  obj.event = EVENT_ID;
   obj.type = type;
   data.push(obj);
 }
@@ -160,7 +143,7 @@ function addEntry(type, obj) {
 function alsoAdd(type, list) {
   Object.keys(list).forEach(function(key) {
     var obj = clone(list[key]);
-    obj.event = eventId;
+    obj.event = EVENT_ID;
     obj.type = type;
     data.push(obj);
   });
@@ -168,7 +151,7 @@ function alsoAdd(type, list) {
 
 function mkID(string) {
   return (
-    eventId +
+    EVENT_ID +
     "-" +
     string
       .toString()
@@ -180,7 +163,7 @@ function mkID(string) {
 function mkID(string, prefix) {
   if (prefix == undefined)
     return (
-      eventId +
+      EVENT_ID +
       "-" +
       string
         .toString()
@@ -188,7 +171,7 @@ function mkID(string, prefix) {
         .toLowerCase()
     );
   return (
-    eventId +
+    EVENT_ID +
     "-" +
     prefix +
     "-" +
@@ -321,7 +304,7 @@ function parseDay(dayXML) {
 
   var day = {
     id: id,
-    event: eventId,
+    event: EVENT_ID,
     type: "day",
     label_en: dateLabelEn,
     label_de: dateLabelDe,
@@ -332,100 +315,100 @@ function parseDay(dayXML) {
 }
 
 function parseSpeaker(speakerJSON, imageURLPrefix) {
-  var bio = "";
+  let bio = '';
   if (speakerJSON.abstract) {
     bio = speakerJSON.abstract;
   }
   if (speakerJSON.description) {
-    bio = bio + "\n\n" + speakerJSON.description;
+    bio = `${bio} \n\n${speakerJSON.description}`;
   }
 
-  var links = [];
+  const links = [];
 
   if (speakerJSON.links) {
-    speakerJSON.links.forEach(function(link) {
-      var url = link.url;
-      if (url.indexOf("http") != 0) {
-        url = "http://" + url;
+    speakerJSON.links.forEach((link) => {
+      let { url } = link;
+      if (url.indexOf('http') !== 0) {
+        url = `http://${url}`;
       }
       links.push({
-        url: url,
+        url,
         title: link.title,
-        service: "web",
-        type: "speaker-link"
+        service: 'web',
+        type: 'speaker-link',
       });
     });
   }
 
-  var result = {
+  const result = {
     id: mkID(speakerJSON.full_public_name),
-    type: "speaker",
-    event: eventId,
+    type: 'speaker',
+    event: EVENT_ID,
     name: speakerJSON.full_public_name,
     biography: bio,
-    links: links,
-    sessions: [] // fill me later
+    links,
+    sessions: [],
   };
 
   // de-htmlize
   // console.log(bio);
   // $ = cheerio.load(bio);
-  result["biography"] = sanitizeHtml(bio, { allowedTags: [] });
+  result.biography = sanitizeHtml(bio, { allowedTags: [] });
 
   // sys.puts(sys.inspect(handler.dom, false, null));
 
-  var imageHost = imageURLPrefix;
+  const imageHost = imageURLPrefix;
   if (speakerJSON.photo) {
-    result["photo"] = speakerJSON.photo;
+    result.photo = speakerJSON.photo;
   }
   if (speakerJSON.image) {
-    var path = speakerJSON.image;
-		path = path.replace(/\/medium\//, "/large/");
-		path = path.replace(/\/original\//, "/large/");
-    result["photo"] = imageHost + path;
+    let imagePath = speakerJSON.image;
+    imagePath = imagePath.replace(/\/medium\//, '/large/');
+    imagePath = imagePath.replace(/\/original\//, '/large/');
+    result.photo = imageHost + imagePath;
   }
   return result;
 }
 
 function parseRoom(roomName, index, namePrefix) {
-  var roomName = roomName;
+  let finalRoomName = roomName;
   if (namePrefix != null) {
-    roomName = namePrefix + roomName;
+    finalRoomName = namePrefix + roomName;
   }
 
-  var id = mkID(roomName);
+  const id = mkID(finalRoomName);
 
   // change some names
-  var newName = locationNameChanges[id];
+  const newName = locationNameChanges[id];
   if (newName) {
-    roomName = newName;
+    finalRoomName = newName;
   }
 
   return {
-    id: id,
-    label_en: roomName,
-    label_de: roomName,
+    id,
+    label_en: finalRoomName,
+    label_de: finalRoomName,
     is_stage: roomName.toString().match(/Stage/i) ? true : false,
     floor: 0,
     order_index: index,
-    event: eventId,
-    type: "location"
+    event: EVENT_ID,
+    type: 'location',
   };
 }
 
 function generateIcalData(allSessions) {
-  var ical = new icalendar.iCalendar();
+  const ical = new icalendar.iCalendar();
 
-  allSessions.forEach(function(session) {
-    var event = new icalendar.VEvent(session.id);
+  allSessions.forEach((session) => {
+    let event = new icalendar.VEvent(session.id);
     event["TZID"] = "Europe/Berlin";
-    var summary = session.title;
+    let summary = session.title;
     if (session.subtitle) {
       summary = summary + " – " + session.subtitle;
     }
     event.setSummary(summary);
 
-    var description = "";
+    let description = "";
     if (session.abstract && session.description) {
       description = session.abstract + "\n\n" + session.description;
     } else if (session.abstract) {
@@ -443,7 +426,7 @@ function generateIcalData(allSessions) {
     ical.addComponent(event);
   });
 
-  var filepath = __dirname + "/../../web/data/" + eventId + "/sessions.ics";
+  let filepath = __dirname + "/../../web/data/" + EVENT_ID + "/sessions.ics";
   filepath = path.normalize(filepath);
   fs.writeFile(filepath, ical.toString(), function(err) {});
 }
@@ -457,15 +440,15 @@ function parseDate(dateString) {
 }
 
 function parseEnd(dateString, durationString) {
-  var dayChange = 4;
-  var eventDate = new Date(dateString);
-  var time = eventDate.getTime() / 1000;
-  var match = durationString.toString().match(/(\d?\d):(\d\d)/);
-  var hours = new Number(match[1]);
-  var minutes = new Number(match[2]);
-  var seconds = time + minutes * 60.0 + hours * 60.0 * 60.0;
-  var date = new Date(seconds * 1000);
-  var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
+  const dayChange = 4;
+  const eventDate = new Date(dateString);
+  const time = eventDate.getTime() / 1000;
+  const match = durationString.toString().match(/(\d?\d):(\d\d)/);
+  const hours = new Number(match[1]);
+  const minutes = new Number(match[2]);
+  const seconds = time + minutes * 60.0 + hours * 60.0 * 60.0;
+  const date = new Date(seconds * 1000);
+  const newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
   date.setTime(newMillis);
 
   if (date.getTime() <= eventDate.getTime()) {
@@ -492,27 +475,27 @@ function parseEnd(dateString, durationString) {
 }
 
 function parseTrackFromEvent(eventXML, defaultTrack) {
-  var trackName = eventXML.track;
+  const trackName = eventXML.track;
   // if no track name is given we just return the default
   if (trackName == null) {
     return defaultTrack;
   }
   // console.log(trackName);
-  var id = mkID(trackName);
-  var color = colors[id];
+  const id = mkID(trackName);
+  let color = colors[id];
   if (!color) {
     color = [109.0, 109.0, 109.0, 1.0]; // grey by default
   }
   return {
-    id: id,
-    color: color,
+    id,
+    color,
     label_en: trackName.toString(),
-    label_de: trackName.toString()
+    label_de: trackName.toString(),
   };
 }
 
 function normalizeXMLDayDateKey(date, begin) {
-  var parseDate = new Date(date);
+  const parseDate = new Date(date);
   parseDate.setUTCFullYear(parseDate.getUTCFullYear() + dayYearChange);
   parseDate.setUTCMonth(parseDate.getUTCMonth() + dayMonthChange);
   parseDate.setUTCDate(parseDate.getUTCDate() + dayDayChange);
@@ -1257,7 +1240,7 @@ function poiForRoomShape(id, shapeJSON, titleJSON, mapID) {
 exports.scrape = function(callback) {
   console.log("scrape");
 
-  var scraper = new scrapyard({
+  const scraper = new scrapyard({
     cache: path.resolve(__dirname, "..", ".cache"),
     debug: true,
     timeout: 300000,
@@ -1269,8 +1252,8 @@ exports.scrape = function(callback) {
   json_requester.get(
     {
       urls: {
-        speakers: speakers_url,
-        schedule: schedule_url
+        speakers: SPEAKERS_URL,
+        schedule: SCHEDULE_URL
       }
     },
     function(result) {
@@ -1361,7 +1344,7 @@ function parsePOIsFromCSV(data, callback) {
         }
 
         var poi = {
-          id: eventId + "-pointofinterest-" + id,
+          id: EVENT_ID + "-pointofinterest-" + id,
           type: "poi",
           label_en: row[4],
           label_de: row[5],
@@ -1377,7 +1360,7 @@ function parsePOIsFromCSV(data, callback) {
         var floors = row[1].split(",");
         if (floors.length > 0 && floors[0] != "") {
           for (var i = floors.length - 1; i >= 0; i--) {
-            var floorID = eventId + "-map-level" + floors[i];
+            var floorID = EVENT_ID + "-map-level" + floors[i];
             poi.positions.push({
               map: floorID,
               x: x,
