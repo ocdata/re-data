@@ -11,7 +11,7 @@ const async = require("async");
 const ical = require("ical");
 const icalendar = require('icalendar');
 const log = require(path.resolve(__dirname, "../../api/lib/log.js"));
-const json_requester = require("../lib/json_requester");
+const jsonRequester = require('../lib/json_requester');
 
 const EVENT_ID = 'bitsundbaeume18';
 const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
@@ -27,40 +27,38 @@ const dayYearChange = 0;
 const dayMonthChange = 0;
 const dayDayChange = 0;
 
+function mkID(string) {
+  const slug = string
+    .toString()
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .toLowerCase();
+  return `${EVENT_ID}-${slug}`;
+}
+
 const sortOrderOfLocations = [
-	'bitsundbaeume18-bits-b-ume-b-hne',
-	mkID('Bühne 1'),
-	mkID('Bühne 2'),
-	mkID('Bühne 3'),
-	mkID('Bühne 4'),
+  'bitsundbaeume18-bits-b-ume-b-hne',
+  mkID('Bühne 1'),
+  mkID('Bühne 2'),
+  mkID('Bühne 3'),
+  mkID('Bühne 4'),
   mkID('Raum 1'),
-	mkID('Raum 2'),
-	mkID('Raum 3'),
-	mkID('Raum 4'),
-	mkID('Raum 5'),
-	mkID('Raum 6'),
-	mkID('Raum 7'),
+  mkID('Raum 2'),
+  mkID('Raum 3'),
+  mkID('Raum 4'),
+  mkID('Raum 5'),
+  mkID('Raum 6'),
+  mkID('Raum 7'),
   mkID('Forum'),
   mkID('JugendForum'),
   mkID('Chatraum'),
 ];
 
 // to map VOC API output to our rooms
-const vocSlugToLocatonID = {
-  "Saal Adams": mkID("saal-adams"),
-  "Saal Borg": mkID("saal-borg"),
-  "Saal Clarke": mkID("saal-clarke"),
-  "Saal Dijkstra": mkID("saal-dijkstra")
-};
+const vocSlugToLocatonID = {};
 
-const locationNameChanges = {
-  //"34c3-sendezentrumsb-hne": "Sendezentrum",
-  //"34c3-podcastingtisch": "Podcasttisch"
-};
+const locationNameChanges = {};
 
-const poi2locationMapping = {
-  //"34c3-h1": mkID("saal-1")
-};
+const poi2locationMapping = {};
 
 const additionalLocations = [];
 
@@ -83,28 +81,33 @@ const streamURLs = {};
 const testVideoURLs = {};
 
 const blue = [80.0, 87.0, 175.0, 1.0];
-const violett = [181.0, 80.0, 189.0, 1.0];
-const turquise = [69.0, 185.0, 179.0, 1.0];
+const violett = [125.0, 136.0, 242.0, 1.0];
+const turquise = [219.0, 196.0, 251.0, 1.0];
 const brown = [168.0, 86.0, 63.0, 1.0];
-const orange = [185.0, 151.0, 69.0, 1.0];
-const yellow = [192.0, 186.0, 89.0, 1.0];
-const green = [69.0, 185.0, 100.0, 1.0];
+const orange = [239.0, 155.0, 74.0, 1.0];
+const yellow = [237.0, 243.0, 87.0, 1.0];
+const green = [169.0, 198.0, 100.0, 1.0];
+const red = [118.0, 26.0, 61.0, 1.0];
 
 // non-official
-const red = [118.0, 26.0, 61.0, 1.0];
+
 const grey = [110.0, 110.0, 110.0, 1.0];
 const black = [0.0, 0.0, 0.0, 1.0];
 const cream = [135.0, 81.0, 86.0, 1.0];
 
 const colors = {};
-colors[mkID('Reclaim Smart City!')] = blue;
-colors[mkID('Die materielle Basis')] = yellow;
-colors[mkID('Bits & Bäume')] = green;
 colors[mkID('Alternatives Wirtschaften')] = orange;
-colors[mkID('Daten & Umwelt')] = turquise;
-colors[mkID('Zivilgesellschaft & Communities')] = violett;
+colors[mkID('Daten & Umwelt')] = green;
+colors[mkID('Die ganz großen Fragen')] = turquise;
+colors[mkID('Die materielle Basis')] = yellow;
 colors[mkID('Digitaler Kapitalismus')] = red;
-colors[mkID('Die ganz großen Fragen')] = grey;
+colors[mkID('Stadt – Land – Smart')] = grey;
+colors[mkID('Zivilgesellschaft & Communities')] = violett;
+
+// not used anymore
+colors[mkID('Reclaim Smart City!')] = blue;
+colors[mkID('Bits & Bäume')] = green;
+
 colors[mkID('Other')] = grey;
 
 const allFormats = {
@@ -147,17 +150,6 @@ function alsoAdd(type, list) {
     obj.type = type;
     data.push(obj);
   });
-}
-
-function mkID(string) {
-  return (
-    EVENT_ID +
-    "-" +
-    string
-      .toString()
-      .replace(/[^A-Za-z0-9]+/g, "-")
-      .toLowerCase()
-  );
 }
 
 function mkID(string, prefix) {
@@ -652,44 +644,44 @@ function parseEvent(
     return null;
   }
 
-  var track = event.track;
-  if (track == null) track = "Other";
+  let { track } = event;
+  if (track == null) track = 'Other';
 
-  var locationNameDe = allRooms[room.id]["label_de"];
-  var locationNameEn = allRooms[room.id]["label_en"];
+  let locationNameDe = allRooms[room.id]["label_de"];
+  let locationNameEn = allRooms[room.id]["label_en"];
   if (locationNamePrefix != null) {
     locationNameDe = locationNamePrefix + locationNameDe;
     locationNameEn = locationNamePrefix + locationNameEn;
   }
 
-  if (event.id.toString() == "1103") {
-    console.log("Event: ", event);
-  }
+  let abstract = sanitizeHtml(event.abstract.toString(), { allowedTags: [] });
+  abstract = ent.decode(abstract);
 
-  var session = {
-    id: id, // Do not use GUID so we keep in line with Halfnarp IDs
+  let description = sanitizeHtml(event.description.toString(), { allowedTags: [] });
+  description = ent.decode(description);
+
+  const session = {
+    id, // Do not use GUID so we keep in line with Halfnarp IDs
     title: event.title.toString(),
-    abstract: sanitizeHtml(event.abstract.toString(), { allowedTags: [] }),
-    description: sanitizeHtml(event.description.toString(), {
-      allowedTags: []
-    }),
-    begin: begin,
+    abstract,
+    description,
+    begin,
     end: parseEnd(event.date, event.duration),
     track: {
       id: trackJSON.id,
       label_de: trackJSON.label_de,
-      label_en: trackJSON.label_en
+      label_en: trackJSON.label_en,
     },
-    day: day,
+    day,
     format: allFormats[eventTypeId],
-    level: allLevels["advanced"],
+    level: allLevels.advanced,
     lang:
       allLanguages[
-        event.language.toString() != null ? event.language.toString() : "en"
+        event.language.toString() != null ? event.language.toString() : 'en'
       ],
     speakers: [], // fill me later
     enclosures: [], // fill me later
-    links: links
+    links,
   };
 
   if (
@@ -1255,7 +1247,7 @@ exports.scrape = function(callback) {
     connections: 10
   });
 
-  json_requester.get(
+  jsonRequester.get(
     {
       urls: {
         speakers: SPEAKERS_URL,
