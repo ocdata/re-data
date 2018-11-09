@@ -5,7 +5,7 @@ const http = require("http");
 const moment = require("moment");
 const ent = require("ent");
 const cheerio = require("cheerio");
-const sanitizeHtml = require("sanitize-html");
+const sanitizeHtml = require('sanitize-html');
 const parseCSV = require("csv-parse");
 const async = require("async");
 const ical = require("ical");
@@ -467,22 +467,26 @@ function parseEnd(dateString, durationString) {
 }
 
 function parseTrackFromEvent(eventXML, defaultTrack) {
-  const trackName = eventXML.track;
+  let trackName = eventXML.track;
+  // id is done without decoding ent
+  const id = mkID(trackName);
+  trackName = ent.decode(trackName);
   // if no track name is given we just return the default
   if (trackName == null) {
     return defaultTrack;
   }
   // console.log(trackName);
-  const id = mkID(trackName);
+  
   let color = colors[id];
   if (!color) {
     color = [109.0, 109.0, 109.0, 1.0]; // grey by default
   }
+  
   return {
     id,
     color,
-    label_en: trackName.toString(),
-    label_de: trackName.toString(),
+    label_en: trackName,
+    label_de: trackName,
   };
 }
 
@@ -604,13 +608,13 @@ function parseEvent(
     }
 
     links.push({
-      title: title,
-      url: url,
-      type: 'session-link'
+      title,
+      url,
+      type: 'session-link',
     });
   });
 
-  let link = additionalLinks[id];
+  const link = additionalLinks[id];
   if (link) {
     links.push(link);
   }
@@ -833,12 +837,12 @@ function handleResult(
     }
   });
   events.schedule.conference.days.forEach((day) => {
-    var roomIndex = 0;
-    var rooms = day.rooms;
+    let roomIndex = 0;
+    const { rooms } = day;
     Object.keys(rooms).forEach((roomLabel) => {
       // Room
       // ----
-      let roomJSON = parseRoom(roomLabel, roomIndex, locationNamePrefix);
+      const roomJSON = parseRoom(roomLabel, roomIndex, locationNamePrefix);
       allRooms[roomJSON.id] = roomJSON;
       roomIndex += 1;
 
@@ -851,15 +855,15 @@ function handleResult(
         // Track
         // -----
         const trackJSON = parseTrackFromEvent(event, defaultTrack);
-        if (parseTrackFromEvent.id == trackJSON.id) {
+        if (parseTrackFromEvent.id === trackJSON.id) {
           log.warn(`!!!! DEFAULT TRACK FOR ${event.title}`);
         }
         allTracks[trackJSON.id] = trackJSON;
-
         // Event
         // -----
         const eventJSON = parseEvent(
           event,
+
           day,
           roomJSON,
           locationNamePrefix,
