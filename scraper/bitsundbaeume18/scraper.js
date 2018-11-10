@@ -42,6 +42,7 @@ const sortOrderOfLocations = [
   mkID('DELPHI'),
   mkID('EMACS'),
   mkID('ahorn'),
+  mkID('birke'),
   mkID('cocos'),
   mkID('durian'),
   mkID('erle'),
@@ -49,6 +50,8 @@ const sortOrderOfLocations = [
   mkID('gingko'),
   mkID('Chatraum'),
   mkID('JugendForum'),
+  mkID('Forum'),
+  mkID('Glasraum'),
 ];
 
 // to map VOC API output to our rooms
