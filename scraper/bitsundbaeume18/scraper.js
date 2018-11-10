@@ -36,21 +36,19 @@ function mkID(string) {
 }
 
 const sortOrderOfLocations = [
-  'bitsundbaeume18-bits-b-ume-b-hne',
-  mkID('Bühne 1'),
-  mkID('Bühne 2'),
-  mkID('Bühne 3'),
-  mkID('Bühne 4'),
-  mkID('Raum 1'),
-  mkID('Raum 2'),
-  mkID('Raum 3'),
-  mkID('Raum 4'),
-  mkID('Raum 5'),
-  mkID('Raum 6'),
-  mkID('Raum 7'),
-  mkID('Forum'),
-  mkID('JugendForum'),
+  mkID('ADA'),
+  mkID('BASH'),
+  mkID('CLOJURE'),
+  mkID('DELPHI'),
+  mkID('EMACS'),
+  mkID('ahorn'),
+  mkID('cocos'),
+  mkID('durian'),
+  mkID('erle'),
+  mkID('fichte'),
+  mkID('gingko'),
   mkID('Chatraum'),
+  mkID('JugendForum'),
 ];
 
 // to map VOC API output to our rooms
