@@ -13,7 +13,9 @@ const { parseVocStreams } = require('./voc-live-api');
 const EVENT_ID = 'bitsundbaeume18';
 const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
 const SPEAKERS_URL = 'https://fahrplan.bits-und-baeume.org/speakers.json';
+
 const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json';
+const VOC_EVENT_ID = 'bub2018';
 
 // for debugging we can just pretend rp14 was today
 const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
@@ -555,7 +557,7 @@ function parseEvent(
   room,
   locationNamePrefix,
   trackJSON,
-  streamMap,
+  enclosureFunction = () => [],
   idPrefix,
   linkMakerFunction,
   idField,
@@ -593,8 +595,8 @@ function parseEvent(
     }
     if (
       typeof url === 'string' &&
-      !(url.indexOf('http://') == 0) &&
-      !(url.indexOf('https://') == 0)
+      !(url.indexOf('http://') === 0) &&
+      !(url.indexOf('https://') === 0)
     ) {
       url = `http://${url}`;
     }
@@ -614,16 +616,14 @@ function parseEvent(
   const begin = parseDate(event.date);
 
   // Make sure day change is at 5 in the morning
-  const hourOffset = 1;
-  const hours = begin.getUTCHours() + hourOffset;
-
+  
   const time = new Date(2017, 11, 27);
   if (begin.getTime() < time.getTime()) {
     console.log('No valid begin: ', begin);
     return null;
   }
 
-  const dayKey = normalizeXMLDayDateKey(eventDay['date'], begin);
+  const dayKey = normalizeXMLDayDateKey(eventDay.date, begin);
   let eventTypeId = event.type.toString();
   if (eventTypeId === 'lecture') {
     eventTypeId = 'talk';
@@ -643,8 +643,8 @@ function parseEvent(
   let { track } = event;
   if (track == null) track = 'Other';
 
-  let locationNameDe = allRooms[room.id]['label_de'];
-  let locationNameEn = allRooms[room.id]['label_en'];
+  let locationNameDe = allRooms[room.id].label_de;
+  let locationNameEn = allRooms[room.id].label_en;
   if (locationNamePrefix != null) {
     locationNameDe = locationNamePrefix + locationNameDe;
     locationNameEn = locationNamePrefix + locationNameEn;
@@ -684,42 +684,40 @@ function parseEvent(
     session.title.match(/\bcancelled\b/i) ||
     session.title.match(/\babgesagt\b/i)
   ) {
-    session['cancelled'] = true;
+    session.cancelled = true;
   } else {
-    session['cancelled'] = false;
+    session.cancelled = false;
   }
 
-  if (allRooms[room.id] != undefined && allRooms[room.id]['id'] != mkID('')) {
-    session['location'] = {
-      id: allRooms[room.id]['id'],
-      label_de: allRooms[room.id]['label_de'],
-      label_en: allRooms[room.id]['label_en']
+  if (allRooms[room.id] && allRooms[room.id].id !== mkID('')) {
+    session.location = {
+      id: allRooms[room.id].id,
+      label_de: allRooms[room.id].label_de,
+      label_en: allRooms[room.id].label_en,
     };
 
-    const locationId = session['location']['id'];
-    let willBeRecorded = undefined;
-    if (event['do_not_record'] == true) {
+    const locationId = session.location.id;
+    let willBeRecorded;
+    if (event.do_not_record) {
       willBeRecorded = false;
-    } else if (toArray(vocSlugToLocatonID).indexOf(locationId) != -1) {
+    } else if (toArray(vocSlugToLocatonID).indexOf(locationId) !== -1) {
       willBeRecorded = true;
     }
 
-    session['will_be_recorded'] = willBeRecorded;
+    session.will_be_recorded = willBeRecorded;
   }
 
   if (!session.format) {
-    log.warn(
-      'Session ' + session.id + ' (' + session.title + ') has no format'
-    );
-    session['format'] = allFormats['talk'];
+    log.warn('Session ', session.id, ' (', session.title, ') has no format');
+    session.format = allFormats.talk;
   }
 
   if (!session.lang) {
-    session.lang = allLanguages['en'];
+    session.lang = allLanguages.en;
   }
 
-  if (event.subtitle.toString() != '') {
-    session['subtitle'] = event.subtitle.toString();
+  if (event.subtitle.toString() !== '') {
+    session.subtitle = event.subtitle.toString();
   }
 
   // HACK: Fake one video for App Review
@@ -734,17 +732,11 @@ function parseEvent(
     });
   }
 
-  let additionalEnclosure = additionalEnclosures[session.id];
+  const additionalEnclosure = additionalEnclosures[session.id];
   if (additionalEnclosure) {
     session.enclosures.push(additionalEnclosure);
   }
 
-  if (session.location) {
-    const stream = streamMap[session.location.id];
-    if (stream) {
-      session.enclosures.push(stream);
-    }
-  }
 
   if (session.location) {
     const streamURL = streamURLs[session.location.id];
@@ -752,8 +744,14 @@ function parseEvent(
       session.enclosures.push({
         url: streamURL,
         mimetype: 'video/mp4',
-        type: 'livestream'
+        type: 'livestream',
       });
+    }
+  }
+  if (enclosureFunction) {
+    const enclosures = enclosureFunction(session);
+    if (Array.isArray(enclosures)) {
+      enclosures.forEach(enclosure => session.enclosures.push(enclosure));
     }
   }
 
@@ -769,11 +767,11 @@ function handleResult(
   locationNamePrefix,
   defaultTrack,
   speakerImageURLPrefix,
-  streamMap,
+  enclosureFunction,
   idPrefix,
   linkMakerFunction,
   idField,
-  sessonValidatorFunction = undefined
+  sessonValidatorFunction,
 ) {
   if (!speakers) {
     speakers = [];
@@ -840,7 +838,7 @@ function handleResult(
           roomJSON,
           locationNamePrefix,
           trackJSON,
-          streamMap,
+          enclosureFunction,
           idPrefix,
           (session, sourceJSON) => `https://fahrplan.bits-und-baeume.org/events/${sourceJSON.id}.html`,
           idField,
@@ -910,14 +908,16 @@ exports.scrape = (callback) => {
         speakers: SPEAKERS_URL,
         schedule: SCHEDULE_URL,
         vocLiveStreams: VOC_LIVE_API_URL,
-      }
+      },
     },
     (result) => {
       // Main Events
       const { speakers } = result.speakers.schedule_speakers;
       const { schedule } = result;
+
+      // VOC Live
       const { vocLiveStreams } = result;
-      const liveStreams = parseVocStreams(vocLiveStreams);
+      const liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
 
       const defaultTrack = {
         id: mkID('other'),
@@ -926,7 +926,23 @@ exports.scrape = (callback) => {
         label_en: 'Other',
       };
 
-      const streamMap = {};
+      // Generates enclosures from a parse session
+      const enclosureFunction = (session) => {
+        const enclosures = [];
+
+        // find live streams
+        const streamInfo = liveStreams.find(stream => stream.name.toLowerCase() === session.location.label_en.toLowerCase() && !stream.translated);
+        if (streamInfo) {
+          const livestream = {
+            url: streamInfo.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          enclosures.push(livestream);
+        }
+        return enclosures;
+      };
+
       const INVALID_SESSION_NAMES = ['Pause', 'Mittagessen', 'Abendessen'];
 
       // Frap
@@ -937,11 +953,11 @@ exports.scrape = (callback) => {
         '',
         defaultTrack,
         'https://fahrplan.bits-und-baeume.org',
-        streamMap,
+        enclosureFunction,
         null,
         null,
         null,
-        (session) => !INVALID_SESSION_NAMES.includes(session.title),
+        session => !INVALID_SESSION_NAMES.includes(session.title),
       );
 
       const allSessions = data.filter(i => i.type === 'session');

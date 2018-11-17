@@ -37,9 +37,5 @@ async function vocLiveStreams(slug, mediaType = 'video', streamType = 'hls') {
   return parseVocStreams(conferences, mediaType, streamType);
 }
 
-vocLiveStreams('bub2018')
-  .then((s) => {
-    console.log(s);
-  });
 
 module.exports = { vocLiveStreams, parseVocStreams };
