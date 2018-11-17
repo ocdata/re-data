@@ -9,6 +9,7 @@
     "cradle": "0.6.7",
     "csv-parse": "2.4.0",
     "ent": "2.2.0",
+    "eslint": "^4.19.1",
     "html-to-text": "2.1.3",
     "ical": "0.3.1",
     "icalendar": "0.7.1",
@@ -17,6 +18,8 @@
     "moment-timezone": "^0.5.14",
     "paper": "0.9.25",
     "request": " 2.81.0",
+    "request-promise": "^4.2.2",
+    "sanitize-html": "^1.19.1",
     "scrapyard": "0.0.8",
     "slug": "^0.9.1",
     "turf": "2.0.0"

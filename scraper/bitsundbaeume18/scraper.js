@@ -1,21 +1,19 @@
-const fs = require("fs");
-const path = require("path");
-const scrapyard = require("scrapyard");
-const http = require("http");
-const moment = require("moment");
-const ent = require("ent");
-const cheerio = require("cheerio");
+const fs = require('fs');
+const path = require('path');
+const scrapyard = require('scrapyard');
+const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
-const parseCSV = require("csv-parse");
-const async = require("async");
-const ical = require("ical");
+const parseCSV = require('csv-parse');
+const async = require('async');
 const icalendar = require('icalendar');
-const log = require(path.resolve(__dirname, "../../api/lib/log.js"));
+const log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 const jsonRequester = require('../lib/json_requester');
+const { parseVocStreams } = require('./voc-live-api');
 
 const EVENT_ID = 'bitsundbaeume18';
 const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
 const SPEAKERS_URL = 'https://fahrplan.bits-und-baeume.org/speakers.json';
+const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json';
 
 // for debugging we can just pretend rp14 was today
 const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
@@ -66,12 +64,12 @@ const additionalLocations = [];
 const additionalLinks = {};
 
 const additionalEnclosures = {
-  "34c3-workshop-e7d29e30-123b-4840-a2fc-e6674ad6c455": {
-    url: "https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4",
-    mimetype: "video/mp4",
-    type: "recording",
-    thumbnail: "https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg"
-  }
+  '34c3-workshop-e7d29e30-123b-4840-a2fc-e6674ad6c455': {
+    url: 'https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4',
+    mimetype: 'video/mp4',
+    type: 'recording',
+    thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg'
+  },
 };
 
 const additionalPOIs = [];
@@ -112,20 +110,20 @@ colors[mkID('Bits & Bäume')] = green;
 colors[mkID('Other')] = grey;
 
 const allFormats = {
-  discussion: { id: "discussion", label_en: "Discussion" },
-  talk: { id: "talk", label_en: "Talk" },
-  workshop: { id: "workshop", label_en: "Workshop" }
+  discussion: { id: 'discussion', label_en: 'Discussion' },
+  talk: { id: 'talk', label_en: 'Talk' },
+  workshop: { id: 'workshop', label_en: 'Workshop' }
 };
 
 const allLevels = {
-  beginner: { id: "beginner", label_en: "Beginner" },
-  intermediate: { id: "intermediate", label_en: "Intermediate" },
-  advanced: { id: "advanced", label_en: "Advanced" }
+  beginner: { id: 'beginner', label_en: 'Beginner' },
+  intermediate: { id: 'intermediate', label_en: 'Intermediate' },
+  advanced: { id: 'advanced', label_en: 'Advanced' }
 };
 
 const allLanguages = {
-  en: { id: "en", label_en: "English" },
-  de: { id: "de", label_en: "German" }
+  en: { id: 'en', label_en: 'English' },
+  de: { id: 'de', label_en: 'German' }
 };
 
 const allMaps = {};
@@ -157,20 +155,20 @@ function mkID(string, prefix) {
   if (prefix == undefined)
     return (
       EVENT_ID +
-      "-" +
+      '-' +
       string
         .toString()
-        .replace(/[^A-Za-z0-9]+/g, "-")
+        .replace(/[^A-Za-z0-9]+/g, '-')
         .toLowerCase()
     );
   return (
     EVENT_ID +
-    "-" +
+    '-' +
     prefix +
-    "-" +
+    '-' +
     string
       .toString()
-      .replace(/[^A-Za-z0-9]+/g, "-")
+      .replace(/[^A-Za-z0-9]+/g, '-')
       .toLowerCase()
   );
 }
@@ -179,9 +177,9 @@ function mkID(string, prefix) {
 
 function recommendedSessions(halfnarp, frapSessions) {
   let validSessionIds = [];
-  for (day of frapSessions.schedule.conference.days) {
-    for (roomName in day.rooms) {
-      let sessions = day.rooms[roomName];
+  for (confDay of frapSessions.schedule.conference.days) {
+    for (roomName in confDay.rooms) {
+      let sessions = confDay.rooms[roomName];
       let ids = sessions.map(session => session.id);
 
       validSessionIds = validSessionIds.concat(ids);
@@ -264,47 +262,44 @@ function halfnarpEventDistance(sessionA, sessionB) {
 }
 
 function parseDay(dayXML) {
-  var date = dayXML.date;
-  // console.log("parsing: ", dayXML);
+  const { date } = dayXML;
+  // console.log('parsing: ', dayXML);
 
-  var comps = date.split("-");
-  var parseDate = new Date(date);
+  const parseDate = new Date(date);
   parseDate.setUTCFullYear(parseDate.getUTCFullYear() + dayYearChange);
   parseDate.setUTCMonth(parseDate.getUTCMonth() + dayMonthChange);
   parseDate.setUTCDate(parseDate.getUTCDate() + dayDayChange);
 
-  var dateLabelDe = date;
-  var dateLabelEn = date;
+  let dateLabelDe = date;
+  let dateLabelEn = date;
 
-  var index = 0;
-  var monthDay = parseDate.getUTCDate();
+  let index = 0;
+  const monthDay = parseDate.getUTCDate();
   switch (monthDay) {
     case 17:
       index = 1;
-      dateLabelDe = "Tag 1";
-      dateLabelEn = "Day 1";
+      dateLabelDe = 'Tag 1';
+      dateLabelEn = 'Day 1';
       break;
     case 18:
       index = 2;
-      dateLabelDe = "Tag 2";
-      dateLabelEn = "Day 2";
+      dateLabelDe = 'Tag 2';
+      dateLabelEn = 'Day 2';
       break;
     default:
       return null;
   }
 
-  var id = mkID(index);
+  const id = mkID(index);
 
-  var day = {
+  return {
     id: id,
     event: EVENT_ID,
-    type: "day",
+    type: 'day',
     label_en: dateLabelEn,
     label_de: dateLabelDe,
     date: date
   };
-  // console.log("DAY   ", day);
-  return day;
 }
 
 function parseSpeaker(speakerJSON, imageURLPrefix) {
@@ -394,16 +389,16 @@ function generateIcalData(allSessions) {
 
   allSessions.forEach((session) => {
     let event = new icalendar.VEvent(session.id);
-    event["TZID"] = "Europe/Berlin";
+    event['TZID'] = 'Europe/Berlin';
     let summary = session.title;
     if (session.subtitle) {
-      summary = summary + " – " + session.subtitle;
+      summary = summary + ' – ' + session.subtitle;
     }
     event.setSummary(summary);
 
-    let description = "";
+    let description = '';
     if (session.abstract && session.description) {
-      description = session.abstract + "\n\n" + session.description;
+      description = session.abstract + '\n\n' + session.description;
     } else if (session.abstract) {
       description = session.abstract;
     } else if (session.description) {
@@ -419,14 +414,14 @@ function generateIcalData(allSessions) {
     ical.addComponent(event);
   });
 
-  let filepath = __dirname + "/../../web/data/" + EVENT_ID + "/sessions.ics";
+  let filepath = __dirname + '/../../web/data/' + EVENT_ID + '/sessions.ics';
   filepath = path.normalize(filepath);
   fs.writeFile(filepath, ical.toString(), function(err) {});
 }
 
 function parseDate(dateString) {
-  var date = new Date(dateString);
-  var newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
+  const date = new Date(dateString);
+  const newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
   date.setTime(newMillis);
 
   return date;
@@ -506,33 +501,33 @@ function normalizeXMLDayDateKey(date, begin) {
     // TODO: get day begin as input
     if (begin.getHours() >= 9) {
       // this is ok only if the session is very early, so we return the date from begin
-      var realBegin =
-        "" +
+      const realBegin =
+        '' +
         begin.getUTCFullYear() +
-        "-" +
+        '-' +
         (begin.getUTCMonth() + 1) +
-        "-" +
+        '-' +
         begin.getUTCDate();
 
-      // log.warn("Given 'day' date and 'begin' date of the session don't match and this is not an early morning session! date says:", parseDate, " vs begin:", begin, " returning ", realBegin);
+      // log.warn('Given 'day' date and 'begin' date of the session don't match and this is not an early morning session! date says:', parseDate, ' vs begin:', begin, ' returning ', realBegin);
 
       return realBegin;
     } else if (begin.getHours() >= 5) {
       // this is ok only if the session is very early, so we return the date from begin
-      var realBegin =
-        "" +
+      const realBegin =
+        '' +
         begin.getUTCFullYear() +
-        "-" +
+        '-' +
         (begin.getUTCMonth() + 1) +
-        "-" +
+        '-' +
         (begin.getUTCDate() - 1);
 
       log.warn(
-        "Session is to early, returning ",
+        'Session is to early, returning ',
         realBegin,
-        " as begin date instead of ",
+        ' as begin date instead of ',
         parseDate,
-        " begin: ",
+        ' begin: ',
         begin
       );
 
@@ -541,22 +536,22 @@ function normalizeXMLDayDateKey(date, begin) {
     // }
   }
 
-  // console.log("normalized " + date );
+  // console.log('normalized ' + date );
   date =
-    "" +
+    '' +
     parseDate.getUTCFullYear() +
-    "-" +
+    '-' +
     (parseDate.getUTCMonth() + 1) +
-    "-" +
+    '-' +
     parseDate.getUTCDate();
-  // console.log("to " + date );
+  // console.log('to ' + date );
 
   return date;
 }
 
 function parseEvent(
   event,
-  day,
+  eventDay,
   room,
   locationNamePrefix,
   trackJSON,
@@ -567,23 +562,19 @@ function parseEvent(
 ) {
   let links = [];
   if (idField == null) {
-    idField = "id";
+    idField = 'id';
   }
   let id = mkID(event[idField]);
-  if (typeof idPrefix == "string") {
+  if (typeof idPrefix == 'string') {
     id = mkID(event[idField], idPrefix);
   }
   let linkFunction = linkMakerFunction;
   if (linkFunction == null) {
     linkFunction = (session, sourceJSON) => {
       if (!event[idField]) {
-        return "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/";
+        return 'https://fahrplan.events.ccc.de/congress/2017/Fahrplan/';
       }
-      return (
-        "https://fahrplan.events.ccc.de/congress/2017/Fahrplan/events/" +
-        event[idField] +
-        ".html"
-      );
+      return `https://fahrplan.events.ccc.de/congress/2017/Fahrplan/events/${event[idField]}.html`;
     };
   }
 
@@ -598,14 +589,14 @@ function parseEvent(
       url = link.url;
     }
     if (typeof url === 'string' && url.indexOf('//') === 0) {
-      url = "http:" + url;
+      url = 'http:' + url;
     }
     if (
       typeof url === 'string' &&
-      !(url.indexOf("http://") == 0) &&
-      !(url.indexOf("https://") == 0)
+      !(url.indexOf('http://') == 0) &&
+      !(url.indexOf('https://') == 0)
     ) {
-      url = "http://" + url;
+      url = `http://${url}`;
     }
 
     links.push({
@@ -620,40 +611,40 @@ function parseEvent(
     links.push(link);
   }
 
-  var begin = parseDate(event.date);
+  const begin = parseDate(event.date);
 
   // Make sure day change is at 5 in the morning
-  var hourOffset = 1;
-  var hours = begin.getUTCHours() + hourOffset;
+  const hourOffset = 1;
+  const hours = begin.getUTCHours() + hourOffset;
 
-  var time = new Date(2017, 11, 27);
+  const time = new Date(2017, 11, 27);
   if (begin.getTime() < time.getTime()) {
-    console.log("No valid begin: " + begin);
+    console.log('No valid begin: ', begin);
     return null;
   }
 
-  var dayKey = normalizeXMLDayDateKey(day["date"], begin);
-  var eventTypeId = event.type.toString();
-  if (eventTypeId == "lecture") {
-    eventTypeId = "talk";
-  } else if (eventTypeId == "other") {
-    eventTypeId = "talk";
-  } else if (eventTypeId == "meeting") {
-    eventTypeId = "workshop";
+  const dayKey = normalizeXMLDayDateKey(eventDay['date'], begin);
+  let eventTypeId = event.type.toString();
+  if (eventTypeId === 'lecture') {
+    eventTypeId = 'talk';
+  } else if (eventTypeId === 'other') {
+    eventTypeId = 'talk';
+  } else if (eventTypeId === 'meeting') {
+    eventTypeId = 'workshop';
   }
 
-  var day = allDays[dayKey];
+  const day = allDays[dayKey];
 
   if (!day) {
-    console.log("No valid day for " + event.title.toString() + " " + dayKey);
+    console.log('No valid day for ' + event.title.toString() + ' ' + dayKey);
     return null;
   }
 
   let { track } = event;
   if (track == null) track = 'Other';
 
-  let locationNameDe = allRooms[room.id]["label_de"];
-  let locationNameEn = allRooms[room.id]["label_en"];
+  let locationNameDe = allRooms[room.id]['label_de'];
+  let locationNameEn = allRooms[room.id]['label_en'];
   if (locationNamePrefix != null) {
     locationNameDe = locationNamePrefix + locationNameDe;
     locationNameEn = locationNamePrefix + locationNameEn;
@@ -693,55 +684,53 @@ function parseEvent(
     session.title.match(/\bcancelled\b/i) ||
     session.title.match(/\babgesagt\b/i)
   ) {
-    session["cancelled"] = true;
+    session['cancelled'] = true;
   } else {
-    session["cancelled"] = false;
+    session['cancelled'] = false;
   }
 
-  if (allRooms[room.id] != undefined && allRooms[room.id]["id"] != mkID("")) {
-    session["location"] = {
-      id: allRooms[room.id]["id"],
-      label_de: allRooms[room.id]["label_de"],
-      label_en: allRooms[room.id]["label_en"]
+  if (allRooms[room.id] != undefined && allRooms[room.id]['id'] != mkID('')) {
+    session['location'] = {
+      id: allRooms[room.id]['id'],
+      label_de: allRooms[room.id]['label_de'],
+      label_en: allRooms[room.id]['label_en']
     };
 
-    var recordingLocationIds = [];
-
-    var locationId = session["location"]["id"];
-    var willBeRecorded = undefined;
-    if (event["do_not_record"] == true) {
+    const locationId = session['location']['id'];
+    let willBeRecorded = undefined;
+    if (event['do_not_record'] == true) {
       willBeRecorded = false;
     } else if (toArray(vocSlugToLocatonID).indexOf(locationId) != -1) {
       willBeRecorded = true;
     }
 
-    session["will_be_recorded"] = willBeRecorded;
+    session['will_be_recorded'] = willBeRecorded;
   }
 
   if (!session.format) {
     log.warn(
-      "Session " + session.id + " (" + session.title + ") has no format"
+      'Session ' + session.id + ' (' + session.title + ') has no format'
     );
-    session["format"] = allFormats["talk"];
+    session['format'] = allFormats['talk'];
   }
 
   if (!session.lang) {
-    session.lang = allLanguages["en"];
+    session.lang = allLanguages['en'];
   }
 
-  if (event.subtitle.toString() != "") {
-    session["subtitle"] = event.subtitle.toString();
+  if (event.subtitle.toString() != '') {
+    session['subtitle'] = event.subtitle.toString();
   }
 
   // HACK: Fake one video for App Review
-  var testVideoURL = testVideoURLs[session.id];
+  const testVideoURL = testVideoURLs[session.id];
   if (testVideoURL) {
     session.enclosures.push({
       url: testVideoURL,
-      mimetype: "video/mp4",
-      type: "recording",
+      mimetype: 'video/mp4',
+      type: 'recording',
       thumbnail:
-        "http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg"
+        'http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg'
     });
   }
 
@@ -751,19 +740,19 @@ function parseEvent(
   }
 
   if (session.location) {
-    var stream = streamMap[session.location.id];
+    const stream = streamMap[session.location.id];
     if (stream) {
       session.enclosures.push(stream);
     }
   }
 
   if (session.location) {
-    var streamURL = streamURLs[session.location.id];
+    const streamURL = streamURLs[session.location.id];
     if (streamURL) {
       session.enclosures.push({
         url: streamURL,
-        mimetype: "video/mp4",
-        type: "livestream"
+        mimetype: 'video/mp4',
+        type: 'livestream'
       });
     }
   }
@@ -794,14 +783,6 @@ function handleResult(
 
     if (allSpeakers[speakerJSON.id]) {
       let speaker = allSpeakers[speakerJSON.id];
-      // ["links", "sessions"].forEach(function(item){
-      //     // concat + uniq
-      //     var concated = speaker[item].concat(speakerJSON[item]);
-      //
-      //     speakerJSON[item] = concated.filter(function(elem, pos) {
-      //         return concated.indexOf(elem) == pos;
-      //     });
-      // });
       ['biography', 'photo'].forEach((item) => {
         // if the old thing has be
         if (
@@ -814,32 +795,23 @@ function handleResult(
           speaker[item] = speakerJSON[item];
         }
       });
-      // var result = {
-      //     "id": mkID(speakerJSON.full_public_name),
-      //     "type": "speaker",
-      //     "event": eventId,
-      //     "name": speakerJSON.full_public_name,
-      //     "biography": bio,
-      //     "links": links,
-      //     "sessions": [] // fill me later
-      // };
     }
 
     allSpeakers[speakerJSON.id] = speakerJSON;
   });
 
-  events.schedule.conference.days.forEach((day) => {
+  events.schedule.conference.days.forEach((confDay) => {
     // Day
     // ---
-    let dayJSON = parseDay(day);
+    let dayJSON = parseDay(confDay);
     if (dayJSON) {
       let key = normalizeXMLDayDateKey(dayJSON.date);
       allDays[key] = dayJSON;
     }
   });
-  events.schedule.conference.days.forEach((day) => {
+  events.schedule.conference.days.forEach((conferenceDay) => {
     let roomIndex = 0;
-    const { rooms } = day;
+    const { rooms } = conferenceDay;
     Object.keys(rooms).forEach((roomLabel) => {
       // Room
       // ----
@@ -864,8 +836,7 @@ function handleResult(
         // -----
         const eventJSON = parseEvent(
           event,
-
-          day,
+          conferenceDay,
           roomJSON,
           locationNamePrefix,
           trackJSON,
@@ -930,345 +901,29 @@ function handleResult(
   });
 }
 
-function handlePOIs(graph, titles) {
-  var POIs = {};
-
-  var map2level = {
-    0: "map-level0",
-    1: "map-level1",
-    2: "map-level2",
-    3: "map-level3",
-    4: "map-level4"
-  };
-  var poisForMaps = {};
-
-  for (roomID in graph.rooms) {
-    var roomShape = graph.rooms[roomID];
-    var roomTitles = titles[roomID];
-    var mapID = map2level[roomShape.level];
-    var pois = poisForMaps[mapID];
-    if (!pois) pois = [];
-
-    var poi = poiForRoomShape(roomID, roomShape, roomTitles, mapID);
-    if (!poi) continue;
-
-    pois.push(poi);
-
-    poisForMaps[mapID] = pois;
-  }
-
-  var allPois = [];
-
-  additionalPOIs.forEach(function(poi) {
-    allPois.push(poi);
-  });
-
-  for (mapID in poisForMaps) {
-    var map = allMaps[mapID];
-    if (!map) continue;
-
-    var pois = poisForMaps[mapID];
-
-    pois.forEach(function(poi) {
-      var mapPOIs = map.pois;
-      if (!mapPOIs) mapPOIs = [];
-      mapPOIs.push(poi);
-      map.pois = mapPOIs;
-
-      allPois.push(poi);
-    });
-  }
-
-  alsoAdd("poi", allPois);
-}
-
-function handleCSVResult(
-  csvData,
-  defaultTrack,
-  shareURL,
-  locationIdentifier,
-  callback
-) {
-  callback(null, []);
-  return;
-  parseCSV(
-    csvData,
-    {
-      delimiter: ";",
-      auto_parse: false,
-      auto_parse_date: false,
-      columns: true,
-      skip_empty_lines: true
-    },
-    function(err, output) {
-      var sessions = [];
-      if (err) {
-        log.error("CSV Parse Error: ", err);
-      } else {
-        // console.log(output);
-
-        var index = 0;
-        output.forEach(function(row) {
-          if (!row.tag || !row.beginn || !row.ende || row.tag.length == 0) {
-            return;
-          }
-
-          var components = row.tag.split(".");
-          if (components.length != 3) {
-            console.error("Could not parse date from CSV: ", row.tag);
-            return;
-          }
-
-          var day = components[0];
-          var month = components[1];
-          var year = "20" + components[2];
-          var isoDay = [year, month, day].join("-");
-
-          var beginDateStr = isoDay + "T" + row.beginn + "+01:00";
-          var beginDate = parseDate(beginDateStr);
-
-          var endDateStr = isoDay + "T" + row.beginn + "+0100";
-          var endDate = new Date(endDateStr);
-
-          var localHours = beginDate.getUTCHours() + 1;
-          if (localHours == 24) localHours = 0;
-          if (localHours <= 4) {
-            var day = beginDate.getUTCDate() - 1;
-            isoDay = [year, month, day].join("-");
-          }
-
-          // if the end date is before the begin date move it a day ahead
-          if (endDate.getTime() < beginDate.getTime()) {
-            endDate.setTime(endDate.getTime() + 24 * 3600 * 1000);
-          }
-
-          var duration = (endDate.getTime() - beginDate.getTime()) / 1000;
-          var durMin = duration / 60.0;
-          var durHour = Math.floor(durMin / 60);
-          var durHourStr = durHour < 10 ? "0" + durHour : durHour;
-          var leftDurMin = durMin - 60.0 * durHour;
-
-          var leftDurMinStr = leftDurMin < 10 ? "0" + leftDurMin : leftDurMin;
-          var durStr = durHourStr + ":" + leftDurMinStr;
-          var end = parseEnd(beginDateStr, durStr);
-
-          var artistURLFunction = function(potentialURL) {
-            if (
-              potentialURL &&
-              typeof potentialURL == "string" &&
-              potentialURL.length > 0 &&
-              potentialURL.indexOf("http") == 0 &&
-              row.dj_url_1.indexOf("://") != -1
-            ) {
-              return potentialURL;
-            } else {
-              return null;
-            }
-          };
-
-          var artists = [];
-          var artistURLs = [];
-          if (!row.dj_name_1) {
-            console.warn("Skipping row without DJ name");
-            return;
-          } else {
-            artists.push(row.dj_name_1);
-            artistURLs.push(artistURLFunction(row.dj_url_1));
-          }
-
-          if (row.dj_name_2 && row.dj_name_2.length > 0) {
-            artists.push(row.dj_name_2);
-            artistURLs.push(artistURLFunction(row.dj_url_2));
-          }
-
-          if (row.dj_name_3 && row.dj_name_3.length > 0) {
-            artists.push(row.dj_name_3);
-            artistURLs.push(artistURLFunction(row.dj_url_3));
-          }
-
-          var title = artists.join(", ");
-          console.log(title, " on day ", isoDay, " for begin ", beginDate);
-
-          var locationJSON = allRooms[locationIdentifier];
-          var trackJSON = defaultTrack;
-          var format = allFormats["talk"];
-          var langJSON = allLanguages["en"];
-          var levelJSON = allLevels["beginner"];
-
-          var day = allDays[isoDay];
-          if (!day) return;
-
-          var session = {
-            id: mkID("lounges-" + locationIdentifier + "-" + index),
-            title: title,
-            url: shareURL,
-            abstract: "",
-            description: "",
-            begin: beginDate,
-            end: end,
-            track: trackJSON,
-            day: day,
-            format: format,
-            level: levelJSON,
-            lang: langJSON,
-            speakers: [],
-            enclosures: [],
-            links: [],
-            location: locationJSON
-          };
-
-          for (var i = 0; i < artistURLs.length; i++) {
-            var url = artistURLs[i];
-            var artist = artists[i];
-            if (typeof url == "string") {
-              session.links.push({
-                title: artist,
-                url: url,
-                type: "session-link"
-              });
-            }
-          }
-
-          addEntry("session", session);
-
-          index++;
-        });
-      }
-
-      callback(err, sessions);
-    }
-  );
-}
-
-function poiForRoomShape(id, shapeJSON, titleJSON, mapID) {
-  var POI = {
-    id: shapeJSON["superroom"] ? mkID(shapeJSON.superroom) : mkID(id),
-    label_de: titleJSON["de"],
-    label_en: titleJSON["en"],
-    positions: [], // fill me later
-    hidden: false,
-    links: [],
-    description_de: "",
-    description_en: "",
-    category: "other"
-  };
-
-  var locationID = poi2locationMapping[POI.id];
-  if (locationID) {
-    POI["location"] = { id: locationID };
-  }
-
-  if (/hall/i.exec(POI.label_en)) {
-    POI["category"] = "session-location";
-  }
-  if (/toilet/i.exec(POI.label_en)) {
-    POI["category"] = "service";
-  }
-  if (/elevator/i.exec(POI.label_en)) {
-    POI["category"] = "elevator";
-  }
-  if (/shirt/i.exec(POI.label_en)) {
-    POI["category"] = "shopping";
-  }
-  if (/cert/i.exec(POI.label_en)) {
-    POI["category"] = "safety";
-  }
-  if (/(cash)/i.exec(POI.label_en)) {
-    POI["category"] = "service";
-  }
-  if (/(cloakroom)/i.exec(POI.label_en)) {
-    POI["category"] = "service";
-  }
-  if (/lounge/i.exec(POI.label_en)) {
-    POI["category"] = "entertainment";
-  }
-
-  var xPoints = [];
-  var yPoints = [];
-
-  var allPointStrings = shapeJSON.shape
-    .split(" ")
-    .map(function(map) {
-      return map.split(",").map(function(str) {
-        return Number(str);
-      });
-    })
-    .map(function(points) {
-      return [points[0] * 4.21875, points[1] * 4.21875];
-    });
-  allPointStrings.forEach(function(point) {
-    xPoints.push(point[0]);
-    yPoints.push(point[1]);
-  });
-
-  var midPointX = 0.0;
-  var midPointY = 0.0;
-  async.reduce(
-    xPoints,
-    0.0,
-    function(memo, item, callback) {
-      callback(null, memo + item);
-    },
-    function(err, res) {
-      midPointX = res / xPoints.length;
-    }
-  );
-  async.reduce(
-    yPoints,
-    0.0,
-    function(memo, item, callback) {
-      callback(null, memo + item);
-    },
-    function(err, res) {
-      midPointY = res / yPoints.length;
-    }
-  );
-
-  if (allPointStrings.length == 0) {
-    return null;
-  }
-  POI.positions.push({ map: mkID(mapID), x: midPointX, y: midPointY });
-
-  // var polygon = turf.polygon(allPointStrings);
-  // console.log("poly: ", polygon);
-  // // var merged = turf.merge(polygon);
-  // var center = turf.centroid(polygon);
-  // var extent = turf.extent(polygon);
-  // console.log("exte: ", extent);
-  // console.log("cent: ", center);
-
-  return POI;
-}
-
-exports.scrape = function(callback) {
-  console.log("scrape");
-
-  const scraper = new scrapyard({
-    cache: path.resolve(__dirname, "..", ".cache"),
-    debug: true,
-    timeout: 300000,
-    retries: 5,
-    type: "json",
-    connections: 10
-  });
+exports.scrape = (callback) => {
+  console.log('scrape');
 
   jsonRequester.get(
     {
       urls: {
         speakers: SPEAKERS_URL,
-        schedule: SCHEDULE_URL
+        schedule: SCHEDULE_URL,
+        vocLiveStreams: VOC_LIVE_API_URL,
       }
     },
-    function(result) {
+    (result) => {
       // Main Events
-      const speakers = result.speakers.schedule_speakers.speakers;
-      const schedule = result.schedule;
+      const { speakers } = result.speakers.schedule_speakers;
+      const { schedule } = result;
+      const { vocLiveStreams } = result;
+      const liveStreams = parseVocStreams(vocLiveStreams);
 
       const defaultTrack = {
-        id: mkID("other"),
+        id: mkID('other'),
         color: [97.0, 97.0, 97.0, 1.0], // grey
-        label_de: "Other",
-        label_en: "Other"
+        label_de: 'Other',
+        label_en: 'Other',
       };
 
       const streamMap = {};
@@ -1279,9 +934,9 @@ exports.scrape = function(callback) {
         schedule,
         speakers,
         [],
-        "",
+        '',
         defaultTrack,
-        "https://fahrplan.bits-und-baeume.org",
+        'https://fahrplan.bits-und-baeume.org',
         streamMap,
         null,
         null,
@@ -1294,27 +949,27 @@ exports.scrape = function(callback) {
       // Generate iCal Feeds
       generateIcalData(allSessions);
 
-      alsoAdd("speaker", allSpeakers);
-      alsoAdd("day", allDays);
+      alsoAdd('speaker', allSpeakers);
+      alsoAdd('day', allDays);
       // console.log(allRooms);
 
       var moreIDs = sortOrderOfLocations.length;
       toArray(allRooms)
         .sort()
         .forEach(function(item) {
-          if (sortOrderOfLocations.indexOf(item["id"]) >= 0) {
-            item["order_index"] = sortOrderOfLocations.indexOf(item["id"]);
+          if (sortOrderOfLocations.indexOf(item['id']) >= 0) {
+            item['order_index'] = sortOrderOfLocations.indexOf(item['id']);
           } else {
-            item["order_index"] = moreIDs;
+            item['order_index'] = moreIDs;
             moreIDs++;
           }
         });
 
-      alsoAdd("location", allRooms);
-      alsoAdd("map", allMaps);
-      alsoAdd("track", allTracks);
-      alsoAdd("format", allFormats);
-      alsoAdd("language", allLanguages);
+      alsoAdd('location', allRooms);
+      alsoAdd('map', allMaps);
+      alsoAdd('track', allTracks);
+      alsoAdd('format', allFormats);
+      alsoAdd('language', allLanguages);
 
       callback(data);
     } // json get result
@@ -1325,7 +980,7 @@ function parsePOIsFromCSV(data, callback) {
   parseCSV(
     csvData,
     {
-      delimiter: ";",
+      delimiter: ';',
       auto_parse: false,
       skip_empty_lines: true
     },
@@ -1336,21 +991,21 @@ function parsePOIsFromCSV(data, callback) {
         var id = row[0];
 
         if (
-          id == "id" ||
-          id == "" ||
-          id == " " ||
-          row[2] == "" ||
-          row[2] == " " ||
-          row[3] == "" ||
-          row[3] == " "
+          id == 'id' ||
+          id == '' ||
+          id == ' ' ||
+          row[2] == '' ||
+          row[2] == ' ' ||
+          row[3] == '' ||
+          row[3] == ' '
         ) {
-          // console.log("skipping "  + row);
+          // console.log('skipping '  + row);
           return;
         }
 
         var poi = {
-          id: EVENT_ID + "-pointofinterest-" + id,
-          type: "poi",
+          id: EVENT_ID + '-pointofinterest-' + id,
+          type: 'poi',
           label_en: row[4],
           label_de: row[5],
           category: row[6],
@@ -1362,10 +1017,10 @@ function parsePOIsFromCSV(data, callback) {
 
         var x = parseInt(row[2]);
         var y = parseInt(row[3]);
-        var floors = row[1].split(",");
-        if (floors.length > 0 && floors[0] != "") {
+        var floors = row[1].split(',');
+        if (floors.length > 0 && floors[0] != '') {
           for (var i = floors.length - 1; i >= 0; i--) {
-            var floorID = EVENT_ID + "-map-level" + floors[i];
+            var floorID = EVENT_ID + '-map-level' + floors[i];
             poi.positions.push({
               map: floorID,
               x: x,
