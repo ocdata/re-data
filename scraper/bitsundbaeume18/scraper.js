@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const scrapyard = require('scrapyard');
 const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
 const parseCSV = require('csv-parse');
@@ -16,6 +15,7 @@ const SPEAKERS_URL = 'https://fahrplan.bits-und-baeume.org/speakers.json';
 
 const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json';
 const VOC_EVENT_ID = 'bub2018';
+const VOC_VOD_CONFERENCE_API_URL = `https://api.media.ccc.de/public/conferences/${VOC_EVENT_ID}`;
 
 // for debugging we can just pretend rp14 was today
 const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
@@ -26,6 +26,18 @@ const sessionStartDateOffsetMilliSecs =
 const dayYearChange = 0;
 const dayMonthChange = 0;
 const dayDayChange = 0;
+
+function toArray(obj) {
+  return Object.keys(obj).map(key => obj[key]);
+}
+
+function clone(obj) {
+  const newObj = {};
+  Object.keys(obj).forEach((key) => {
+    newObj[key] = obj[key];
+  });
+  return newObj;
+}
 
 function mkID(string) {
   const slug = string
@@ -59,8 +71,6 @@ const vocSlugToLocatonID = {};
 
 const locationNameChanges = {};
 
-const poi2locationMapping = {};
-
 const additionalLocations = [];
 
 const additionalLinks = {};
@@ -74,8 +84,6 @@ const additionalEnclosures = {
   },
 };
 
-const additionalPOIs = [];
-
 // Livestream test
 const streamURLs = {};
 
@@ -84,17 +92,13 @@ const testVideoURLs = {};
 const blue = [80.0, 87.0, 175.0, 1.0];
 const violett = [125.0, 136.0, 242.0, 1.0];
 const turquise = [219.0, 196.0, 251.0, 1.0];
-const brown = [168.0, 86.0, 63.0, 1.0];
 const orange = [239.0, 155.0, 74.0, 1.0];
 const yellow = [237.0, 243.0, 87.0, 1.0];
 const green = [169.0, 198.0, 100.0, 1.0];
 const red = [118.0, 26.0, 61.0, 1.0];
 
 // non-official
-
 const grey = [110.0, 110.0, 110.0, 1.0];
-const black = [0.0, 0.0, 0.0, 1.0];
-const cream = [135.0, 81.0, 86.0, 1.0];
 
 const colors = {};
 colors[mkID('Alternatives Wirtschaften')] = orange;
@@ -114,13 +118,13 @@ colors[mkID('Other')] = grey;
 const allFormats = {
   discussion: { id: 'discussion', label_en: 'Discussion' },
   talk: { id: 'talk', label_en: 'Talk' },
-  workshop: { id: 'workshop', label_en: 'Workshop' }
+  workshop: { id: 'workshop', label_en: 'Workshop' },
 };
 
 const allLevels = {
   beginner: { id: 'beginner', label_en: 'Beginner' },
   intermediate: { id: 'intermediate', label_en: 'Intermediate' },
-  advanced: { id: 'advanced', label_en: 'Advanced' }
+  advanced: { id: 'advanced', label_en: 'Advanced' },
 };
 
 const allLanguages = {
@@ -130,8 +134,6 @@ const allLanguages = {
 
 const allMaps = {};
 
-const allPOIs = {};
-
 const data = [];
 const allDays = {};
 const allRooms = {};
@@ -139,128 +141,19 @@ const allSpeakers = {};
 const allTracks = {};
 
 function addEntry(type, obj) {
-  obj.event = EVENT_ID;
-  obj.type = type;
-  data.push(obj);
+  const object = obj;
+  object.event = EVENT_ID;
+  object.type = type;
+  data.push(object);
 }
 
 function alsoAdd(type, list) {
-  Object.keys(list).forEach(function(key) {
-    var obj = clone(list[key]);
+  Object.keys(list).forEach((key) => {
+    const obj = clone(list[key]);
     obj.event = EVENT_ID;
     obj.type = type;
     data.push(obj);
   });
-}
-
-function mkID(string, prefix) {
-  if (prefix == undefined)
-    return (
-      EVENT_ID +
-      '-' +
-      string
-        .toString()
-        .replace(/[^A-Za-z0-9]+/g, '-')
-        .toLowerCase()
-    );
-  return (
-    EVENT_ID +
-    '-' +
-    prefix +
-    '-' +
-    string
-      .toString()
-      .replace(/[^A-Za-z0-9]+/g, '-')
-      .toLowerCase()
-  );
-}
-
-// HALFNARP - Recomendations
-
-function recommendedSessions(halfnarp, frapSessions) {
-  let validSessionIds = [];
-  for (confDay of frapSessions.schedule.conference.days) {
-    for (roomName in confDay.rooms) {
-      let sessions = confDay.rooms[roomName];
-      let ids = sessions.map(session => session.id);
-
-      validSessionIds = validSessionIds.concat(ids);
-    }
-  }
-
-  // Store all classified sessions for each
-  let result = {};
-  let sessions = halfnarp;
-
-  for (session of sessions) {
-    let sessionId = mkID(`${session.event_id}`);
-    let recommedations = [];
-    for (otherSession of sessions) {
-      if (
-        session.event_id === otherSession.event_id ||
-        validSessionIds.indexOf(otherSession.event_id) === -1
-      ) {
-        continue;
-      }
-
-      let distance = halfnarpEventDistance(session, otherSession);
-      if (distance) {
-        recommedations.push({
-          title: otherSession.title,
-          id: mkID(`${otherSession.event_id}`),
-          distance: distance
-        });
-      }
-    }
-
-    recommedations = recommedations
-      .sort((a, b) => {
-        return a.distance - b.distance;
-      })
-      .filter(a => a.distance < 100)
-      .map(a => {
-        return {
-          title: a.title,
-          id: a.id
-        };
-      });
-
-    result[sessionId] = recommedations.slice(0, 5);
-  }
-
-  return result;
-}
-
-function halfnarpEventDistance(sessionA, sessionB) {
-  let distance = 0;
-  let aClassifiers = Object.keys(sessionA.event_classifiers);
-  if (aClassifiers.length == 0) {
-    console.log(sessionA);
-    return null;
-  }
-
-  for (classifier in sessionA.event_classifiers) {
-    let aWeight = sessionA.event_classifiers[classifier];
-    let bWeight = sessionB[classifier];
-    if (!bWeight) bWeight = -10;
-
-    distance = distance + Math.abs(aWeight - bWeight);
-  }
-
-  for (classfier in sessionB.event_classifiers) {
-    if (aClassifiers.indexOf(classifier)) {
-      continue;
-    }
-
-    distance = distance + sessionB.event_classifiers[classifier] + 5;
-  }
-
-  if (sessionA.track_id === sessionB.track_id) {
-    distance = distance * 0.95;
-  }
-
-  let numberOfClassifiers = Object.keys(sessionA.event_classifiers).length;
-  return distance / numberOfClassifiers;
 }
 
 function parseDay(dayXML) {
@@ -295,12 +188,12 @@ function parseDay(dayXML) {
   const id = mkID(index);
 
   return {
-    id: id,
+    id,
     event: EVENT_ID,
     type: 'day',
     label_en: dateLabelEn,
     label_de: dateLabelDe,
-    date: date
+    date,
   };
 }
 
@@ -591,7 +484,7 @@ function parseEvent(
       url = link.url;
     }
     if (typeof url === 'string' && url.indexOf('//') === 0) {
-      url = 'http:' + url;
+      url = `http:${url}`;
     }
     if (
       typeof url === 'string' &&
@@ -636,7 +529,7 @@ function parseEvent(
   const day = allDays[dayKey];
 
   if (!day) {
-    console.log('No valid day for ' + event.title.toString() + ' ' + dayKey);
+    console.log('No valid day for', event.title.toString(), dayKey);
     return null;
   }
 
@@ -801,9 +694,9 @@ function handleResult(
   events.schedule.conference.days.forEach((confDay) => {
     // Day
     // ---
-    let dayJSON = parseDay(confDay);
+    const dayJSON = parseDay(confDay);
     if (dayJSON) {
-      let key = normalizeXMLDayDateKey(dayJSON.date);
+      const key = normalizeXMLDayDateKey(dayJSON.date);
       allDays[key] = dayJSON;
     }
   });
@@ -908,6 +801,7 @@ exports.scrape = (callback) => {
         speakers: SPEAKERS_URL,
         schedule: SCHEDULE_URL,
         vocLiveStreams: VOC_LIVE_API_URL,
+        vocVodConference: VOC_VOD_CONFERENCE_API_URL,
       },
     },
     (result) => {
@@ -969,15 +863,15 @@ exports.scrape = (callback) => {
       alsoAdd('day', allDays);
       // console.log(allRooms);
 
-      var moreIDs = sortOrderOfLocations.length;
+      const moreIDs = sortOrderOfLocations.length;
       toArray(allRooms)
         .sort()
-        .forEach(function(item) {
-          if (sortOrderOfLocations.indexOf(item['id']) >= 0) {
-            item['order_index'] = sortOrderOfLocations.indexOf(item['id']);
+        .forEach((item) => {
+          if (sortOrderOfLocations.indexOf(item.id) >= 0) {
+            item.order_index = sortOrderOfLocations.indexOf(item.id);
           } else {
-            item['order_index'] = moreIDs;
-            moreIDs++;
+            item.order_index = moreIDs;
+            moreIDs += 1;
           }
         });
 
@@ -992,77 +886,3 @@ exports.scrape = (callback) => {
   ); // json get
 }; // scrape
 
-function parsePOIsFromCSV(data, callback) {
-  parseCSV(
-    csvData,
-    {
-      delimiter: ';',
-      auto_parse: false,
-      skip_empty_lines: true
-    },
-    function(err, output) {
-      var pois = [];
-
-      output.forEach(function(row) {
-        var id = row[0];
-
-        if (
-          id == 'id' ||
-          id == '' ||
-          id == ' ' ||
-          row[2] == '' ||
-          row[2] == ' ' ||
-          row[3] == '' ||
-          row[3] == ' '
-        ) {
-          // console.log('skipping '  + row);
-          return;
-        }
-
-        var poi = {
-          id: EVENT_ID + '-pointofinterest-' + id,
-          type: 'poi',
-          label_en: row[4],
-          label_de: row[5],
-          category: row[6],
-          positions: [], // fill me later
-          hidden: false,
-          priority: 1000,
-          beacons: []
-        };
-
-        var x = parseInt(row[2]);
-        var y = parseInt(row[3]);
-        var floors = row[1].split(',');
-        if (floors.length > 0 && floors[0] != '') {
-          for (var i = floors.length - 1; i >= 0; i--) {
-            var floorID = EVENT_ID + '-map-level' + floors[i];
-            poi.positions.push({
-              map: floorID,
-              x: x,
-              y: y
-            });
-          }
-        }
-
-        pois.push(poi);
-      });
-
-      callback(pois);
-    }
-  );
-}
-
-function toArray(obj) {
-  return Object.keys(obj).map(function(key) {
-    return obj[key];
-  });
-}
-
-function clone(obj) {
-  var newObj = {};
-  Object.keys(obj).forEach(function(key) {
-    newObj[key] = obj[key];
-  });
-  return newObj;
-}
