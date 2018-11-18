@@ -7,7 +7,7 @@ const async = require('async');
 const icalendar = require('icalendar');
 const log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 const jsonRequester = require('../lib/json_requester');
-const { parseVocStreams } = require('./voc-live-api');
+const { parseVocStreams, vocVodSessionVideos, enclosureFromVocJson } = require('./voc-live-api');
 
 const EVENT_ID = 'bitsundbaeume18';
 const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
@@ -641,14 +641,15 @@ function parseEvent(
       });
     }
   }
+
+  session.url = linkFunction(session, event);
+
   if (enclosureFunction) {
     const enclosures = enclosureFunction(session);
     if (Array.isArray(enclosures)) {
       enclosures.forEach(enclosure => session.enclosures.push(enclosure));
     }
   }
-
-  session.url = linkFunction(session, event);
 
   return session;
 }
@@ -804,7 +805,7 @@ exports.scrape = (callback) => {
         vocVodConference: VOC_VOD_CONFERENCE_API_URL,
       },
     },
-    (result) => {
+    async (result) => {
       // Main Events
       const { speakers } = result.speakers.schedule_speakers;
       const { schedule } = result;
@@ -813,12 +814,17 @@ exports.scrape = (callback) => {
       const { vocLiveStreams } = result;
       const liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
 
+      // VOC VOD
+      const { vocVodConference } = result;
+
       const defaultTrack = {
         id: mkID('other'),
         color: [97.0, 97.0, 97.0, 1.0], // grey
         label_de: 'Other',
         label_en: 'Other',
       };
+
+      const vodJsons = await vocVodSessionVideos(vocVodConference);
 
       // Generates enclosures from a parse session
       const enclosureFunction = (session) => {
@@ -833,6 +839,15 @@ exports.scrape = (callback) => {
             type: 'livestream',
           };
           enclosures.push(livestream);
+        }
+
+        // find recording for this session
+        const vodJson = vodJsons.find(vocVideo => vocVideo.link === session.url);
+        if (vodJson) {
+          const enclosure = enclosureFromVocJson(vodJson);
+          if (enclosure) {
+            enclosures.push(enclosure);
+          }
         }
         return enclosures;
       };
