@@ -2,10 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
-const parseCSV = require('csv-parse');
-const async = require('async');
 const icalendar = require('icalendar');
-const log = require(path.resolve(__dirname, '../../api/lib/log.js'));
+
+const log = require('../../api/lib/log.js');
 const jsonRequester = require('../lib/json_requester');
 const { parseVocStreams, vocVodSessionVideos, enclosureFromVocJson } = require('./voc-live-api');
 
@@ -80,7 +79,7 @@ const additionalEnclosures = {
     url: 'https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4',
     mimetype: 'video/mp4',
     type: 'recording',
-    thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg'
+    thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg',
   },
 };
 
@@ -129,7 +128,7 @@ const allLevels = {
 
 const allLanguages = {
   en: { id: 'en', label_en: 'English' },
-  de: { id: 'de', label_en: 'German' }
+  de: { id: 'de', label_en: 'German' },
 };
 
 const allMaps = {};
@@ -283,17 +282,17 @@ function generateIcalData(allSessions) {
   const ical = new icalendar.iCalendar();
 
   allSessions.forEach((session) => {
-    let event = new icalendar.VEvent(session.id);
-    event['TZID'] = 'Europe/Berlin';
+    const event = new icalendar.VEvent(session.id);
+    event.TZID = 'Europe/Berlin';
     let summary = session.title;
     if (session.subtitle) {
-      summary = summary + ' – ' + session.subtitle;
+      summary = `${summary} – ${session.subtitle}`;
     }
     event.setSummary(summary);
 
     let description = '';
     if (session.abstract && session.description) {
-      description = session.abstract + '\n\n' + session.description;
+      description = `${session.abstract}\n\n${session.description}`;
     } else if (session.abstract) {
       description = session.abstract;
     } else if (session.description) {
@@ -311,7 +310,7 @@ function generateIcalData(allSessions) {
 
   let filepath = __dirname + '/../../web/data/' + EVENT_ID + '/sessions.ics';
   filepath = path.normalize(filepath);
-  fs.writeFile(filepath, ical.toString(), function(err) {});
+  fs.writeFile(filepath, ical.toString(), () => {});
 }
 
 function parseDate(dateString) {
@@ -327,15 +326,15 @@ function parseEnd(dateString, durationString) {
   const eventDate = new Date(dateString);
   const time = eventDate.getTime() / 1000;
   const match = durationString.toString().match(/(\d?\d):(\d\d)/);
-  const hours = new Number(match[1]);
-  const minutes = new Number(match[2]);
-  const seconds = time + minutes * 60.0 + hours * 60.0 * 60.0;
+  const hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const seconds = time + (minutes * 60.0) + (hours * 60.0 * 60.0);
   const date = new Date(seconds * 1000);
   const newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
   date.setTime(newMillis);
 
   if (date.getTime() <= eventDate.getTime()) {
-    date.setTime(eventDate.getTime() + 1000 * 3600);
+    date.setTime(eventDate.getTime() + (1000 * 3600));
   }
 
   // if the event starts on day 1 but ends on day 2 after day change,
@@ -382,10 +381,10 @@ function parseTrackFromEvent(eventXML, defaultTrack) {
 }
 
 function normalizeXMLDayDateKey(date, begin) {
-  const parseDate = new Date(date);
-  parseDate.setUTCFullYear(parseDate.getUTCFullYear() + dayYearChange);
-  parseDate.setUTCMonth(parseDate.getUTCMonth() + dayMonthChange);
-  parseDate.setUTCDate(parseDate.getUTCDate() + dayDayChange);
+  const theDate = new Date(date);
+  theDate.setUTCFullYear(theDate.getUTCFullYear() + dayYearChange);
+  theDate.setUTCMonth(theDate.getUTCMonth() + dayMonthChange);
+  theDate.setUTCDate(theDate.getUTCDate() + dayDayChange);
 
   // if this is for a session we sanatize the date in case of strange input
   if (begin) {
@@ -421,7 +420,7 @@ function normalizeXMLDayDateKey(date, begin) {
         'Session is to early, returning ',
         realBegin,
         ' as begin date instead of ',
-        parseDate,
+        theDate,
         ' begin: ',
         begin
       );
@@ -434,11 +433,11 @@ function normalizeXMLDayDateKey(date, begin) {
   // console.log('normalized ' + date );
   date =
     '' +
-    parseDate.getUTCFullYear() +
+    theDate.getUTCFullYear() +
     '-' +
-    (parseDate.getUTCMonth() + 1) +
+    (theDate.getUTCMonth() + 1) +
     '-' +
-    parseDate.getUTCDate();
+    theDate.getUTCDate();
   // console.log('to ' + date );
 
   return date;
