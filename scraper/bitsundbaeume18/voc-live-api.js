@@ -30,7 +30,7 @@ function enclosureFromVocJson(vocJson, mimeType = 'video/mp4') {
   const streamUrl = vocJson.recordings.find(r => r.mime_type === mimeType);
   if (!streamUrl) return null;
   return {
-    url: streamUrl.url,
+    url: streamUrl.recording_url,
     mimetype: mimeType,
     type: 'recording',
     thumbnail: poster,
