@@ -422,7 +422,7 @@ function normalizeXMLDayDateKey(date, begin) {
         ' as begin date instead of ',
         theDate,
         ' begin: ',
-        begin
+        begin,
       );
 
       return realBegin;
@@ -613,7 +613,7 @@ function parseEvent(
       mimetype: 'video/mp4',
       type: 'recording',
       thumbnail:
-        'http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg'
+        'http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg',
     });
   }
 
