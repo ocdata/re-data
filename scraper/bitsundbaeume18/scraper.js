@@ -455,17 +455,17 @@ function parseEvent(
   linkMakerFunction,
   idField,
 ) {
-  let links = [];
+  const links = [];
   if (idField == null) {
     idField = 'id';
   }
   let id = mkID(event[idField]);
-  if (typeof idPrefix == 'string') {
+  if (typeof idPrefix === 'string') {
     id = mkID(event[idField], idPrefix);
   }
   let linkFunction = linkMakerFunction;
   if (linkFunction == null) {
-    linkFunction = (session, sourceJSON) => {
+    linkFunction = () => {
       if (!event[idField]) {
         return 'https://fahrplan.events.ccc.de/congress/2017/Fahrplan/';
       }
@@ -535,13 +535,6 @@ function parseEvent(
 
   let { track } = event;
   if (track == null) track = 'Other';
-
-  let locationNameDe = allRooms[room.id].label_de;
-  let locationNameEn = allRooms[room.id].label_en;
-  if (locationNamePrefix != null) {
-    locationNameDe = locationNamePrefix + locationNameDe;
-    locationNameEn = locationNamePrefix + locationNameEn;
-  }
 
   let abstract = sanitizeHtml(event.abstract.toString(), { allowedTags: [] });
   abstract = ent.decode(abstract);
@@ -656,7 +649,7 @@ function parseEvent(
 
 function handleResult(
   events,
-  speakers,
+  resultSpeakers,
   eventRecordings,
   locationNamePrefix,
   defaultTrack,
@@ -667,6 +660,7 @@ function handleResult(
   idField,
   sessonValidatorFunction,
 ) {
+  let speakers = resultSpeakers;
   if (!speakers) {
     speakers = [];
   }
@@ -674,17 +668,17 @@ function handleResult(
     const speakerJSON = parseSpeaker(speaker, speakerImageURLPrefix);
 
     if (allSpeakers[speakerJSON.id]) {
-      const speaker = allSpeakers[speakerJSON.id];
+      const theSpeker = allSpeakers[speakerJSON.id];
       ['biography', 'photo'].forEach((item) => {
         // if the old thing has be
         if (
-          speaker[item] &&
+          theSpeker[item] &&
           speakerJSON[item] &&
-          speaker[item].length > speakerJSON[item].length
+          theSpeker[item].length > speakerJSON[item].length
         ) {
-          speakerJSON[item] = speaker[item];
+          speakerJSON[item] = theSpeker[item];
         } else {
-          speaker[item] = speakerJSON[item];
+          theSpeker[item] = speakerJSON[item];
         }
       });
     }
@@ -715,8 +709,8 @@ function handleResult(
         allRooms[locationJSON.id] = locationJSON;
       });
 
-      const events = rooms[roomLabel];
-      events.forEach((event) => {
+      const eventsFromRoom = rooms[roomLabel];
+      eventsFromRoom.forEach((event) => {
         // Track
         // -----
         const trackJSON = parseTrackFromEvent(event, defaultTrack);
@@ -831,7 +825,10 @@ exports.scrape = (callback) => {
         const enclosures = [];
 
         // find live streams
-        const streamInfo = liveStreams.find(stream => stream.name.toLowerCase() === session.location.label_en.toLowerCase() && !stream.translated);
+        const streamInfo = liveStreams.find((stream) => {
+          return stream.name.toLowerCase() === session.location.label_en.toLowerCase()
+            && !stream.translated;
+        });
         if (streamInfo) {
           const livestream = {
             url: streamInfo.streamUrl,
@@ -897,7 +894,7 @@ exports.scrape = (callback) => {
       alsoAdd('language', allLanguages);
 
       callback(data);
-    } // json get result
+    }, // json get result
   ); // json get
 }; // scrape
 
