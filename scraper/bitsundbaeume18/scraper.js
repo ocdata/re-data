@@ -671,10 +671,10 @@ function handleResult(
     speakers = [];
   }
   speakers.forEach((speaker) => {
-    let speakerJSON = parseSpeaker(speaker, speakerImageURLPrefix);
+    const speakerJSON = parseSpeaker(speaker, speakerImageURLPrefix);
 
     if (allSpeakers[speakerJSON.id]) {
-      let speaker = allSpeakers[speakerJSON.id];
+      const speaker = allSpeakers[speakerJSON.id];
       ['biography', 'photo'].forEach((item) => {
         // if the old thing has be
         if (
