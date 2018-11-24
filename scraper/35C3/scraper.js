@@ -3,7 +3,7 @@ const path = require('path');
 const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
 const icalendar = require('icalendar');
-const { toArray, mkSlug, clone } = require('./utlils');
+const { toArray, mkSlug, clone, frabImageUrl } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
 
@@ -120,7 +120,7 @@ function addEntry(type, obj) {
 }
 
 function alsoAdd(type, list) {
-  Object.keys(list).forEach(key => {
+  Object.keys(list).forEach((key) => {
     const obj = clone(list[key]);
     obj.event = EVENT_ID;
     obj.type = type;
@@ -165,7 +165,7 @@ function parseDay(dayXML) {
     type: 'day',
     label_en: dateLabelEn,
     label_de: dateLabelDe,
-    date
+    date,
   };
 }
 
@@ -181,7 +181,7 @@ function parseSpeaker(speakerJSON, imageURLPrefix) {
   const links = [];
 
   if (speakerJSON.links) {
-    speakerJSON.links.forEach(link => {
+    speakerJSON.links.forEach((link) => {
       let { url } = link;
       if (url.indexOf('http') !== 0) {
         url = `http://${url}`;
@@ -762,6 +762,13 @@ exports.scrape = (callback) => {
     const halfnarp = await halfnarpLoader(
       HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
       HALFNARP_EVENTS_SOURCE_FILE_PATH,
+      null,
+      (speaker, source) => {
+        if (source.image) {
+          // eslint-disable-next-line no-param-reassign
+          speaker.photo = `https://frab.cccv.de${frabImageUrl(source.image)}`;
+        }
+      },
     );
 
     // VOC Live

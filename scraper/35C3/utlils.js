@@ -18,5 +18,17 @@ function mkSlug(string) {
   return slug;
 }
 
-module.exports = { mkSlug, clone, toArray };
+function frabImageUrl(path) {
+  let imagePath = path;
+  imagePath = imagePath.replace(/\/medium\//, '/large/');
+  imagePath = imagePath.replace(/\/original\//, '/large/');
+  return imagePath;
+}
+
+module.exports = {
+  mkSlug,
+  clone,
+  toArray,
+  frabImageUrl,
+};
 

@@ -42,11 +42,11 @@ function tracksFromHalfnarpEvents(events) {
   return Array.from(tracks.values());
 }
 
-function speakersFromConfirmedEvents(events) {
+function speakersFromConfirmedEvents(events, speakerHandler) {
   const speakers = new Map();
   events.forEach((event) => {
     event.speakers.forEach((speaker) => {
-      speakers.set(`${speaker.id}`, {
+      const speakerEntry = {
         name: speaker.full_public_name,
         id: mkId(speaker.id),
         biography: sanitizeHtml(speaker.abstract, { allowedTags: [] }),
@@ -59,7 +59,11 @@ function speakersFromConfirmedEvents(events) {
             service: 'web',
           };
         }),
-      });
+      }; 
+      if (speakerHandler) {
+        speakerHandler(speakerEntry, speaker);
+      }
+      speakers.set(`${speaker.id}`, speakerEntry);
     });
   });
   return Array.from(speakers.values());
@@ -70,7 +74,7 @@ function sessionFromConfirmedEvent(confirmedEvent, halfnarpEvent, sessionFunctio
     id: mkId(confirmedEvent.id),
     title: confirmedEvent.title,
     subtitle: confirmedEvent.subtitle,
-    url: null,
+    url: undefined,
     abstract: confirmedEvent.abstract,
     description: sanitizeHtml(ent.decode(confirmedEvent.description), { allowedTags: [] }),
     lang: allLanguages[confirmedEvent.language],
@@ -86,10 +90,10 @@ function sessionFromConfirmedEvent(confirmedEvent, halfnarpEvent, sessionFunctio
     links: [],
     cancelled: false,
     will_be_recorded: !confirmedEvent.do_not_record,
-    location: null,
-    begin: null,
-    end: null,
-    duration: null,
+    location: undefined,
+    begin: undefined,
+    end: undefined,
+    duration: undefined,
     related_sessions: [],
   };
   if (sessionFunction) {
@@ -116,7 +120,12 @@ function sessionsFromConfirmedAndHalfnarpEvents(
   return sessions;
 }
 
-async function getTracksSpeakersAndSessionsForHalfnarp(confirmedFilePath, eventsFilePath) {
+async function getTracksSpeakersAndSessionsForHalfnarp(
+  confirmedFilePath,
+  eventsFilePath,
+  sessionHandler,
+  speakerHandler,
+) {
   const confirmedEventsPromise = fs.readJson(confirmedFilePath);
   const eventsPromise = fs.readJson(eventsFilePath);
   
@@ -129,9 +138,9 @@ async function getTracksSpeakersAndSessionsForHalfnarp(confirmedFilePath, events
   
       const allTracks = tracksFromHalfnarpEvents(confirmedHalfnarpEvents);
       console.log('found', allTracks.length, 'tracks');
-      const allSpeakers = speakersFromConfirmedEvents(confirmedEvents);
+      const allSpeakers = speakersFromConfirmedEvents(confirmedEvents, speakerHandler);
       console.log('found', allSpeakers.length, 'speakers');
-      const allSessions = sessionsFromConfirmedAndHalfnarpEvents(confirmedEvents, confirmedHalfnarpEvents);
+      const allSessions = sessionsFromConfirmedAndHalfnarpEvents(confirmedEvents, confirmedHalfnarpEvents, sessionHandler);
       console.log('found', allSessions.length, 'sessions');
       
       return {
