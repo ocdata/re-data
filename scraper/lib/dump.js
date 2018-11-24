@@ -80,7 +80,7 @@ exports.dump = function (data) {
 				photo:        entry.photo,
 				organization: entry.organization,
 				position:     entry.position,
-				sessions:     entry.sessions.map(function (session) { return session.title }).join(', ')
+				sessions:     entry.sessions ? entry.sessions.map(function (session) { return session.title }).join(', ') : ''
 			}
 		}));
 	});
