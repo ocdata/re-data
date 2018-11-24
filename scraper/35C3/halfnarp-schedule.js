@@ -1,11 +1,10 @@
-const path = require('path');
+const ent = require('ent');
+const sanitizeHtml = require('sanitize-html');
 const { mkSlug } = require('./utlils');
 const { allLanguages, allFormats, allLevels } = require('./baseStructures');
 const fs = require('fs-extra');
 
 const EVENT_ID = '35c3';
-const HALFNARP_EVENTS_SOURCE_FILE_PATH = path.join(__dirname, 'data_source', 'events-halfnarp.json');
-const HALFNARP_CONFIRMED_SOURCE_FILE_PATH = path.join(__dirname, 'data_source', 'halfnarp.json');
 
 function mkId(string) {
   const slug = mkSlug(string);
@@ -36,8 +35,8 @@ function tracksFromHalfnarpEvents(events) {
   events.forEach((event) => {
     tracks.set(`${event.track_id}`, {
       id: mkId(event.track_id),
-      label_de: event.track_name,
-      label_en: event.track_name,
+      label_de: ent.decode(event.track_name),
+      label_en: ent.decode(event.track_name),
     });
   });
   return Array.from(tracks.values());
@@ -73,15 +72,15 @@ function sessionFromConfirmedEvent(confirmedEvent, halfnarpEvent, sessionFunctio
     subtitle: confirmedEvent.subtitle,
     url: null,
     abstract: confirmedEvent.abstract,
-    description: confirmedEvent.description,
+    description: sanitizeHtml(ent.decode(confirmedEvent.description), { allowedTags: [] }),
     lang: allLanguages[confirmedEvent.language],
     format: allFormats.talk,
     level: levelFromClassifiers(halfnarpEvent.event_classifiers),
     speakers: speakersFromHalfnarp(confirmedEvent),
     track: {
       id: mkId(halfnarpEvent.track_id),
-      label_de: halfnarpEvent.track_name,
-      label_en: halfnarpEvent.track_name,
+      label_de: ent.decode(halfnarpEvent.track_name),
+      label_en: ent.decode(halfnarpEvent.track_name),
     },
     enclosures: [],
     links: [],
@@ -143,11 +142,13 @@ async function getTracksSpeakersAndSessionsForHalfnarp(confirmedFilePath, events
     });
 }
 
-getTracksSpeakersAndSessionsForHalfnarp(
-  HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
-  HALFNARP_EVENTS_SOURCE_FILE_PATH,
-)
-  .then((result) => {
-    console.log(result);
-  })
-  // .catch(error => console.error('error', error));
+module.exports = getTracksSpeakersAndSessionsForHalfnarp;
+
+// getTracksSpeakersAndSessionsForHalfnarp(
+//   HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
+//   HALFNARP_EVENTS_SOURCE_FILE_PATH,
+// )
+//   .then((result) => {
+//     console.log(result);
+//   })
+//   // .catch(error => console.error('error', error));
