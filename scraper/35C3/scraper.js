@@ -5,13 +5,13 @@ const sanitizeHtml = require('sanitize-html');
 const icalendar = require('icalendar');
 const { toArray, mkSlug, clone } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
+const colors = require('./colors');
 
 const log = require('../../api/lib/log.js');
-const jsonRequester = require('../lib/json_requester');
 const {
   parseVocStreams,
   vocVodSessionVideos,
-  enclosureFromVocJson
+  enclosureFromVocJson,
 } = require('./voc-live-api');
 const { allLanguages, allFormats, allLevels } = require('./baseStructures');
 
@@ -90,31 +90,19 @@ const streamURLs = {};
 
 const testVideoURLs = {};
 
-const blue = [80.0, 87.0, 175.0, 1.0];
-const violett = [125.0, 136.0, 242.0, 1.0];
-const turquise = [219.0, 196.0, 251.0, 1.0];
-const orange = [239.0, 155.0, 74.0, 1.0];
-const yellow = [237.0, 243.0, 87.0, 1.0];
-const green = [169.0, 198.0, 100.0, 1.0];
-const red = [118.0, 26.0, 61.0, 1.0];
-
-// non-official
-const grey = [110.0, 110.0, 110.0, 1.0];
-
-const colors = {};
-colors[mkID('Alternatives Wirtschaften')] = orange;
-colors[mkID('Daten & Umwelt')] = green;
-colors[mkID('Die ganz großen Fragen')] = turquise;
-colors[mkID('Die materielle Basis')] = yellow;
-colors[mkID('Digitaler Kapitalismus')] = red;
-colors[mkID('Stadt – Land – Smart')] = grey;
-colors[mkID('Zivilgesellschaft & Communities')] = violett;
-
-// not used anymore
-colors[mkID('Reclaim Smart City!')] = blue;
-colors[mkID('Bits & Bäume')] = green;
-
-colors[mkID('Other')] = grey;
+const trackColors = {};
+trackColors[mkID('343')] = colors.blue; // security
+trackColors[mkID('339')] = colors.violett; // ethics-society-politics
+trackColors[mkID('342')] = colors.turquise; // science
+trackColors[mkID('340')] = colors.brown; // hardware-making
+trackColors[mkID('338')] = colors.orange; // art-culture
+// trackColors[eventId + "-failosophy"] = yellow;
+trackColors[mkID('344')] = colors.green; // ccc
+trackColors[mkID('345')] = colors.green; // entertainment
+// trackColors[eventId + "-self-organized-sessions"] = grey;
+// trackColors[eventId + "-podcast"] = red;
+// trackColors[eventId + "-sendezentrum"] = red;
+trackColors.other = colors.grey;
 
 const allMaps = {};
 
@@ -266,7 +254,7 @@ function parseRoom(roomName, index, namePrefix) {
 function generateIcalData(allSessions) {
   const ical = new icalendar.iCalendar();
 
-  allSessions.forEach(session => {
+  allSessions.forEach((session) => {
     const event = new icalendar.VEvent(session.id);
     event.TZID = 'Europe/Berlin';
     let summary = session.title;
@@ -794,9 +782,15 @@ exports.scrape = (callback) => {
     };
 
     // Import Halfnarp
-    halfnarp.tracks.forEach(track => addEntry('track', track));
-    halfnarp.sessions.forEach(session => addEntry('session', session));
+    halfnarp.tracks.forEach((_track) => {
+      const track = _track;
+      let trackColor = trackColors[track.id];
+      if (!trackColor) trackColor = trackColors.other;
+      track.color = trackColor;
+      addEntry('track', track);
+    });
     halfnarp.speakers.forEach(speaker => addEntry('speaker', speaker));
+    halfnarp.sessions.forEach(session => addEntry('session', session));
 
     // VOD Handling for Frap
     let vodJsons;

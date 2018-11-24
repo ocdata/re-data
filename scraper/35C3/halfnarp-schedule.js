@@ -49,7 +49,7 @@ function speakersFromConfirmedEvents(events) {
       speakers.set(`${speaker.id}`, {
         name: speaker.full_public_name,
         id: mkId(speaker.id),
-        biography: speaker.abstract,
+        biography: sanitizeHtml(speaker.abstract, { allowedTags: [] }),
         // eslint-disable-next-line arrow-body-style
         links: speaker.links.map((link) => {
           return {
