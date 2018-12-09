@@ -379,28 +379,28 @@ function normalizeXMLDayDateKey(date, begin) {
 
   // if this is for a session we sanatize the date in case of strange input
   if (begin) {
-    if (begin.getHours() >= 9) {
-      // this is ok only if the session is very early, so we return the date from begin
-      const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
-        1}-${begin.getUTCDate() + 1}`;
+    // if (begin.getHours() >= 9) {
+    //   // this is ok only if the session is very early, so we return the date from begin
+    //   const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
+    //     1}-${begin.getUTCDate() + 1}`;
 
-      return realBegin;
-    } else if (begin.getHours() >= 5) {
-      // this is ok only if the session is very early, so we return the date from begin
-      const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
-        1}-${begin.getUTCDate() - 1}`;
+    //   return realBegin;
+    // } else if (begin.getHours() >= 5) {
+    //   // this is ok only if the session is very early, so we return the date from begin
+    //   const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
+    //     1}-${begin.getUTCDate() - 1}`;
 
-      log.warn(
-        'Session is to early, returning ',
-        realBegin,
-        ' as begin date instead of ',
-        theDate,
-        ' begin: ',
-        begin,
-      );
+    //   log.warn(
+    //     'Session is to early, returning ',
+    //     realBegin,
+    //     ' as begin date instead of ',
+    //     theDate,
+    //     ' begin: ',
+    //     begin,
+    //   );
 
-      return realBegin;
-    }
+    //   return realBegin;
+    // }
   }
 
   return `${theDate.getUTCFullYear()}-${theDate.getUTCMonth() +
