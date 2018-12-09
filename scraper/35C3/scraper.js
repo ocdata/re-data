@@ -185,26 +185,26 @@ function parseSpeaker(speakerJSON, imageURLPrefix) {
   if (speakerJSON.links) {
     speakerJSON.links.forEach((link) => {
       let { url } = link;
-      if (url.indexOf('http') !== 0) {
+      if (url.indexOf('http') === -1) {
         url = `http://${url}`;
       }
       links.push({
         url,
         title: link.title,
         service: 'web',
-        type: 'speaker-link'
+        type: 'speaker-link',
       });
     });
   }
 
   const result = {
-    id: mkID(speakerJSON.full_public_name),
+    id: mkID(speakerJSON.id),
     type: 'speaker',
     event: EVENT_ID,
     name: speakerJSON.full_public_name,
     biography: bio,
     links,
-    sessions: []
+    sessions: [],
   };
 
   // de-htmlize
@@ -288,7 +288,7 @@ function generateIcalData(allSessions) {
     __dirname,
     '/../../web/data/',
     EVENT_ID,
-    '/sessions.ics'
+    '/sessions.ics',
   );
   filepath = path.normalize(filepath);
   fs.writeFile(filepath, ical.toString(), () => {});
@@ -429,7 +429,7 @@ function parseEvent(
     };
   }
 
-  event.links.forEach(link => {
+  event.links.forEach((link) => {
     let url = null;
     let title = null;
     if (typeof link === 'string') {
@@ -455,7 +455,7 @@ function parseEvent(
     links.push({
       title,
       url,
-      type: 'session-link'
+      type: 'session-link',
     });
   });
 
@@ -498,7 +498,7 @@ function parseEvent(
   abstract = ent.decode(abstract);
 
   let description = sanitizeHtml(event.description.toString(), {
-    allowedTags: []
+    allowedTags: [],
   });
   description = ent.decode(description);
 
@@ -523,7 +523,7 @@ function parseEvent(
       ],
     speakers: [], // fill me later
     enclosures: [], // fill me later
-    links
+    links,
   };
 
   if (
