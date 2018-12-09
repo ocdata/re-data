@@ -28,7 +28,7 @@ const HALFNARP_EVENTS_SOURCE_FILE_PATH = path.join(
 const HALFNARP_CONFIRMED_SOURCE_FILE_PATH = path.join(
   __dirname,
   'data_source',
-  'halfnarp.json'
+  'halfnarp.json',
 );
 
 const VOC_EVENT_ID = '35c3';
@@ -50,22 +50,11 @@ function mkID(string) {
 }
 
 const sortOrderOfLocations = [
-  mkID('ADA'),
-  mkID('BASH'),
-  mkID('CLOJURE'),
-  mkID('DELPHI'),
-  mkID('EMACS'),
-  mkID('ahorn'),
-  mkID('birke'),
-  mkID('cocos'),
-  mkID('durian'),
-  mkID('erle'),
-  mkID('fichte'),
-  mkID('gingko'),
-  mkID('Chatraum'),
-  mkID('JugendForum'),
-  mkID('Forum'),
-  mkID('Glasraum')
+  mkID('Adams'),
+  mkID('Borg'),
+  mkID('Clarke'),
+  mkID('Dijkstra'),
+  mkID('Eliza'),
 ];
 
 // to map VOC API output to our rooms
@@ -92,14 +81,15 @@ const streamURLs = {};
 const testVideoURLs = {};
 
 const trackColors = {};
-trackColors[mkID('Security')] = colors.blue; // security
-trackColors[mkID('Ethics, Society & Politics')] = colors.violett; // ethics-society-politics
-trackColors[mkID('Science')] = colors.turquise; // science
-trackColors[mkID('Hardware & Making')] = colors.brown; // hardware-making
-trackColors[mkID('Art & Culture')] = colors.orange; // art-culture
+trackColors[mkID('Security')] = colors.darkBlue; // security
+trackColors[mkID('Ethics, Society & Politics')] = colors.red; // ethics-society-politics
+trackColors[mkID('Science')] = colors.green; // science
+trackColors[mkID('Hardware & Making')] = colors.violett; // hardware-making
+trackColors[mkID('Art & Culture')] = colors.yellow; // art-culture
+trackColors[mkID('Resilience')] = colors.blue;
 // trackColors[eventId + "-failosophy"] = yellow;
-trackColors[mkID('CCC')] = colors.green; // ccc
-trackColors[mkID('Entertainment')] = colors.green; // entertainment
+trackColors[mkID('CCC')] = colors.turquise; // ccc
+trackColors[mkID('Entertainment')] = colors.turquise; // entertainment
 // trackColors[eventId + "-self-organized-sessions"] = grey;
 // trackColors[eventId + "-podcast"] = red;
 // trackColors[eventId + "-sendezentrum"] = red;
@@ -698,7 +688,7 @@ function handleResult(
           enclosureFunction,
           idPrefix,
           (session, sourceJSON) =>
-            `https://fahrplan.bits-und-baeume.org/events/${sourceJSON.id}.html`,
+            `https://fahrplan.events.ccc.de/congress/2018/Fahrplan/events/${sourceJSON.id}.html`,
           idField,
         );
         // if event could not be parse skip it
