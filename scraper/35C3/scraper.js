@@ -700,7 +700,7 @@ function handleResult(
           const publicName = person.public_name;
           if (!publicName) return;
 
-          const personID = mkID(publicName);
+          const personID = mkID(person.id);
           const speaker = allSpeakers[personID];
 
           if (speaker) {
