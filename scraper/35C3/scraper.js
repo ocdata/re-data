@@ -83,7 +83,7 @@ const additionalEnclosures = {
     mimetype: 'video/mp4',
     type: 'recording',
     thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg'
-  }
+  },
 };
 
 // Livestream test
@@ -358,16 +358,16 @@ function parseTrackFromEvent(eventXML, defaultTrack) {
   }
   // console.log(trackName);
 
-  let color = colors[id];
+  let color = trackColors[id];
   if (!color) {
-    color = [109.0, 109.0, 109.0, 1.0]; // grey by default
+    color = colors.grey;
   }
 
   return {
     id,
     color,
     label_en: trackName,
-    label_de: trackName
+    label_de: trackName,
   };
 }
 
