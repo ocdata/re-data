@@ -3,6 +3,7 @@ const path = require('path');
 const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
 const icalendar = require('icalendar');
+const request = require('request-promise');
 const { toArray, mkSlug, clone, frabImageUrl } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
@@ -16,8 +17,8 @@ const {
 const { allLanguages, allFormats, allLevels } = require('./baseStructures');
 
 const EVENT_ID = '35c3';
-// const SCHEDULE_URL = 'https://fahrplan.bits-und-baeume.org/schedule.json';
-// const SPEAKERS_URL = 'https://fahrplan.bits-und-baeume.org/speakers.json';
+const SCHEDULE_URL = 'https://fahrplan.events.ccc.de/congress/2018/Fahrplan/schedule.json';
+const SPEAKERS_URL = 'https://fahrplan.events.ccc.de/congress/2018/Fahrplan/speakers.json';
 
 const HALFNARP_EVENTS_SOURCE_FILE_PATH = path.join(
   __dirname,
@@ -107,7 +108,8 @@ trackColors.other = colors.grey;
 const allMaps = {};
 
 const data = [];
-const allDays = {};
+const allDays = {
+};
 const allRooms = {};
 const allSpeakers = {};
 const allTracks = {};
@@ -143,15 +145,25 @@ function parseDay(dayXML) {
   let index = 0;
   const monthDay = parseDate.getUTCDate();
   switch (monthDay) {
-    case 17:
+    case 27:
       index = 1;
       dateLabelDe = 'Tag 1';
       dateLabelEn = 'Day 1';
       break;
-    case 18:
+    case 28:
       index = 2;
       dateLabelDe = 'Tag 2';
       dateLabelEn = 'Day 2';
+      break;
+    case 29:
+      index = 3;
+      dateLabelDe = 'Tag 3';
+      dateLabelEn = 'Day 3';
+      break;
+    case 30:
+      index = 4;
+      dateLabelDe = 'Tag 4';
+      dateLabelEn = 'Day 4';
       break;
     default:
       return null;
@@ -370,7 +382,7 @@ function normalizeXMLDayDateKey(date, begin) {
     if (begin.getHours() >= 9) {
       // this is ok only if the session is very early, so we return the date from begin
       const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
-        1}-${begin.getUTCMonth() + 1}`;
+        1}-${begin.getUTCDate() + 1}`;
 
       return realBegin;
     } else if (begin.getHours() >= 5) {
@@ -384,7 +396,7 @@ function normalizeXMLDayDateKey(date, begin) {
         ' as begin date instead of ',
         theDate,
         ' begin: ',
-        begin
+        begin,
       );
 
       return realBegin;
@@ -466,7 +478,7 @@ function parseEvent(
 
   // Make sure day change is at 5 in the morning
 
-  const time = new Date(2017, 11, 27);
+  const time = new Date(2018, 11, 27);
   if (begin.getTime() < time.getTime()) {
     console.log('No valid begin: ', begin);
     return null;
@@ -510,7 +522,7 @@ function parseEvent(
     track: {
       id: trackJSON.id,
       label_de: trackJSON.label_de,
-      label_en: trackJSON.label_en
+      label_en: trackJSON.label_en,
     },
     day,
     format: allFormats[eventTypeId],
@@ -537,7 +549,7 @@ function parseEvent(
     session.location = {
       id: allRooms[room.id].id,
       label_de: allRooms[room.id].label_de,
-      label_en: allRooms[room.id].label_en
+      label_en: allRooms[room.id].label_en,
     };
 
     const locationId = session.location.id;
@@ -750,36 +762,43 @@ exports.scrape = (callback) => {
 
   const results = async () => {
     // Main Events
-    let speakers = [];
-    const result = {};
+    let speakers = null;
+    let schedule = null;
+    
+    try {
+      // eslint-disable-next-line
+      schedule = await request({ uri: SCHEDULE_URL, json: true });
 
-    if (result.speakers) {
-      speakers = result.speakers.schedule_speakers;
+      const speakersResult = await request({ uri: SPEAKERS_URL, json: true });
+      // eslint-disable-next-line
+      speakers = speakersResult.schedule_speakers.speakers;
+    } catch (error) {
+      log.error('Could not load frab data:', error);
     }
-    const { schedule } = result;
-
+    
     // Halfnarp
-    const halfnarp = await halfnarpLoader(
-      HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
-      HALFNARP_EVENTS_SOURCE_FILE_PATH,
-      null,
-      (speaker, source) => {
-        if (source.image) {
-          // eslint-disable-next-line no-param-reassign
-          speaker.photo = `https://frab.cccv.de${frabImageUrl(source.image)}`;
-        }
-      },
-    );
+    const halfnarp = null;
+    // const halfnarp = await halfnarpLoader(
+    //   HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
+    //   HALFNARP_EVENTS_SOURCE_FILE_PATH,
+    //   null,
+    //   (speaker, source) => {
+    //     if (source.image) {
+    //       // eslint-disable-next-line no-param-reassign
+    //       speaker.photo = `https://frab.cccv.de${frabImageUrl(source.image)}`;
+    //     }
+    //   },
+    // );
 
     // VOC Live
-    const { vocLiveStreams } = result;
+    const vocLiveStreams = null;
     let liveStreams = [];
     if (vocLiveStreams) {
       liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
     }
 
     // VOC VOD
-    const { vocVodConference } = result;
+    const vocVodConference = null;
 
     const defaultTrack = {
       id: mkID('other'),
@@ -789,16 +808,17 @@ exports.scrape = (callback) => {
     };
 
     // Import Halfnarp
-    halfnarp.tracks.forEach((_track) => {
-      const track = _track;
-      let trackColor = trackColors[track.id];
-      if (!trackColor) trackColor = trackColors.other;
-      track.color = trackColor;
-      addEntry('track', track);
-    });
-    halfnarp.speakers.forEach(speaker => addEntry('speaker', speaker));
-    halfnarp.sessions.forEach(session => addEntry('session', session));
-
+    if (halfnarp) {
+      halfnarp.tracks.forEach((_track) => {
+        const track = _track;
+        let trackColor = trackColors[track.id];
+        if (!trackColor) trackColor = trackColors.other;
+        track.color = trackColor;
+        addEntry('track', track);
+      });
+      halfnarp.speakers.forEach(speaker => addEntry('speaker', speaker));
+      halfnarp.sessions.forEach(session => addEntry('session', session));
+    }
     // VOD Handling for Frap
     let vodJsons;
     try {
@@ -831,11 +851,13 @@ exports.scrape = (callback) => {
       }
 
       // find recording for this session
-      const vodJson = vodJsons.find(vocVideo => vocVideo.link === session.url);
-      if (vodJson) {
-        const enclosure = enclosureFromVocJson(vodJson);
-        if (enclosure) {
-          enclosures.push(enclosure);
+      if (Array.isArray(vodJsons)) {
+        const vodJson = vodJsons.find(vocVideo => vocVideo.link === session.url);
+        if (vodJson) {
+          const enclosure = enclosureFromVocJson(vodJson);
+          if (enclosure) {
+            enclosures.push(enclosure);
+          }
         }
       }
       return enclosures;
@@ -844,19 +866,19 @@ exports.scrape = (callback) => {
     const INVALID_SESSION_NAMES = ['Pause', 'Mittagessen', 'Abendessen'];
 
     if (schedule && speakers) {
-      // Frap
+      // Frab
       handleResult(
         schedule,
         speakers,
         [],
         '',
         defaultTrack,
-        'https://fahrplan.bits-und-baeume.org',
+        'https://fahrplan.events.ccc.de/congress/2018/Fahrplan',
         enclosureFunction,
         null,
         null,
         null,
-        session => !INVALID_SESSION_NAMES.includes(session.title)
+        session => !INVALID_SESSION_NAMES.includes(session.title),
       );
     }
 
@@ -869,7 +891,7 @@ exports.scrape = (callback) => {
     alsoAdd('day', allDays);
     // console.log(allRooms);
 
-    const moreIDs = sortOrderOfLocations.length;
+    let moreIDs = sortOrderOfLocations.length;
     toArray(allRooms)
       .sort()
       .forEach((item) => {
