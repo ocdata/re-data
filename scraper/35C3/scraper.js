@@ -4,7 +4,12 @@ const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
 const icalendar = require('icalendar');
 const request = require('request-promise');
-const { toArray, mkSlug, clone, frabImageUrl } = require('./utlils');
+const {
+  toArray,
+  mkSlug,
+  clone,
+  frabImageUrl,
+} = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
 
@@ -20,10 +25,11 @@ const EVENT_ID = '35c3';
 const SCHEDULE_URL = 'https://fahrplan.events.ccc.de/congress/2018/Fahrplan/schedule.json';
 const SPEAKERS_URL = 'https://fahrplan.events.ccc.de/congress/2018/Fahrplan/speakers.json';
 
+const HALFNARP_ENABLED = false;
 const HALFNARP_EVENTS_SOURCE_FILE_PATH = path.join(
   __dirname,
   'data_source',
-  'events-halfnarp.json'
+  'events-halfnarp.json',
 );
 const HALFNARP_CONFIRMED_SOURCE_FILE_PATH = path.join(
   __dirname,
@@ -71,14 +77,16 @@ const additionalEnclosures = {
     url: 'https://ccc.cdn.as250.net/34c3/Markus_Drenger_beA.mp4',
     mimetype: 'video/mp4',
     type: 'recording',
-    thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg'
+    thumbnail: 'https://img.youtube.com/vi/Od5WAah-ktk/hqdefault.jpg',
   },
 };
 
 // Livestream test
 const streamURLs = {};
 
-const testVideoURLs = {};
+const testVideoURLs = {
+  '35c3-9985': 'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8',
+};
 
 const trackColors = {};
 trackColors[mkID('Security')] = colors.darkBlue; // security
@@ -96,10 +104,8 @@ trackColors[mkID('Entertainment')] = colors.turquise; // entertainment
 trackColors.other = colors.grey;
 
 const allMaps = {};
-
 const data = [];
-const allDays = {
-};
+const allDays = {};
 const allRooms = {};
 const allSpeakers = {};
 const allTracks = {};
@@ -124,16 +130,16 @@ function parseDay(dayXML) {
   const { date } = dayXML;
   // console.log('parsing: ', dayXML);
 
-  const parseDate = new Date(date);
-  parseDate.setUTCFullYear(parseDate.getUTCFullYear() + dayYearChange);
-  parseDate.setUTCMonth(parseDate.getUTCMonth() + dayMonthChange);
-  parseDate.setUTCDate(parseDate.getUTCDate() + dayDayChange);
+  const dayDate = new Date(date);
+  dayDate.setUTCFullYear(dayDate.getUTCFullYear() + dayYearChange);
+  dayDate.setUTCMonth(dayDate.getUTCMonth() + dayMonthChange);
+  dayDate.setUTCDate(dayDate.getUTCDate() + dayDayChange);
 
   let dateLabelDe = date;
   let dateLabelEn = date;
 
   let index = 0;
-  const monthDay = parseDate.getUTCDate();
+  const monthDay = dayDate.getUTCDate();
   switch (monthDay) {
     case 27:
       index = 1;
@@ -245,11 +251,11 @@ function parseRoom(roomName, index, namePrefix) {
     id,
     label_en: finalRoomName,
     label_de: finalRoomName,
-    is_stage: roomName.toString().match(/Stage/i) ? true : false,
+    is_stage: roomName.toString().match(/Stage/i) != null,
     floor: 0,
     order_index: index,
     event: EVENT_ID,
-    type: 'location'
+    type: 'location',
   };
 }
 
@@ -421,11 +427,9 @@ function parseEvent(
   if (linkFunction == null) {
     linkFunction = () => {
       if (!event[idField]) {
-        return 'https://fahrplan.events.ccc.de/congress/2017/Fahrplan/';
+        return 'https://fahrplan.events.ccc.de/congress/2018/Fahrplan/';
       }
-      return `https://fahrplan.events.ccc.de/congress/2017/Fahrplan/events/${
-        event[idField]
-      }.html`;
+      return `https://fahrplan.events.ccc.de/congress/2018/Fahrplan/events/${event[idField]}.html`;
     };
   }
 
@@ -574,7 +578,7 @@ function parseEvent(
       mimetype: 'video/mp4',
       type: 'recording',
       thumbnail:
-        'http://static.media.ccc.de/media/congress/2013/5490-h264-iprod_preview.jpg'
+        'https://static.media.ccc.de/media/conferences/rustfest/2018-2/5-hd_preview.jpg',
     });
   }
 
@@ -589,7 +593,7 @@ function parseEvent(
       session.enclosures.push({
         url: streamURL,
         mimetype: 'video/mp4',
-        type: 'livestream'
+        type: 'livestream',
       });
     }
   }
@@ -767,18 +771,20 @@ exports.scrape = (callback) => {
     }
     
     // Halfnarp
-    const halfnarp = null;
-    // const halfnarp = await halfnarpLoader(
-    //   HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
-    //   HALFNARP_EVENTS_SOURCE_FILE_PATH,
-    //   null,
-    //   (speaker, source) => {
-    //     if (source.image) {
-    //       // eslint-disable-next-line no-param-reassign
-    //       speaker.photo = `https://frab.cccv.de${frabImageUrl(source.image)}`;
-    //     }
-    //   },
-    // );
+    let halfnarp = null;
+    if (HALFNARP_ENABLED) {
+      halfnarp = await halfnarpLoader(
+        HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
+        HALFNARP_EVENTS_SOURCE_FILE_PATH,
+        null,
+        (speaker, source) => {
+          if (source.image) {
+            // eslint-disable-next-line no-param-reassign
+            speaker.photo = `https://frab.cccv.de${frabImageUrl(source.image)}`;
+          }
+        },
+      );
+    }
 
     // VOC Live
     const vocLiveStreams = null;
