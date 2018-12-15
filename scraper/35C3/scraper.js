@@ -85,7 +85,7 @@ const additionalEnclosures = {
 const streamURLs = {};
 
 const testVideoURLs = {
-  '35c3-9985': 'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8',
+  // '35c3-9985': 'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8',
 };
 
 const trackColors = {};
