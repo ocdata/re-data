@@ -4,6 +4,7 @@ const ent = require('ent');
 const sanitizeHtml = require('sanitize-html');
 const icalendar = require('icalendar');
 const request = require('request-promise');
+const moment = require('moment-timezone');
 const {
   toArray,
   mkSlug,
@@ -864,14 +865,17 @@ exports.scrape = (callback) => {
       color: [63.0, 164.0, 125.0, 1.0],
     };
 
-    const dayKeyFromBeginDateString = (dateString) => {
-      const beginDate = new Date(dateString);
-      let day = beginDate.getUTCDate();
-      if (beginDate.getHours() < 9) {
-        day -= 1;
+    const dayKeyAndBeginEndTimeFromBeginDateString = (beginDateString) => {
+      const beginDate = moment(beginDateString);
+      let day;
+      if (beginDate.hour() < 9) {
+        day = beginDate.date() - 1;
+      } else {
+        day = beginDate.date();
       }
-      const dayKey = `${beginDate.getUTCFullYear()}-${beginDate.getUTCMonth() + 1}-${day}`;
-      return dayKey;
+      const dayString = day < 10 ? `0${day}` : `${day}`;
+      const dayKey = `${beginDate.format('YYYY-MM-')}${dayString}`;
+      return { dayKey };
     };
     
     const chaosWest = await importPretalk(
@@ -885,8 +889,18 @@ exports.scrape = (callback) => {
         }
         const mutableSession = session;
         mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}/`;
+        
         if (session.begin) {
-          mutableSession.day = allDays[dayKeyFromBeginDateString(session.begin)];
+          // WORKAROUND: Chaoswest server has the wrong timezone
+          const beginDate = moment(session.begin).subtract(1, 'h');
+          const endDate = moment(session.end).subtract(1, 'h');
+          mutableSession.begin = beginDate.format();
+          mutableSession.end = endDate.format();
+
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+          // mutableSession.begin = begin;
+          // mutableSession.end = end;
         }
         return mutableSession;
       },
