@@ -63,6 +63,7 @@ const sortOrderOfLocations = [
   mkID('Clarke'),
   mkID('Dijkstra'),
   mkID('Eliza'),
+  '35c3-chaoswest-chaos-west-stage',
 ];
 
 // to map VOC API output to our rooms
@@ -854,17 +855,7 @@ exports.scrape = (callback) => {
       );
     }
 
-
-    // Lightning Pretalk
-    const CHAOSWEST_PRETALK_API = 'https://fahrplan.chaos-west.de/api/events/35c3chaoswest';
-    const CHAOSWEST_PRETALK_SHARE = 'https://fahrplan.chaos-west.de/35c3chaoswest/talk';
-    const CHAOSWEST_TRACK = {
-      id: mkID('chaoswest'),
-      label_de: 'Chaos West',
-      label_en: 'Chaos West',
-      color: [63.0, 164.0, 125.0, 1.0],
-    };
-
+    
     const dayKeyAndBeginEndTimeFromBeginDateString = (beginDateString) => {
       const beginDate = moment(beginDateString);
       let day;
@@ -876,6 +867,16 @@ exports.scrape = (callback) => {
       const dayString = day < 10 ? `0${day}` : `${day}`;
       const dayKey = `${beginDate.format('YYYY-MM-')}${dayString}`;
       return { dayKey };
+    };
+
+    // Chaos West
+    const CHAOSWEST_PRETALK_API = 'https://fahrplan.chaos-west.de/api/events/35c3chaoswest';
+    const CHAOSWEST_PRETALK_SHARE = 'https://fahrplan.chaos-west.de/35c3chaoswest/talk';
+    const CHAOSWEST_TRACK = {
+      id: mkID('chaoswest'),
+      label_de: 'Chaos West',
+      label_en: 'Chaos West',
+      color: [63.0, 164.0, 125.0, 1.0],
     };
     
     const chaosWest = await importPretalk(
@@ -899,8 +900,6 @@ exports.scrape = (callback) => {
 
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
-          // mutableSession.begin = begin;
-          // mutableSession.end = end;
         }
         return mutableSession;
       },
@@ -914,7 +913,49 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
     
+    // Freifunk
 
+    const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
+    const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
+    const OPEN_INFRA_TRACK = {
+      id: mkID('Open Infrastructure'),
+      label_de: 'Open Infrastructure',
+      label_en: 'Open Infrastructure',
+      color: [218.0, 16.0, 104.0, 1.0],
+    };
+
+    const openInfra = await importPretalk(
+      OPEN_INFRA_PRETALK_API,
+      OPEN_INFRA_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        if (session.location.label_de.match(/Thementisch/i)) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${OPEN_INFRA_PRETALK_SHARE}/${talk.code}/`;
+        
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
+    openInfra.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    openInfra.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
+    // Final processing
     const allSessions = data.filter(i => i.type === 'session');
 
     // Generate iCal Feeds
