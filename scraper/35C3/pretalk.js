@@ -95,12 +95,18 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
   const { start, end } = talk.slot;
 
   const room = locationFromTalk(talk, track, eventId, roomMapper);
-   
-  delete room.is_stage;
-  delete room.floor;
-  delete room.order_index;
-  delete room.event;
-
+  const miniRoom = {
+    label_de: room.label_de,
+    label_en: room.label_en,
+    id: room.id,
+  };
+  
+  const miniTrack = {
+    id: track.id,
+    label_de: track.label_de,
+    label_en: track.label_en,
+  };
+  
   let session = {
     event: eventId,
     type: 'session',
@@ -111,7 +117,7 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
     description: talk.description,
     cancelled: false,
     will_be_recorded: talk.do_not_record ? false : undefined,
-    track,
+    track: miniTrack,
     lang: allLanguages[talk.content_locale],
     speakers,
     enclosures: [],
@@ -119,7 +125,7 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
     url: null,
     begin: start,
     end,
-    location: room,
+    location: miniRoom,
     level: allLevels.intermediate,
     format: allFormats.talk,
   };

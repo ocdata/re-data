@@ -861,7 +861,7 @@ exports.scrape = (callback) => {
       id: mkID('chaoswest'),
       label_de: 'Chaos West',
       label_en: 'Chaos West',
-      color: [127.0, 127.0, 127.0, 1.0],
+      color: [63.0, 164.0, 125.0, 1.0],
     };
 
     const dayKeyFromBeginDateString = (dateString) => {
