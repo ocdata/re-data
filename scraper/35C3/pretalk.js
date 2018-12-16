@@ -1,8 +1,7 @@
 const request = require('request-promise');
+const moment = require('moment-timezone');
 const { mkSlug } = require('./utlils');
 const { allLanguages, allFormats, allLevels } = require('./baseStructures');
-
-const PRETALK_BASE_URL = 'https://c3lt.de/api/events/35c3/';
 
 async function allPagesFromPretalk(url, previousResult = []) {
   let result = previousResult;
@@ -93,6 +92,8 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
   });
 
   const { start, end } = talk.slot;
+  const beginDate = moment(start);
+  const endDate = moment(end);
 
   const room = locationFromTalk(talk, track, eventId, roomMapper);
   const miniRoom = {
@@ -123,8 +124,8 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
     enclosures: [],
     links: [],
     url: null,
-    begin: start,
-    end,
+    begin: beginDate.format(),
+    end: endDate.format(),
     location: miniRoom,
     level: allLevels.intermediate,
     format: allFormats.talk,
