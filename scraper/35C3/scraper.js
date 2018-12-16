@@ -12,6 +12,7 @@ const {
 } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
+const importPretalk = require('./pretalk');
 
 const log = require('../../api/lib/log.js');
 const {
@@ -372,32 +373,6 @@ function normalizeXMLDayDateKey(date, begin) {
   theDate.setUTCFullYear(theDate.getUTCFullYear() + dayYearChange);
   theDate.setUTCMonth(theDate.getUTCMonth() + dayMonthChange);
   theDate.setUTCDate(theDate.getUTCDate() + dayDayChange);
-
-  // if this is for a session we sanatize the date in case of strange input
-  if (begin) {
-    // if (begin.getHours() >= 9) {
-    //   // this is ok only if the session is very early, so we return the date from begin
-    //   const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
-    //     1}-${begin.getUTCDate() + 1}`;
-
-    //   return realBegin;
-    // } else if (begin.getHours() >= 5) {
-    //   // this is ok only if the session is very early, so we return the date from begin
-    //   const realBegin = `${begin.getUTCFullYear()}-${begin.getUTCMonth() +
-    //     1}-${begin.getUTCDate() - 1}`;
-
-    //   log.warn(
-    //     'Session is to early, returning ',
-    //     realBegin,
-    //     ' as begin date instead of ',
-    //     theDate,
-    //     ' begin: ',
-    //     begin,
-    //   );
-
-    //   return realBegin;
-    // }
-  }
 
   return `${theDate.getUTCFullYear()}-${theDate.getUTCMonth() +
     1}-${theDate.getUTCDate()}`;
@@ -877,6 +852,54 @@ exports.scrape = (callback) => {
         session => !INVALID_SESSION_NAMES.includes(session.title),
       );
     }
+
+
+    // Lightning Pretalk
+    const CHAOSWEST_PRETALK_API = 'https://fahrplan.chaos-west.de/api/events/35c3chaoswest';
+    const CHAOSWEST_PRETALK_SHARE = 'https://fahrplan.chaos-west.de/35c3chaoswest/talk';
+    const CHAOSWEST_TRACK = {
+      id: mkID('chaoswest'),
+      label_de: 'Chaos West',
+      label_en: 'Chaos West',
+      color: [127.0, 127.0, 127.0, 1.0],
+    };
+
+    const dayKeyFromBeginDateString = (dateString) => {
+      const beginDate = new Date(dateString);
+      let day = beginDate.getUTCDate();
+      if (beginDate.getHours() < 9) {
+        day -= 1;
+      }
+      const dayKey = `${beginDate.getUTCFullYear()}-${beginDate.getUTCMonth() + 1}-${day}`;
+      return dayKey;
+    };
+    
+    const chaosWest = await importPretalk(
+      CHAOSWEST_PRETALK_API,
+      CHAOSWEST_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}/`;
+        if (session.begin) {
+          mutableSession.day = allDays[dayKeyFromBeginDateString(session.begin)];
+        }
+        return mutableSession;
+      },
+    );
+    chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
+    chaosWest.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    chaosWest.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+    
 
     const allSessions = data.filter(i => i.type === 'session');
 
