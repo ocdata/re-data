@@ -59,10 +59,12 @@ async function locationsFromPretalk(roomsUrl, track, eventId, roomMapper) {
 }
 
 function locationFromName(name, track, eventId) {
+  let locationName = name.en;
+  if (!locationName) locationName = name.de;
   return {
-    id: mkSlug(`${track.id}-${name.en}`),
-    label_en: name.en,
-    label_de: name.de,
+    id: mkSlug(`${track.id}-${locationName}`),
+    label_en: locationName,
+    label_de: locationName,
     is_stage: false,
     floor: 0,
     order_index: 0,
