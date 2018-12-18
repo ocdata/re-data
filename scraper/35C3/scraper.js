@@ -947,7 +947,7 @@ exports.scrape = (callback) => {
         if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
           return null;
         }
-        if (session.location.label_de.match(/Thementisch/i)) {
+        if (session.location.label_de.match(/(Thementisch|presentation desk)/i)) {
           return null;
         }
         const mutableSession = session;
@@ -977,7 +977,7 @@ exports.scrape = (callback) => {
       id: mkID('Sendezentrum'),
       label_de: 'Sendezentrum',
       label_en: 'Sendezentrum',
-      color: [218.0, 16.0, 104.0, 1.0],
+      color: [159.0, 75.0, 208.0, 1.0],
     };
 
     const sendezentrum = await importPretalk(
