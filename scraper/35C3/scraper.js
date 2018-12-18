@@ -64,6 +64,8 @@ const sortOrderOfLocations = [
   mkID('Dijkstra'),
   mkID('Eliza'),
   '35c3-chaoswest-chaos-west-stage',
+  '35c3-sendezentrum-b-hne',
+  '35c3-sendezentrum-sendetisch',
 ];
 
 // to map VOC API output to our rooms
@@ -451,24 +453,33 @@ function parseEvent(
 
   const time = new Date(2018, 11, 27);
   if (begin.getTime() < time.getTime()) {
-    console.log('No valid begin: ', begin);
+    log.error('No valid begin: ', begin);
     return null;
   }
 
   const dayKey = normalizeXMLDayDateKey(eventDay.date, begin);
-  let eventTypeId = event.type.toString();
+  const eventTypeId = event.type.toString();
+  let format = allFormats.talk;
   if (eventTypeId === 'lecture') {
-    eventTypeId = 'talk';
+    format = allFormats.talk;
   } else if (eventTypeId === 'other') {
-    eventTypeId = 'talk';
+    format = allFormats.talk;
   } else if (eventTypeId === 'meeting') {
-    eventTypeId = 'workshop';
+    format = allFormats.workshop;
+  } else if (eventTypeId === 'performance') {
+    format = allFormats.workshop;
+  } else if (eventTypeId === 'film') {
+    format = allFormats.talk;
+  } else if (eventTypeId === 'podium') {
+    format = allFormats.discussion;
+  } else {
+    log.error('unknown event type', eventTypeId);
   }
 
   const day = allDays[dayKey];
 
   if (!day) {
-    console.log('No valid day for', event.title.toString(), dayKey);
+    log.info('No valid day for', event.title.toString(), dayKey);
     return null;
   }
 
@@ -496,7 +507,7 @@ function parseEvent(
       label_en: trackJSON.label_en,
     },
     day,
-    format: allFormats[eventTypeId],
+    format,
     level: allLevels.advanced,
     lang:
       allLanguages[
@@ -737,6 +748,7 @@ exports.scrape = (callback) => {
     let schedule = null;
     
     try {
+      log.info('Importing Fahrplan data');
       // eslint-disable-next-line
       schedule = await request({ uri: SCHEDULE_URL, json: true });
 
@@ -750,6 +762,7 @@ exports.scrape = (callback) => {
     // Halfnarp
     let halfnarp = null;
     if (HALFNARP_ENABLED) {
+      log.info('Importing Halfnarp data');
       halfnarp = await halfnarpLoader(
         HALFNARP_CONFIRMED_SOURCE_FILE_PATH,
         HALFNARP_EVENTS_SOURCE_FILE_PATH,
@@ -799,7 +812,7 @@ exports.scrape = (callback) => {
         vodJsons = await vocVodSessionVideos(vocVodConference);
       }
     } catch (error) {
-      console.error('Could not fetch voc jsons', error);
+      log.error('Could not fetch voc jsons', error);
     }
     if (!vodJsons) vodJsons = {};
 
@@ -870,6 +883,7 @@ exports.scrape = (callback) => {
     };
 
     // Chaos West
+    log.info('Importing Chaos West data');
     const CHAOSWEST_PRETALK_API = 'https://fahrplan.chaos-west.de/api/events/35c3chaoswest';
     const CHAOSWEST_PRETALK_SHARE = 'https://fahrplan.chaos-west.de/35c3chaoswest/talk';
     const CHAOSWEST_TRACK = {
@@ -914,7 +928,7 @@ exports.scrape = (callback) => {
     });
     
     // Freifunk
-
+    log.info('Importing Freifunk data');
     const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
     const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
     const OPEN_INFRA_TRACK = {
@@ -955,6 +969,56 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
+    // Sendezentrum
+    log.info('Importing Sendezentrum data');
+    const SENDEZENTRUM_PRETALK_API = 'https://35c3.studio-link.de/api/events/35c3';
+    const SENDEZENTRUM_PRETALK_SHARE = 'https://35c3.studio-link.de/35c3/talk';
+    const SENDEZENTRUM_TRACK = {
+      id: mkID('Sendezentrum'),
+      label_de: 'Sendezentrum',
+      label_en: 'Sendezentrum',
+      color: [218.0, 16.0, 104.0, 1.0],
+    };
+
+    const sendezentrum = await importPretalk(
+      SENDEZENTRUM_PRETALK_API,
+      SENDEZENTRUM_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        const mutableSession = session;
+        mutableSession.url = `${SENDEZENTRUM_PRETALK_SHARE}/${talk.code}/`;
+        
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    sendezentrum.sessions.filter(s => s !== null).forEach((session) => {
+      const sendezentrumSession = session;
+      if (sendezentrumSession.location && sendezentrumSession.location.id === '35c3-sendezentrum-b-hne') {
+        sendezentrumSession.location.label_de = 'Sendezentrum';
+        sendezentrumSession.location.label_en = session.location.label_de;
+      }
+      addEntry('session', sendezentrumSession);
+    });
+    sendezentrum.speakers.forEach(speaker => addEntry('speaker', speaker));
+    sendezentrum.locations.forEach((location) => {
+      const sendezentrumLocation = location;
+      if (sendezentrumLocation.id === '35c3-sendezentrum-b-hne') {
+        sendezentrumLocation.label_de = 'Sendezentrum';
+        sendezentrumLocation.label_en = sendezentrumLocation.label_de;
+      }
+      if (!allRooms[sendezentrumLocation.id]) {
+        allRooms[sendezentrumLocation.id] = sendezentrumLocation;
+      }
+    });
+    sendezentrum.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
     // Final processing
     const allSessions = data.filter(i => i.type === 'session');
 
@@ -983,11 +1047,10 @@ exports.scrape = (callback) => {
     alsoAdd('format', allFormats);
     alsoAdd('language', allLanguages);
 
-    console.log('data=', data.length);
+    log.info('Importing', data.length, 'entries');
     return data;
   }; // json get result
 
-  console.log('foo');
   results()
     .then(resultData => callback(resultData));
 }; // scrape
