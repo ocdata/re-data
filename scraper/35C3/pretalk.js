@@ -158,8 +158,6 @@ async function ocdataFromPretalk(pretalkBaseUrl, track, eventId, roomMapper, ses
   const { sessions, locations } = await sessionsFromPretalk(`${pretalkBaseUrl}/talks`, track, eventId, roomMapper, sessionFunction);
   const speakers = await speakersFromPretalk(`${pretalkBaseUrl}/speakers`, track, eventId);
   
-  // const locations = await locationsFromPretalk(`${pretalkBaseUrl}/rooms/`, track, eventId, roomMapper);
-  // const tracks = await tracksFromPretalk(`${pretalkBaseUrl}/track`);
   return {
     speakers: speakers.filter(s => s != null && s.name.length > 0),
     sessions: sessions.filter(s => s != null),
@@ -167,10 +165,5 @@ async function ocdataFromPretalk(pretalkBaseUrl, track, eventId, roomMapper, ses
     locations,
   };
 }
-
-// scheduleFromPretalk(SCHEDULE_URL)
-// ocdataFromPretalk(PRETALK_BASE_URL, 'lightning', '35c3', pt => pt)
-//   .then(result => console.log(result))
-//   .catch(error => console.error(error));
 
 module.exports = ocdataFromPretalk;
