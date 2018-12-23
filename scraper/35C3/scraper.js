@@ -14,6 +14,7 @@ const {
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
 const importPretalk = require('./pretalk');
+const importFrab = require('./frab');
 
 const log = require('../../api/lib/log.js');
 const {
@@ -63,6 +64,10 @@ const sortOrderOfLocations = [
   mkID('Clarke'),
   mkID('Dijkstra'),
   mkID('Eliza'),
+  '35c3-lineup-discodrama',
+  '35c3-lineup-shutter-island',
+  '35c3-lineup-compeiler',
+  '35c3-lineup-uptime-bar',
   '35c3-chaoswest-chaos-west-stage',
   '35c3-sendezentrum-b-hne',
   '35c3-sendezentrum-sendetisch',
@@ -881,6 +886,46 @@ exports.scrape = (callback) => {
       const dayKey = `${beginDate.format('YYYY-MM-')}${dayString}`;
       return { dayKey };
     };
+
+    // Lounge
+    log.info('Importing Lounge data');
+    const LOUNGE_BASE_URL = 'https://fahrplan.events.ccc.de/congress/2018/Lineup';
+    const LOUNGE_SHARE_PREFIX = 'https://fahrplan.events.ccc.de/congress/2018/Lineup/events/';
+    const LOUNGE_PREFIX = 'lineup';
+    const LOUNGE_TRACK = {
+      id: '35c3-lineup',
+      label_de: 'Lineup',
+      label_en: 'Lineup',
+      color: [173, 173, 173, 1],
+    };
+    const lounge = await importFrab(
+      LOUNGE_BASE_URL,
+      LOUNGE_TRACK,
+      LOUNGE_PREFIX,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${LOUNGE_SHARE_PREFIX}/${talk.id}.html`;
+        
+        if (session.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
+    lounge.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    lounge.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
 
     // Chaos West
     log.info('Importing Chaos West data');
