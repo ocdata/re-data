@@ -930,7 +930,7 @@ exports.scrape = (callback) => {
     // Freifunk
     log.info('Importing Freifunk data');
     const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
-    const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
+    const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/35c3oio/talk';
     const OPEN_INFRA_TRACK = {
       id: mkID('Open Infrastructure'),
       label_de: 'Open Infrastructure',
@@ -1016,6 +1016,45 @@ exports.scrape = (callback) => {
       }
     });
     sendezentrum.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
+    // WikiPaka
+    log.info('Importing WikiPaka data');
+    const WIKIPAKA_PRETALK_API = 'https://cfp.verschwoerhaus.de/api/events/35c3';
+    const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk/R7JKQA/';
+    const WIKIPAKA_TRACK = {
+      id: mkID('WikiPaka'),
+      label_de: 'WikiPaka',
+      label_en: 'WikiPaka',
+      color: [71.0, 105.0, 140.0, 1.0],
+    };
+
+    const wikipaka = await importPretalk(
+      WIKIPAKA_PRETALK_API,
+      WIKIPAKA_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}/`;
+
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    wikipaka.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    wikipaka.speakers.forEach(speaker => addEntry('speaker', speaker));
+    wikipaka.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    wikipaka.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 

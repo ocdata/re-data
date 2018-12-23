@@ -9,7 +9,12 @@ async function allPagesFromPretalk(url, previousResult = []) {
 
   while (nextPage) {
     // eslint-disable-next-line
-    let pageResult = await request({ uri: nextPage, json: true }); 
+    let pageResult = await request({ 
+      uri: nextPage,
+      json: true,
+      gzip: true,
+      timeout: 2000,
+    });
     nextPage = pageResult.next;
     result = result.concat(pageResult.results);
   }
@@ -96,6 +101,10 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
   const { start, end } = talk.slot;
   const beginDate = moment(start);
   const endDate = moment(end);
+  const minutes = beginDate.diff(endDate, 'm');
+  if (Math.abs(minutes) > 6 * 60) {
+    return null;
+  }
 
   const room = locationFromTalk(talk, track, eventId, roomMapper);
   const miniRoom = {
@@ -122,7 +131,7 @@ function talksToOcSession(talk, track, eventId, roomMapper, sessionFunction) {
     will_be_recorded: talk.do_not_record ? false : undefined,
     track: miniTrack,
     lang: allLanguages[talk.content_locale],
-    speakers,
+    speakers: speakers.filter(s => s != null && s.name.length > 0),
     enclosures: [],
     links: [],
     url: null,
@@ -152,8 +161,8 @@ async function ocdataFromPretalk(pretalkBaseUrl, track, eventId, roomMapper, ses
   // const locations = await locationsFromPretalk(`${pretalkBaseUrl}/rooms/`, track, eventId, roomMapper);
   // const tracks = await tracksFromPretalk(`${pretalkBaseUrl}/track`);
   return {
-    speakers,
-    sessions,
+    speakers: speakers.filter(s => s != null && s.name.length > 0),
+    sessions: sessions.filter(s => s != null),
     tracks: [track],
     locations,
   };
