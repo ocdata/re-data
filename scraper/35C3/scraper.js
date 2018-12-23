@@ -1022,7 +1022,7 @@ exports.scrape = (callback) => {
     // WikiPaka
     log.info('Importing WikiPaka data');
     const WIKIPAKA_PRETALK_API = 'https://cfp.verschwoerhaus.de/api/events/35c3';
-    const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk/R7JKQA/';
+    const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk';
     const WIKIPAKA_TRACK = {
       id: mkID('WikiPaka'),
       label_de: 'WikiPaka',
