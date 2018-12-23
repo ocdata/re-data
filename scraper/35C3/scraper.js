@@ -1000,7 +1000,7 @@ exports.scrape = (callback) => {
       const sendezentrumSession = session;
       if (sendezentrumSession.location && sendezentrumSession.location.id === '35c3-sendezentrum-b-hne') {
         sendezentrumSession.location.label_de = 'Sendezentrum';
-        sendezentrumSession.location.label_en = session.location.label_de;
+        sendezentrumSession.location.label_en = sendezentrumSession.location.label_de;
       }
       addEntry('session', sendezentrumSession);
     });
