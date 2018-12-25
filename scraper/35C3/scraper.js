@@ -10,6 +10,7 @@ const {
   mkSlug,
   clone,
   frabImageUrl,
+  Link,
 } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
@@ -204,12 +205,8 @@ function parseSpeaker(speakerJSON, imageURLPrefix) {
       if (url.indexOf('http') === -1) {
         url = `http://${url}`;
       }
-      links.push({
-        url,
-        title: link.title,
-        service: 'web',
-        type: 'speaker-link',
-      });
+      
+      links.push((new Link(url, 'speaker-link', link.title)).JSON);
     });
   }
 
@@ -440,11 +437,7 @@ function parseEvent(
       url = `http://${url}`;
     }
 
-    links.push({
-      title,
-      url,
-      type: 'session-link',
-    });
+    links.push((new Link(url, 'session-link', title)).JSON);
   });
 
   const link = additionalLinks[id];
@@ -1100,6 +1093,45 @@ exports.scrape = (callback) => {
       if (!allRooms[location.id]) allRooms[location.id] = location;
     });
     wikipaka.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
+    // ChaosZone
+    log.info('Importing ChaosZone data');
+    const CHAOSZONE_PRETALK_API = 'https://cfp.chaoszone.cz/api/events/35c3';
+    const CHAOSZONE_PRETALK_SHARE = 'https://cfp.chaoszone.cz/35c3/talk';
+    const CHAOSZONE_TRACK = {
+      id: mkID('ChaosZone'),
+      label_de: 'ChaosZone',
+      label_en: 'ChaosZone',
+      color: [153, 49, 41, 1],
+    };
+
+    const chaoszone = await importPretalk(
+      CHAOSZONE_PRETALK_API,
+      CHAOSZONE_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${CHAOSZONE_PRETALK_SHARE}/${talk.code}/`;
+
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    chaoszone.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    chaoszone.speakers.forEach(speaker => addEntry('speaker', speaker));
+    chaoszone.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    chaoszone.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 

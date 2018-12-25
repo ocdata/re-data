@@ -13,7 +13,7 @@ function speakerFromJson(speakerJson, eventId, prefix) {
   }
 
   const links = speakerJson.links.map((link) => {
-    const ocLink = new Link(link.url, link.title);
+    const ocLink = new Link(link.url, 'speaker-link', link.title);
     return ocLink.JSON;
   });
   
@@ -95,7 +95,7 @@ function sessionFromFrab(sessionJson, eventId, track, prefix, sessionFunction) {
     lang: language,
     speakers: speakers.filter(s => s != null && s.name.length > 0),
     enclosures: [],
-    links: sessionJson.links.map(l => new Link(l.url, l.title)),
+    links: sessionJson.links.map(l => (new Link(l.url, 'session-link', l.title).JSON)),
     url: null,
     begin: beginDate.format(),
     end: endDate.format(),
