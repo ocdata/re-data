@@ -881,6 +881,8 @@ exports.scrape = (callback) => {
       return { dayKey };
     };
 
+    const loadingPromises = [];
+
     // Lounge
     log.info('Importing Lounge data');
     const LOUNGE_BASE_URL = 'https://fahrplan.events.ccc.de/congress/2018/Lineup';
@@ -892,7 +894,7 @@ exports.scrape = (callback) => {
       label_en: 'Lineup',
       color: [173, 173, 173, 1],
     };
-    const lounge = await importFrab(
+    const loungePromise = importFrab(
       LOUNGE_BASE_URL,
       LOUNGE_TRACK,
       LOUNGE_PREFIX,
@@ -912,14 +914,7 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
-    lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
-    lounge.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    lounge.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    loadingPromises.push(loungePromise);
 
     // Chaos West
     log.info('Importing Chaos West data');
@@ -932,7 +927,7 @@ exports.scrape = (callback) => {
       color: [63.0, 164.0, 125.0, 1.0],
     };
     
-    const chaosWest = await importPretalk(
+    const chaosWestPromise = importPretalk(
       CHAOSWEST_PRETALK_API,
       CHAOSWEST_TRACK,
       EVENT_ID,
@@ -945,21 +940,13 @@ exports.scrape = (callback) => {
         mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}/`;
         
         if (session.begin) {
-
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
         return mutableSession;
       },
     );
-    chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
-    chaosWest.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    chaosWest.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    loadingPromises.push(chaosWestPromise);
     
     // Freifunk
     log.info('Importing Freifunk data');
@@ -972,7 +959,7 @@ exports.scrape = (callback) => {
       color: [218.0, 16.0, 104.0, 1.0],
     };
 
-    const openInfra = await importPretalk(
+    const openInfraPromise = importPretalk(
       OPEN_INFRA_PRETALK_API,
       OPEN_INFRA_TRACK,
       EVENT_ID,
@@ -994,14 +981,7 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
-    openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
-    openInfra.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    openInfra.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    loadingPromises.push(openInfraPromise);
 
     // Sendezentrum
     log.info('Importing Sendezentrum data');
@@ -1014,7 +994,7 @@ exports.scrape = (callback) => {
       color: [159.0, 75.0, 208.0, 1.0],
     };
 
-    const sendezentrum = await importPretalk(
+    const sendezentrumPromise = importPretalk(
       SENDEZENTRUM_PRETALK_API,
       SENDEZENTRUM_TRACK,
       EVENT_ID,
@@ -1030,6 +1010,103 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
+    loadingPromises.push(sendezentrumPromise);
+
+    // WikiPaka
+    log.info('Importing WikiPaka data');
+    const WIKIPAKA_PRETALK_API = 'https://cfp.verschwoerhaus.de/api/events/35c3';
+    const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk';
+    const WIKIPAKA_TRACK = {
+      id: mkID('WikiPaka'),
+      label_de: 'WikiPaka',
+      label_en: 'WikiPaka',
+      color: [71.0, 105.0, 140.0, 1.0],
+    };
+
+    const wikipakaPromise = importPretalk(
+      WIKIPAKA_PRETALK_API,
+      WIKIPAKA_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}/`;
+
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    loadingPromises.push(wikipakaPromise);
+
+    // ChaosZone
+    log.info('Importing ChaosZone data');
+    const CHAOSZONE_PRETALK_API = 'https://cfp.chaoszone.cz/api/events/35c3';
+    const CHAOSZONE_PRETALK_SHARE = 'https://cfp.chaoszone.cz/35c3/talk';
+    const CHAOSZONE_TRACK = {
+      id: mkID('ChaosZone'),
+      label_de: 'ChaosZone',
+      label_en: 'ChaosZone',
+      color: [153, 49, 41, 1],
+    };
+
+    const chaoszonePromise = importPretalk(
+      CHAOSZONE_PRETALK_API,
+      CHAOSZONE_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${CHAOSZONE_PRETALK_SHARE}/${talk.code}/`;
+
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    loadingPromises.push(chaoszonePromise);
+
+    // Load all the things
+    const result = await Promise.all(loadingPromises);
+    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone] = result;
+
+    lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
+    lounge.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    lounge.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });    
+
+    chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
+    chaosWest.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    chaosWest.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
+    openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
+    openInfra.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    openInfra.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
     sendezentrum.sessions.filter(s => s !== null).forEach((session) => {
       const sendezentrumSession = session;
       if (sendezentrumSession.location && sendezentrumSession.location.id === '35c3-sendezentrum-b-hne') {
@@ -1053,36 +1130,6 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
-    // WikiPaka
-    log.info('Importing WikiPaka data');
-    const WIKIPAKA_PRETALK_API = 'https://cfp.verschwoerhaus.de/api/events/35c3';
-    const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk';
-    const WIKIPAKA_TRACK = {
-      id: mkID('WikiPaka'),
-      label_de: 'WikiPaka',
-      label_en: 'WikiPaka',
-      color: [71.0, 105.0, 140.0, 1.0],
-    };
-
-    const wikipaka = await importPretalk(
-      WIKIPAKA_PRETALK_API,
-      WIKIPAKA_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
-          return null;
-        }
-        const mutableSession = session;
-        mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}/`;
-
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
-        return mutableSession;
-      },
-    );
     wikipaka.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     wikipaka.speakers.forEach(speaker => addEntry('speaker', speaker));
     wikipaka.locations.forEach((location) => {
@@ -1090,38 +1137,8 @@ exports.scrape = (callback) => {
     });
     wikipaka.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    });    
 
-    // ChaosZone
-    log.info('Importing ChaosZone data');
-    const CHAOSZONE_PRETALK_API = 'https://cfp.chaoszone.cz/api/events/35c3';
-    const CHAOSZONE_PRETALK_SHARE = 'https://cfp.chaoszone.cz/35c3/talk';
-    const CHAOSZONE_TRACK = {
-      id: mkID('ChaosZone'),
-      label_de: 'ChaosZone',
-      label_en: 'ChaosZone',
-      color: [153, 49, 41, 1],
-    };
-
-    const chaoszone = await importPretalk(
-      CHAOSZONE_PRETALK_API,
-      CHAOSZONE_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
-          return null;
-        }
-        const mutableSession = session;
-        mutableSession.url = `${CHAOSZONE_PRETALK_SHARE}/${talk.code}/`;
-
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
-        return mutableSession;
-      },
-    );
     chaoszone.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     chaoszone.speakers.forEach(speaker => addEntry('speaker', speaker));
     chaoszone.locations.forEach((location) => {
