@@ -70,6 +70,7 @@ const sortOrderOfLocations = [
   '35c3-lineup-compeiler',
   '35c3-lineup-uptime-bar',
   '35c3-chaoswest-chaos-west-stage',
+  '35c3-chaoszone-chaoszone-stage-35c3',
   '35c3-sendezentrum-b-hne',
   '35c3-sendezentrum-sendetisch',
 ];
