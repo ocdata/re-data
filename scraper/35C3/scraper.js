@@ -945,11 +945,6 @@ exports.scrape = (callback) => {
         mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}/`;
         
         if (session.begin) {
-          // WORKAROUND: Chaoswest server has the wrong timezone
-          const beginDate = moment(session.begin).subtract(1, 'h');
-          const endDate = moment(session.end).subtract(1, 'h');
-          mutableSession.begin = beginDate.format();
-          mutableSession.end = endDate.format();
 
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
