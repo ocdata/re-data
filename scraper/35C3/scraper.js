@@ -42,7 +42,7 @@ const HALFNARP_CONFIRMED_SOURCE_FILE_PATH = path.join(
 );
 
 const VOC_EVENT_ID = '35c3';
-const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json';
+const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json?forceopen=yes';
 const VOC_VOD_CONFERENCE_API_URL = `https://api.media.ccc.de/public/conferences/${VOC_EVENT_ID}`;
 
 // for debugging we can just pretend rp14 was today
@@ -789,7 +789,7 @@ exports.scrape = (callback) => {
     }
 
     // VOC Live
-    const vocLiveStreams = null;
+    const vocLiveStreams = await request({ uri: VOC_LIVE_API_URL, json: true, timeout: 5000 });
     let liveStreams = [];
     if (vocLiveStreams) {
       liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
