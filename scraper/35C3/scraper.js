@@ -73,6 +73,19 @@ const sortOrderOfLocations = [
   '35c3-chaoszone-chaoszone-stage-35c3',
   '35c3-sendezentrum-b-hne',
   '35c3-sendezentrum-sendetisch',
+  '35c3-wikipaka-wikipakawg-esszimmer',
+  '35c3-wikipaka-wikipakawg-k-che',
+  '35c3-komona-dome-1-talks',
+  '35c3-komona-dome-3-workshops-talks',
+  '35c3-komona-dome-4-workshops-handson',
+  '35c3-open-infrastructure-oio-lecture-arena',
+  '35c3-open-infrastructure-oio-presentation-desk-1',
+  '35c3-open-infrastructure-oio-presentation-desk-2',
+  '35c3-open-infrastructure-oio-presentation-desk-3',
+  '35c3-open-infrastructure-oio-presentation-desk-4',
+  '35c3-open-infrastructure-oio-presentation-desk-6',
+  '35c3-open-infrastructure-oio-solder-area',
+  '35c3-open-infrastructure-oio-workshop-domo',
 ];
 
 // to map VOC API output to our rooms
@@ -1076,9 +1089,39 @@ exports.scrape = (callback) => {
     );
     loadingPromises.push(chaoszonePromise);
 
+    log.info('Importing KOMONA data');
+    const KOMONA_PRETALK_API = 'https://talks.komona.org/api/events/35c3';
+    const KOMONA_PRETALK_SHARE = 'https://talks.komona.org/35c3/talk';
+    const KOMONA_TRACK = {
+      id: mkID('Komona'),
+      label_de: 'Komona',
+      label_en: 'Komona',
+      color: [128, 72, 230, 1],
+    };
+    const komonaPromise = importPretalk(
+      KOMONA_PRETALK_API,
+      KOMONA_TRACK,
+      EVENT_ID,
+      null,
+      (session, talk) => {
+        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+          return null;
+        }
+        const mutableSession = session;
+        mutableSession.url = `${KOMONA_PRETALK_SHARE}/${talk.code}/`;
+
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+          mutableSession.day = allDays[dayKey];
+        }
+        return mutableSession;
+      },
+    );
+    loadingPromises.push(komonaPromise);
+
     // Load all the things
     const result = await Promise.all(loadingPromises);
-    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone] = result;
+    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone, komona] = result;
 
     lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1087,7 +1130,7 @@ exports.scrape = (callback) => {
     });
     lounge.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
-    });    
+    });
 
     chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1145,6 +1188,15 @@ exports.scrape = (callback) => {
       if (!allRooms[location.id]) allRooms[location.id] = location;
     });
     chaoszone.tracks.forEach((track) => {
+      if (!allTracks[track.id]) allTracks[track.id] = track;
+    });
+
+    komona.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    komona.speakers.forEach(speaker => addEntry('speaker', speaker));
+    komona.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    komona.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
