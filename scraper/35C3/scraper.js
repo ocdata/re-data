@@ -14,8 +14,8 @@ const {
 } = require('./utlils');
 const halfnarpLoader = require('./halfnarp-schedule');
 const colors = require('./colors');
-const importPretalk = require('./pretalk');
-const importFrab = require('./frab');
+const { importPretalk } = require('./pretalk');
+const { importFrab, frabSessionsFromJson } = require('./frab');
 
 const log = require('../../api/lib/log.js');
 const {
@@ -827,8 +827,8 @@ exports.scrape = (callback) => {
     }
 
     // VOC VOD
-    const vocVodConference = null;
-
+    const vocVodConference = await request({ uri: VOC_VOD_CONFERENCE_API_URL, json: true, timeout: 5000 });
+    
     const defaultTrack = {
       id: mkID('other'),
       color: [97.0, 97.0, 97.0, 1.0], // grey
@@ -1327,6 +1327,7 @@ exports.scrape = (callback) => {
     komona.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
+
 
     // Final processing
     const allSessions = data.filter(i => i.type === 'session');

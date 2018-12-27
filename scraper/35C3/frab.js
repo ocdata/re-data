@@ -146,4 +146,8 @@ async function ocdataFromFrab(frabBaseUrl, track, prefix, eventId, roomMapper, s
     });
 }
 
-module.exports = ocdataFromFrab;
+module.exports = {
+  importFrab: ocdataFromFrab,
+  frabSpeakersFromJson: speakersFromJson,
+  frabSessionsFromJson: sessionsFromJson,
+};

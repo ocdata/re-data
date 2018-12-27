@@ -166,4 +166,4 @@ async function ocdataFromPretalk(pretalkBaseUrl, track, eventId, roomMapper, ses
   };
 }
 
-module.exports = ocdataFromPretalk;
+module.exports = { importPretalk: ocdataFromPretalk, sessionsFromPretalk };
