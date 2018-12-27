@@ -1357,7 +1357,19 @@ exports.scrape = (callback) => {
     alsoAdd('language', allLanguages);
 
     log.info('Importing', data.length, 'entries');
-    return data;
+    const INVALID_SPEAKER_NAMES = ['35C3', '35c3', '35c3oio@freifunk.space'];
+    const validateSpeakerName = entry => entry.name.match(/[a-zA-Z0-9]+/i) && !INVALID_SPEAKER_NAMES.includes(entry.name);
+    return data.map((entry) => {
+      if (entry.type === 'speaker' && !validateSpeakerName(entry)) {
+        return null;
+      }
+      if (entry.type === 'session') {
+        const session = entry;
+        session.speakers = session.speakers.filter(s => validateSpeakerName(s));
+        return session;
+      }
+      return entry;
+    }).filter(e => e != null);
   }; // json get result
 
   results()

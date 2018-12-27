@@ -4,7 +4,6 @@ function parseVocStreams(json, slug, mediaType = 'video', streamType = 'hls') {
   const streams = [];
   const conference = json.find(a => a.slug === slug);
   if (conference) {
-    console.log(conference);
     conference.groups.forEach((group) => {
       group.rooms.forEach((room) => {
         room.streams.forEach((stream) => {
