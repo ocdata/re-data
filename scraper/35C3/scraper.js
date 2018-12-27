@@ -116,6 +116,14 @@ const additionalEnclosures = {
   },
 };
 
+const LOCATION_ID_TO_C3NAV_URL = {
+  '35c3-adams': 'https://35c3.c3nav.de/l/hall-b/',
+  '35c3-borg': 'https://35c3.c3nav.de/l/hall-b/',
+  '35c3-clarke': 'https://35c3.c3nav.de/l/hall-c/',
+  '35c3-dijkstra': 'https://35c3.c3nav.de/l/hall-d/',
+  '35c3-eliza': 'https://35c3.c3nav.de/l/hall-e/',
+};
+
 // Livestream test
 const streamURLs = {};
 
@@ -417,7 +425,7 @@ function parseEvent(
   enclosureFunction = () => [],
   idPrefix,
   linkMakerFunction,
-  idFieldValue
+  idFieldValue,
 ) {
   const links = [];
   let idField = idFieldValue;
@@ -606,6 +614,10 @@ function parseEvent(
         type: 'livestream',
       });
     }
+
+    const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+    const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+    session.links.push(navLink.JSON);
   }
 
   session.url = linkFunction(session, event);
