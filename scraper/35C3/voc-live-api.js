@@ -37,7 +37,6 @@ function enclosureFromVocJson(vocJson, mimeType = 'video/mp4') {
   };
 }
 
-
 // streamType can be hls, webm, dash, mp3, opus
 // type can be dash, video or audio
 async function vocLiveStreams(slug, mediaType = 'video', streamType = 'hls') {

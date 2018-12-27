@@ -966,7 +966,12 @@ exports.scrape = (callback) => {
 
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
@@ -1005,7 +1010,12 @@ exports.scrape = (callback) => {
         }
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
@@ -1038,7 +1048,12 @@ exports.scrape = (callback) => {
         }
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
@@ -1074,7 +1089,12 @@ exports.scrape = (callback) => {
         }
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
@@ -1110,7 +1130,12 @@ exports.scrape = (callback) => {
         }
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
@@ -1144,7 +1169,12 @@ exports.scrape = (callback) => {
         }
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
         if (liveStream) {
-          mutableSession.enclosures.push(liveStream);
+          const enclosure = {
+            url: liveStream.streamUrl,
+            mimetype: 'video/mp4',
+            type: 'livestream',
+          };
+          mutableSession.enclosures.push(enclosure);
         }
         return mutableSession;
       },
