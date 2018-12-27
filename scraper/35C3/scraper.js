@@ -117,11 +117,20 @@ const additionalEnclosures = {
 };
 
 const LOCATION_ID_TO_C3NAV_URL = {
-  '35c3-adams': 'https://35c3.c3nav.de/l/hall-b/',
-  '35c3-borg': 'https://35c3.c3nav.de/l/hall-b/',
-  '35c3-clarke': 'https://35c3.c3nav.de/l/hall-c/',
-  '35c3-dijkstra': 'https://35c3.c3nav.de/l/hall-d/',
-  '35c3-eliza': 'https://35c3.c3nav.de/l/hall-e/',
+  '35c3-adams': 'https://35c3.c3nav.de/l/hall-a/@0,283.74,134.73,2.13',
+  '35c3-borg': 'https://35c3.c3nav.de/l/hall-b/@0,491.26,95.7,3.03',
+  '35c3-clarke': 'https://35c3.c3nav.de/l/hall-c/@0,614.29,466.27,3.01',
+  '35c3-dijkstra': 'https://35c3.c3nav.de/l/hall-d/@1,207.97,384.73,4.25',
+  '35c3-eliza': 'https://35c3.c3nav.de/l/hall-e/@1,287.26,380.76,4.6',
+  '35c3-lineup-compeiler': 'https://35c3.c3nav.de/l/compeiler/@-1,351.59,347.33,5',
+  '35c3-lineup-discodrama': 'https://35c3.c3nav.de/l/discodrama/@0,615.55,171.19,2.9',
+  '35c3-lineup-shutter-island': 'https://35c3.c3nav.de/l/shutter-island/@-1,267.97,369.25,4.24',
+  '35c3-lineup-uptime-bar': 'https://35c3.c3nav.de/l/uptime-bar/@0,513.45,424.68,4.28',
+  '35c3-open-infrastructure-oio-lecture-arena': 'https://35c3.c3nav.de/l/oio-arena/@0,447.08,404.83,5',
+  '35c3-sendezentrum-b-hne': 'https://35c3.c3nav.de/l/dlf-sendezentrum/@1,302.77,380.28,4.59',
+  '35c3-sendezentrum-sendetisch': 'https://35c3.c3nav.de/l/sendetisch/@0,307.09,382.33,5',
+  '35c3-wikipaka-wikipakawg-k-che': 'https://35c3.c3nav.de/l/wikipaka-kitchen/@0,399.59,454.33,5',
+  '35c3-wikipaka-wikipakawg-esszimmer': 'https://35c3.c3nav.de/l/wikipaka-dining/@0,388.59,455.83,5',
 };
 
 // Livestream test
@@ -944,6 +953,11 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
+        }
         return mutableSession;
       },
     );
@@ -985,6 +999,11 @@ exports.scrape = (callback) => {
             type: 'livestream',
           };
           mutableSession.enclosures.push(enclosure);
+        }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
         }
         return mutableSession;
       },
@@ -1029,6 +1048,11 @@ exports.scrape = (callback) => {
             type: 'livestream',
           };
           mutableSession.enclosures.push(enclosure);
+        }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
         }
         return mutableSession;
       },
@@ -1077,7 +1101,11 @@ exports.scrape = (callback) => {
           };
           mutableSession.enclosures.push(enclosure);
         }
-
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
+        }
         return mutableSession;
       },
     );
@@ -1118,6 +1146,11 @@ exports.scrape = (callback) => {
             type: 'livestream',
           };
           mutableSession.enclosures.push(enclosure);
+        }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
         }
         return mutableSession;
       },
@@ -1160,6 +1193,11 @@ exports.scrape = (callback) => {
           };
           mutableSession.enclosures.push(enclosure);
         }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
+        }
         return mutableSession;
       },
     );
@@ -1198,6 +1236,11 @@ exports.scrape = (callback) => {
             type: 'livestream',
           };
           mutableSession.enclosures.push(enclosure);
+        }
+        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+        if (navLinkUrl) {
+          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+          session.links.push(navLink.JSON);
         }
         return mutableSession;
       },
