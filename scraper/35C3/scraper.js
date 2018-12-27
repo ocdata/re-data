@@ -89,7 +89,16 @@ const sortOrderOfLocations = [
 ];
 
 // to map VOC API output to our rooms
-const vocSlugToLocatonID = {};
+const vocSlugToLocatonID = {
+  halla: '35c3-adams',
+  hallb: '35c3-borg',
+  hallc: '35c3-clarke',
+  halld: '35c3-dijkstra',
+  halle: '35c3-eliza',
+  oio: '35c3-open-infrastructure-oio-lecture-arena',
+  wikipakawg: '35c3-wikipaka-wikipakawg-esszimmer',
+  chaoswest: '35c3-chaoswest-chaos-west-stage',
+};
 
 const locationNameChanges = {};
 
@@ -834,10 +843,8 @@ exports.scrape = (callback) => {
 
       // find live streams
       const streamInfo = liveStreams.find((stream) => {
-        return (
-          stream.name.toLowerCase() ===
-            session.location.label_en.toLowerCase() && !stream.translated
-        );
+        const locationId = vocSlugToLocatonID[stream.roomSlug];
+        return session.location.id === locationId;
       });
       if (streamInfo) {
         const livestream = {
@@ -956,6 +963,11 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
+
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
+        }
         return mutableSession;
       },
     );
@@ -991,6 +1003,10 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
+        }
         return mutableSession;
       },
     );
@@ -1019,6 +1035,10 @@ exports.scrape = (callback) => {
         if (mutableSession.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
+        }
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
         }
         return mutableSession;
       },
@@ -1052,6 +1072,10 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
+        }
         return mutableSession;
       },
     );
@@ -1084,6 +1108,10 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
+        }
         return mutableSession;
       },
     );
@@ -1113,6 +1141,10 @@ exports.scrape = (callback) => {
         if (mutableSession.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
+        }
+        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+        if (liveStream) {
+          mutableSession.enclosures.push(liveStream);
         }
         return mutableSession;
       },
