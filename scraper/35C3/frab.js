@@ -31,7 +31,9 @@ function speakerFromJson(speakerJson, eventId, prefix) {
 
 function speakersFromJson(speakersJson, eventId, prefix) {
   const { speakers } = speakersJson.schedule_speakers;
-  return speakers.map(s => speakerFromJson(s, eventId, prefix));
+  return speakers
+    .map(s => speakerFromJson(s, eventId, prefix))
+    .filter(s => s != null && s.name.length > 0);
 }
 
 function locationFromName(name, eventId, prefix) {
