@@ -100,6 +100,7 @@ const vocSlugToLocatonID = {
   chaoswest: '35c3-chaoswest-chaos-west-stage',
 };
 
+
 const locationNameChanges = {};
 
 const additionalLocations = [];
@@ -1033,6 +1034,13 @@ exports.scrape = (callback) => {
       color: [159.0, 75.0, 208.0, 1.0],
     };
 
+    // MP3 stream urls added to sendezentrum
+    const SENDEZENTRUM_STREAM_URLS = {
+      '35c3-sendezentrum-b-hne': 'https://stream-master.studio-link.de/35c3buehne.mp3',
+      '35c3-sendezentrum-sendetisch': 'https://stream-master.studio-link.de/35c3sendetisch.mp3',
+    };
+
+
     const sendezentrumPromise = importPretalk(
       SENDEZENTRUM_PRETALK_API,
       SENDEZENTRUM_TRACK,
@@ -1046,15 +1054,18 @@ exports.scrape = (callback) => {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
         }
-        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
-        if (liveStream) {
+
+        // Sendezentrum audio only streams
+        const mp3StreamUrl = SENDEZENTRUM_STREAM_URLS[session.location.id];
+        if (mp3StreamUrl) {
           const enclosure = {
-            url: liveStream.streamUrl,
-            mimetype: 'video/mp4',
+            url: mp3StreamUrl,
+            mimetype: 'audio/mp3',
             type: 'livestream',
           };
           mutableSession.enclosures.push(enclosure);
         }
+
         return mutableSession;
       },
     );
