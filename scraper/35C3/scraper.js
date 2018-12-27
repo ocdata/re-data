@@ -131,6 +131,7 @@ const LOCATION_ID_TO_C3NAV_URL = {
   '35c3-sendezentrum-sendetisch': 'https://35c3.c3nav.de/l/sendetisch/@0,307.09,382.33,5',
   '35c3-wikipaka-wikipakawg-k-che': 'https://35c3.c3nav.de/l/wikipaka-kitchen/@0,399.59,454.33,5',
   '35c3-wikipaka-wikipakawg-esszimmer': 'https://35c3.c3nav.de/l/wikipaka-dining/@0,388.59,455.83,5',
+  '35c3-chaoswest-chaos-west-stage': 'https://35c3.c3nav.de/l/chaos-west-stage/@0,404.39,99.54,4.38',
 };
 
 // Livestream test
