@@ -97,7 +97,13 @@ function sessionFromFrab(sessionJson, eventId, track, prefix, sessionFunction) {
     lang: language,
     speakers: speakers.filter(s => s != null && s.name.length > 0),
     enclosures: [],
-    links: sessionJson.links.map(l => (new Link(l.url, 'session-link', l.title).JSON)),
+    links: (sessionJson.links || []).map((link) => {
+      if (typeof link === 'string') {
+        return new Link(link, 'session-link', link).JSON;
+      }
+      
+      return new Link(link.url, 'session-link', link.title).JSON;
+    }),
     url: null,
     begin: beginDate.format(),
     end: endDate.format(),

@@ -1248,9 +1248,14 @@ exports.scrape = (callback) => {
     );
     loadingPromises.push(komonaPromise);
 
+    // Self organized sessions
+    const SELF_ORGANIZED_SCHEDULE_URL = 'http://data.c3voc.de/35C3/workshops.schedule.json';
+    const selfOrganizedPromise = request({ uri: SELF_ORGANIZED_SCHEDULE_URL, json: true, timeout: 5000 });
+    loadingPromises.push(selfOrganizedPromise);
+
     // Load all the things
     const result = await Promise.all(loadingPromises);
-    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone, komona] = result;
+    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone, komona, selfOrganizedJson] = result;
 
     lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1329,8 +1334,44 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
+    const SELF_ORGANIZED_TRACK = {
+      id: mkID('self-organized-sessons'),
+      label_de: 'Self-Organized Sessions',
+      label_en: 'Self-Organized Sessions',
+      color: [173, 173, 173, 1],
+    };
+    const selfOrganized = frabSessionsFromJson(
+      selfOrganizedJson,
+      EVENT_ID,
+      SELF_ORGANIZED_TRACK,
+      'self-organized',
+      (session) => {
+        const mutableSession = session;
+        if (mutableSession.begin) {
+          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(
+            mutableSession.begin,
+            mutableSession.end,
+          );
+          mutableSession.day = allDays[dayKey];
+        }
+        if (!mutableSession.day) return null;
+        mutableSession.speakers = [];
+        // the last link
+        const wikiLink = mutableSession.links.find(l => l.url.indexOf('https://events.ccc.de/congress/2018/wiki/index.php/Session:') !== -1);
+        mutableSession.url = wikiLink.url;
 
-    // Final processing
+        return mutableSession;
+      },
+    );
+    selfOrganized.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    selfOrganized.locations.forEach((location) => {
+      if (!allRooms[location.id]) allRooms[location.id] = location;
+    });
+    allTracks[SELF_ORGANIZED_TRACK.id] = SELF_ORGANIZED_TRACK;
+
+    //                  //
+    // Final processing //
+    //                  //
     const allSessions = data.filter(i => i.type === 'session');
 
     // Generate iCal Feeds
