@@ -26,7 +26,7 @@ function parseVocStreams(json, slug, mediaType = 'video', streamType = 'hls') {
 
 function enclosureFromVocJson(vocJson, mimeType = 'video/mp4') {
   const poster = vocJson.poster_url;
-  const streamUrl = vocJson.recordings.find(r => r.mime_type === mimeType);
+  const streamUrl = vocJson.recordings.find(r => r.mime_type === mimeType && r.filename.indexOf('slides') === -1);
   if (!streamUrl) return null;
   return {
     url: streamUrl.recording_url,
