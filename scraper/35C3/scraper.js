@@ -1291,7 +1291,7 @@ exports.scrape = (callback) => {
     sendezentrum.locations.forEach((location) => {
       const sendezentrumLocation = location;
       if (sendezentrumLocation.id === '35c3-sendezentrum-b-hne') {
-        sendezentrumLocation.label_de = 'Sendezentrum';
+        sendezentrumLocation.label_de = 'Bühne Sendezentrum & DLF';
         sendezentrumLocation.label_en = sendezentrumLocation.label_de;
       }
       if (!allRooms[sendezentrumLocation.id]) {
