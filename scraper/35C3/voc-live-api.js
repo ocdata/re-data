@@ -53,6 +53,7 @@ async function vocVodSessionVideo(url) {
     uri: url,
     method: 'GET',
     json: true,
+    timeout: 5000,
   };
   return request(options);
 }
