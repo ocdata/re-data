@@ -42,8 +42,12 @@ const HALFNARP_CONFIRMED_SOURCE_FILE_PATH = path.join(
 );
 
 const VOC_EVENT_ID = '35c3';
+const VOC_LIVE_ENABLED = false;
 const VOC_LIVE_API_URL = 'https://streaming.media.ccc.de/streams/v2.json?forceopen=yes';
 const VOC_VOD_CONFERENCE_API_URL = `https://api.media.ccc.de/public/conferences/${VOC_EVENT_ID}`;
+const VOC_VOD_WIKIPAKA_API_URL = 'https://api.media.ccc.de/public/conferences/177';
+const VOC_VOD_CHAOSWEST_API_URL = 'https://api.media.ccc.de/public/conferences/178';
+
 
 // for debugging we can just pretend rp14 was today
 const originalStartDate = new Date(Date.UTC(2015, 11, 27, 10, 0, 0, 0));
@@ -821,15 +825,19 @@ exports.scrape = (callback) => {
     }
 
     // VOC Live
-    const vocLiveStreams = await request({ uri: VOC_LIVE_API_URL, json: true, timeout: 5000 });
     let liveStreams = [];
-    if (vocLiveStreams) {
-      liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
+    if (VOC_LIVE_ENABLED) {
+      const vocLiveStreams = await request({ uri: VOC_LIVE_API_URL, json: true, timeout: 5000 });
+      if (vocLiveStreams) {
+        liveStreams = parseVocStreams(vocLiveStreams, VOC_EVENT_ID);
+      }
     }
 
     // VOC VOD
     const vocVodConference = await request({ uri: VOC_VOD_CONFERENCE_API_URL, json: true, timeout: 5000 });
-    
+    const vocVodWikipaka = await request({ uri: VOC_VOD_WIKIPAKA_API_URL, json: true, timeout: 5000 });
+    const vocVodChaosWest = await request({ uri: VOC_VOD_CHAOSWEST_API_URL, json: true, timeout: 5000 });
+
     const defaultTrack = {
       id: mkID('other'),
       color: [97.0, 97.0, 97.0, 1.0], // grey
@@ -859,6 +867,26 @@ exports.scrape = (callback) => {
       log.error('Could not fetch voc jsons', error);
     }
     if (!vodJsons) vodJsons = {};
+
+    let vodWikipakaJsons;
+    try {
+      if (vocVodWikipaka) {
+        vodWikipakaJsons = await vocVodSessionVideos(vocVodWikipaka);
+      }
+    } catch (error) {
+      log.error('Could not fetch voc jsons', error);
+    }
+    if (!vodWikipakaJsons) vodWikipakaJsons = {};
+
+    let vodChaoswestJsons;
+    try {
+      if (vocVodChaosWest) {
+        vodChaoswestJsons = await vocVodSessionVideos(vocVodChaosWest);
+      }
+    } catch (error) {
+      log.error('Could not fetch voc jsons', error);
+    }
+    if (!vodChaoswestJsons) vodChaoswestJsons = {};
 
     // Generates enclosures from a parse session
     const enclosureFunction = (session) => {
@@ -985,11 +1013,21 @@ exports.scrape = (callback) => {
           return null;
         }
         const mutableSession = session;
-        mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}/`;
+        mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}`;
         
         if (session.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
+        }
+
+        if (Array.isArray(vodChaoswestJsons)) {
+          const vodJson = vodChaoswestJsons.find(vocVideo => vocVideo.link === session.url);
+          if (vodJson) {
+            const enclosure = enclosureFromVocJson(vodJson);
+            if (enclosure) {
+              mutableSession.enclosures.push(enclosure);
+            }
+          }
         }
 
         const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
@@ -1133,7 +1171,7 @@ exports.scrape = (callback) => {
           return null;
         }
         const mutableSession = session;
-        mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}/`;
+        mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}`;
 
         if (mutableSession.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
@@ -1148,6 +1186,18 @@ exports.scrape = (callback) => {
           };
           mutableSession.enclosures.push(enclosure);
         }
+
+
+        if (Array.isArray(vodWikipakaJsons)) {
+          const vodJson = vodWikipakaJsons.find(vocVideo => vocVideo.link === session.url);
+          if (vodJson) {
+            const enclosure = enclosureFromVocJson(vodJson);
+            if (enclosure) {
+              mutableSession.enclosures.push(enclosure);
+            }
+          }
+        }
+
         const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
         if (navLinkUrl) {
           const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
@@ -1306,6 +1356,7 @@ exports.scrape = (callback) => {
     sendezentrum.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
+
 
     wikipaka.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     wikipaka.speakers.forEach(speaker => addEntry('speaker', speaker));
