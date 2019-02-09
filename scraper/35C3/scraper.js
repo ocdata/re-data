@@ -998,8 +998,8 @@ exports.scrape = (callback) => {
     const CHAOSWEST_PRETALK_SHARE = 'https://fahrplan.chaos-west.de/35c3chaoswest/talk';
     const CHAOSWEST_TRACK = {
       id: mkID('chaoswest'),
-      label_de: 'Chaos West',
-      label_en: 'Chaos West',
+      label_de: 'Chaos West @ 35C3',
+      label_en: 'Chaos West @ 35C3',
       color: [63.0, 164.0, 125.0, 1.0],
     };
     
@@ -1054,9 +1054,9 @@ exports.scrape = (callback) => {
     const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
     const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/35c3oio/talk';
     const OPEN_INFRA_TRACK = {
-      id: mkID('Open Infrastructure'),
-      label_de: 'Open Infrastructure',
-      label_en: 'Open Infrastructure',
+      id: mkID('Open Infrastructure @ 35C3'),
+      label_de: 'Open Infrastructure @ 35C3',
+      label_en: 'Open Infrastructure @ 35C3',
       color: [218.0, 16.0, 104.0, 1.0],
     };
 
@@ -1104,8 +1104,8 @@ exports.scrape = (callback) => {
     const SENDEZENTRUM_PRETALK_SHARE = 'https://35c3.studio-link.de/35c3/talk';
     const SENDEZENTRUM_TRACK = {
       id: mkID('Sendezentrum'),
-      label_de: 'Sendezentrum',
-      label_en: 'Sendezentrum',
+      label_de: 'Sendezentrum @ 35C3',
+      label_en: 'Sendezentrum @ 35C3',
       color: [159.0, 75.0, 208.0, 1.0],
     };
 
@@ -1156,8 +1156,8 @@ exports.scrape = (callback) => {
     const WIKIPAKA_PRETALK_SHARE = 'https://cfp.verschwoerhaus.de/35c3/talk';
     const WIKIPAKA_TRACK = {
       id: mkID('WikiPaka'),
-      label_de: 'WikiPaka',
-      label_en: 'WikiPaka',
+      label_de: 'WikiPaka @ 35C3',
+      label_en: 'WikiPaka @ 35C3',
       color: [71.0, 105.0, 140.0, 1.0],
     };
 
