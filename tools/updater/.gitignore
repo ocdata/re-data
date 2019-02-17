@@ -1,0 +1,7 @@
+yarn-error.log
+node_modules
+.vscode/*.sql
+**/logs/*
+.env
+node_modules
+build
