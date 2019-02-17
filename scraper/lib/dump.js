@@ -1,20 +1,21 @@
-var fs = require('fs');
-var path = require('path');
-var log = require(path.resolve(__dirname, '../../api/lib/log.js'));
+const fs = require('fs');
+const path = require('path');
+const log = require(path.resolve(__dirname, '../../api/lib/log.js'));
 
-var dumpFolder = path.resolve(__dirname, '../../web/data/')+'/';
+const dumpFolder = path.resolve(__dirname, '../../web/data/')+'/';
 
-var typeMatching = {
-	'day': 'days',
-	'session': 'sessions',
-	'speaker': 'speakers',
-	'location': 'locations',
-	'track': 'tracks',
-	'format': 'formats',
-	'level': 'levels',
-	'language': 'languages',
-	'map': 'maps',
-	'poi': 'pois'		
+const typeMatching = {
+  day: 'days',
+  session: 'sessions',
+  speaker: 'speakers',
+  location: 'locations',
+  track: 'tracks',
+  format: 'formats',
+  level: 'levels',
+  language: 'languages',
+  map: 'maps',
+  poi: 'pois',
+  subconference: 'subconferences',
 };
 
 exports.dump = function (data) {

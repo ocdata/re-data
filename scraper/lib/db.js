@@ -136,7 +136,8 @@ function updateCouchDB(db, data, callback) {
 			'level':    'data/levels',
 			'language': 'data/languages',
 			'map':      'data/maps',			
-			'poi':      'data/pois',						
+			'poi':      'data/pois',		
+			'subconference':      'data/subconference',						
 		}
 
 		// Here be caches
@@ -347,7 +348,8 @@ function recreateCouchDB(db, connection) {
 					levels:    { map: function(doc) { if (doc.type === 'level')    emit([doc.event, doc.id]); }},
 					languages: { map: function(doc) { if (doc.type === 'language') emit([doc.event, doc.id]); }},
 					maps:      { map: function(doc) { if (doc.type === 'map') 	   emit([doc.event, doc.id]); }},
-					pois:      { map: function(doc) { if (doc.type === 'poi') 	   emit([doc.event, doc.id]); }}
+					pois:      { map: function(doc) { if (doc.type === 'poi') 	   emit([doc.event, doc.id]); }},
+					subconferences: { map: function(doc) { if (doc.type === 'subconference') 	   emit([doc.event, doc.id]); }}
 				}
 			}, cb);
 		},

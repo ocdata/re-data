@@ -88,7 +88,8 @@ var types = [
 	'levels',
 	'languages',
 	'maps',
-	'pois'	
+	'pois',
+	'subconferences'
 ];
 
 types.forEach(function (type) {

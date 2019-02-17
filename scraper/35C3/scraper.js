@@ -166,6 +166,7 @@ const allDays = {};
 const allRooms = {};
 const allSpeakers = {};
 const allTracks = {};
+const allSubconferences = {};
 
 function addEntry(type, obj) {
   const object = obj;
@@ -1002,6 +1003,11 @@ exports.scrape = (callback) => {
       label_en: 'Chaos West @ 35C3',
       color: [63.0, 164.0, 125.0, 1.0],
     };
+    const CHAOSWEST_SUBCONF = {
+      id: '35c3-chaoswest',
+      label: 'Chaos West @ 35C3',
+    };
+    allSubconferences[CHAOSWEST_SUBCONF.id] = CHAOSWEST_SUBCONF;
     
     const chaosWestPromise = importPretalk(
       CHAOSWEST_PRETALK_API,
@@ -1014,6 +1020,7 @@ exports.scrape = (callback) => {
         }
         const mutableSession = session;
         mutableSession.url = `${CHAOSWEST_PRETALK_SHARE}/${talk.code}`;
+        mutableSession.subconference = CHAOSWEST_SUBCONF;
         
         if (session.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
@@ -1096,7 +1103,7 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
-    loadingPromises.push(openInfraPromise);
+    // loadingPromises.push(openInfraPromise);
 
     // Sendezentrum
     log.info('Importing Sendezentrum data');
@@ -1108,7 +1115,12 @@ exports.scrape = (callback) => {
       label_en: 'Sendezentrum @ 35C3',
       color: [159.0, 75.0, 208.0, 1.0],
     };
-
+    const SENDEZENTRUM_SUBCONF = {
+      id: '35c3-sendezentrum',
+      label: 'Sendezentrum',
+    };
+    allSubconferences[SENDEZENTRUM_SUBCONF.id] = SENDEZENTRUM_SUBCONF;
+    
     // MP3 stream urls added to sendezentrum
     const SENDEZENTRUM_STREAM_URLS = {
       '35c3-sendezentrum-b-hne': 'https://stream-master.studio-link.de/35c3buehne.mp3',
@@ -1124,7 +1136,8 @@ exports.scrape = (callback) => {
       (session, talk) => {
         const mutableSession = session;
         mutableSession.url = `${SENDEZENTRUM_PRETALK_SHARE}/${talk.code}/`;
-        
+        mutableSession.subconference = SENDEZENTRUM_SUBCONF;
+
         if (mutableSession.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
           mutableSession.day = allDays[dayKey];
@@ -1160,6 +1173,11 @@ exports.scrape = (callback) => {
       label_en: 'WikiPaka @ 35C3',
       color: [71.0, 105.0, 140.0, 1.0],
     };
+    const WIKIPAKA_SUBCONF = {
+      id: '35c3-wikipaka',
+      label: 'Wikipaka @ 35C3',
+    };
+    allSubconferences[WIKIPAKA_SUBCONF.id] = WIKIPAKA_SUBCONF;
 
     const wikipakaPromise = importPretalk(
       WIKIPAKA_PRETALK_API,
@@ -1172,6 +1190,7 @@ exports.scrape = (callback) => {
         }
         const mutableSession = session;
         mutableSession.url = `${WIKIPAKA_PRETALK_SHARE}/${talk.code}`;
+        mutableSession.subconference = WIKIPAKA_SUBCONF;
 
         if (mutableSession.begin) {
           const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
@@ -1218,7 +1237,7 @@ exports.scrape = (callback) => {
       label_en: 'ChaosZone',
       color: [153, 49, 41, 1],
     };
-
+    
     const chaoszonePromise = importPretalk(
       CHAOSZONE_PRETALK_API,
       CHAOSZONE_TRACK,
@@ -1252,7 +1271,7 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
-    loadingPromises.push(chaoszonePromise);
+    // loadingPromises.push(chaoszonePromise);
 
     log.info('Importing KOMONA data');
     const KOMONA_PRETALK_API = 'https://talks.komona.org/api/events/35c3';
@@ -1296,7 +1315,7 @@ exports.scrape = (callback) => {
         return mutableSession;
       },
     );
-    loadingPromises.push(komonaPromise);
+    // loadingPromises.push(komonaPromise);
 
     // Self organized sessions
     const SELF_ORGANIZED_SCHEDULE_URL = 'http://data.c3voc.de/35C3/workshops.schedule.json';
@@ -1305,7 +1324,7 @@ exports.scrape = (callback) => {
 
     // Load all the things
     const result = await Promise.all(loadingPromises);
-    const [lounge, chaosWest, openInfra, sendezentrum, wikipaka, chaoszone, komona, selfOrganizedJson] = result;
+    const [lounge, chaosWest, sendezentrum, wikipaka, selfOrganizedJson] = result;
 
     lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1325,14 +1344,14 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
-    openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
-    openInfra.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    openInfra.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    // openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    // openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
+    // openInfra.locations.forEach((location) => {
+    //   if (!allRooms[location.id]) allRooms[location.id] = location;
+    // });
+    // openInfra.tracks.forEach((track) => {
+    //   if (!allTracks[track.id]) allTracks[track.id] = track;
+    // });
 
     sendezentrum.sessions.filter(s => s !== null).forEach((session) => {
       const sendezentrumSession = session;
@@ -1367,23 +1386,23 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });    
 
-    chaoszone.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    chaoszone.speakers.forEach(speaker => addEntry('speaker', speaker));
-    chaoszone.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    chaoszone.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    // chaoszone.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    // chaoszone.speakers.forEach(speaker => addEntry('speaker', speaker));
+    // chaoszone.locations.forEach((location) => {
+    //   if (!allRooms[location.id]) allRooms[location.id] = location;
+    // });
+    // chaoszone.tracks.forEach((track) => {
+    //   if (!allTracks[track.id]) allTracks[track.id] = track;
+    // });
 
-    komona.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    komona.speakers.forEach(speaker => addEntry('speaker', speaker));
-    komona.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    komona.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    // komona.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+    // komona.speakers.forEach(speaker => addEntry('speaker', speaker));
+    // komona.locations.forEach((location) => {
+    //   if (!allRooms[location.id]) allRooms[location.id] = location;
+    // });
+    // komona.tracks.forEach((track) => {
+    //   if (!allTracks[track.id]) allTracks[track.id] = track;
+    // });
 
     const SELF_ORGANIZED_TRACK = {
       id: mkID('self-organized-sessons'),
@@ -1428,6 +1447,7 @@ exports.scrape = (callback) => {
     // Generate iCal Feeds
     generateIcalData(allSessions);
 
+    alsoAdd('subconference', allSubconferences);
     alsoAdd('speaker', allSpeakers);
     alsoAdd('day', allDays);
     // console.log(allRooms);

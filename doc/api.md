@@ -160,6 +160,10 @@ An event is one chronologically delimited total of sessions. Like a yearly confe
 ```` javascript
 [{
 	"id": "rp14-session-1",
+	"subconference": {
+		"id": "tincon",
+		"label": "Tincon"
+	},
 	"title": "Eröffnung",
 	"subtitle": "Die erste session",	
 	"abstract": "...",
@@ -259,6 +263,7 @@ Optional fields:
 - `will_be_recorded`, assume `false` if missing
 - `cancelled`, assume `false` if missing
 - `translated_langs`: Translations of this talk (subtitles, live translations). If present an Array of Dictionaries similar to `lang` field. 
+- `subconference`: Object with `id` and `label` of the subconference. If `null` or not set the session belongs to the main conference.
 
 ### Enclosures
 
@@ -555,16 +560,40 @@ Represents a single point of interest on a map. Each POI belongs to a map object
 			 Note: Only beacons whose presence identififies this POI should be here, not merely beacons who are close by. 
 
 
-
-
-
 ### GET `/events/<event-id>/pois/<poi-id>`
+
+## Subconferences
+
+### GET `/events/<event-id>/subconferences`
+
+Returns all subconferences
+
+### GET `/events/<event-id>/subconferences/<id>`
+
+Returns a specific subconference.
+
+```` javascript
+[
+	{
+		"id": "tincon",
+		"event": "rp19",
+		"type": "subconference",
+		"label": "Tincon",
+		"last_modified": 1393611456.99
+	}
+	//...
+]
+````
+
+
+
 
 ## Days
 
 Days group several session by a slice of time, usually one day.
 
 __Note:__ The `date` property is a calendar date (aka symbolic date) not a point in time. Therefore it is interpreted in the timezone of the conference.
+
 
 ### GET `/events/<event-id>/days`
 
