@@ -314,6 +314,7 @@ function parseRoom(roomName, index, namePrefix) {
 }
 
 function generateIcalData(allSessions) {
+  // eslint-disable-next-line
   const ical = new icalendar.iCalendar();
 
   allSessions.forEach((session) => {
@@ -369,13 +370,13 @@ function parseEnd(dateString, durationString) {
   const match = durationString.toString().match(/(\d?\d):(\d\d)/);
   const hours = parseInt(match[1], 10);
   const minutes = parseInt(match[2], 10);
-  const seconds = time + minutes * 60.0 + hours * 60.0 * 60.0;
+  const seconds = time + (minutes * 60.0) + (hours * 60.0 * 60.0);
   const date = new Date(seconds * 1000);
   const newMillis = date.getTime() + sessionStartDateOffsetMilliSecs;
   date.setTime(newMillis);
 
   if (date.getTime() <= eventDate.getTime()) {
-    date.setTime(eventDate.getTime() + 1000 * 3600);
+    date.setTime(eventDate.getTime() + (1000 * 3600));
   }
 
   // if the event starts on day 1 but ends on day 2 after day change,
@@ -763,7 +764,7 @@ function handleResult(
         let recordingJSON = null;
 
         eventRecordings.forEach((element) => {
-          if (eventJSON && element && eventJSON.title == element.title) {
+          if (eventJSON && element && eventJSON.title === element.title) {
             recordingJSON = element;
           }
         });
@@ -1384,7 +1385,7 @@ exports.scrape = (callback) => {
     });
     wikipaka.tracks.forEach((track) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
-    });    
+    });
 
     // chaoszone.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     // chaoszone.speakers.forEach(speaker => addEntry('speaker', speaker));
