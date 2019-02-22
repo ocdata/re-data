@@ -56,16 +56,17 @@ exports.reset = function () {
 
 function deleteEvent(db, eventID, callback) {
 	var couchDBViews = {
-		'session':  'data/sessions',
-		'speaker':  'data/speakers',
-		'track':    'data/tracks',
-		'location': 'data/locations',
-		'day':      'data/days',
-		'format':   'data/formats',
-		'level':    'data/levels',
-		'language': 'data/languages',
-		'map':      'data/maps',			
-		'poi':      'data/pois',						
+		session:  'data/sessions',
+		speaker:  'data/speakers',
+		track:    'data/tracks',
+		location: 'data/locations',
+		day:      'data/days',
+		format:   'data/formats',
+		level:    'data/levels',
+		language: 'data/languages',
+		map:      'data/maps',			
+		poi:      'data/pois',			
+		subconference:      'data/subconference',			
 	};
 	
 
@@ -114,37 +115,36 @@ function deleteEvent(db, eventID, callback) {
 
 function updateCouchDB(db, data, callback) {
 
-	// updateCouchDB deletes the SQL ... no wait ... updates the CouchDB
+// updateCouchDB deletes the SQL ... no wait ... updates the CouchDB
+// Since we want to check for changes for every entry,
+// it would be very slow to fetch each single item from the db and
+// compare it with the new item.
+// Instead we have a dbCache, that loads every e.g. session of an event
+// in a single query.
 
-	// Since we want to check for changes for every entry,
-	// it would be very slow to fetch each single item from the db and
-	// compare it with the new item.
-	// Instead we have a dbCache, that loads every e.g. session of an event
-	// in a single query.
-
-	var dbCache = new (function () {
-		var me = this;
+const dbCache = new (function () {
+		const me = this;
 
 		// small lookup to find the corresponding CouchDB for item.type
-		var couchDBViews = {
-			'session':  'data/sessions',
-			'speaker':  'data/speakers',
-			'track':    'data/tracks',
-			'location': 'data/locations',
-			'day':      'data/days',
-			'format':   'data/formats',
-			'level':    'data/levels',
-			'language': 'data/languages',
-			'map':      'data/maps',			
-			'poi':      'data/pois',		
-			'subconference':      'data/subconference',						
+		const couchDBViews = {
+			session:  'data/sessions',
+			speaker:  'data/speakers',
+			track:    'data/tracks',
+			location: 'data/locations',
+			day:      'data/days',
+			format:   'data/formats',
+			level:    'data/levels',
+			language: 'data/languages',
+			map:      'data/maps',			
+			poi:      'data/pois',		
+			subconference: 'data/subconferences',
 		}
 
 		// Here be caches
-		var caches = {};
+		const caches = {};
 
 		// check if you you can find the item in the db
-		me.findInDB = function (item, callback) {
+		me.findInDB = (item, callback) => {
 
 			// Which cache do we want to use? e.g. "rp13-session"
 			var cacheKey = [item.event, item.type].join('-');

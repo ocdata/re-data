@@ -60,7 +60,20 @@ async function vocVodSessionVideo(url) {
 
 async function vocVodSessionVideos(conferenceJson) {
   const { events } = conferenceJson;
-  return Promise.all(events.map(event => vocVodSessionVideo(event.url)));
+  const eventResults = [];
+  // eslint-disable-next-line
+  for (const event of events) {
+    try {
+      // eslint-disable-next-line
+      const eventResult = await vocVodSessionVideo(event.url);
+      eventResults.push(eventResult);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('could not load', event.url, error.message);
+    }
+  }
+
+  return eventResults;
 }
 
 async function addEnclosuresFromVoc(allSession, vocJson) {

@@ -866,7 +866,7 @@ exports.scrape = (callback) => {
         vodJsons = await vocVodSessionVideos(vocVodConference);
       }
     } catch (error) {
-      log.error('Could not fetch voc jsons', error);
+      log.error('Could not fetch voc jsons', error.name, error.message);
     }
     if (!vodJsons) vodJsons = {};
 
@@ -876,7 +876,7 @@ exports.scrape = (callback) => {
         vodWikipakaJsons = await vocVodSessionVideos(vocVodWikipaka);
       }
     } catch (error) {
-      log.error('Could not fetch voc jsons', error);
+      log.error('Could not fetch voc jsons', error.name, error.message);
     }
     if (!vodWikipakaJsons) vodWikipakaJsons = {};
 
@@ -1058,111 +1058,111 @@ exports.scrape = (callback) => {
     loadingPromises.push(chaosWestPromise);
     
     // Freifunk
-    log.info('Importing Freifunk data');
-    const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
-    const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/35c3oio/talk';
-    const OPEN_INFRA_TRACK = {
-      id: mkID('Open Infrastructure @ 35C3'),
-      label_de: 'Open Infrastructure @ 35C3',
-      label_en: 'Open Infrastructure @ 35C3',
-      color: [218.0, 16.0, 104.0, 1.0],
-    };
+    // log.info('Importing Freifunk data');
+    // const OPEN_INFRA_PRETALK_API = 'https://pretalx.35c3oio.freifunk.space/api/events/35c3oio';
+    // const OPEN_INFRA_PRETALK_SHARE = 'https://pretalx.35c3oio.freifunk.space/35c3oio/talk';
+    // const OPEN_INFRA_TRACK = {
+    //   id: mkID('Open Infrastructure @ 35C3'),
+    //   label_de: 'Open Infrastructure @ 35C3',
+    //   label_en: 'Open Infrastructure @ 35C3',
+    //   color: [218.0, 16.0, 104.0, 1.0],
+    // };
 
-    const openInfraPromise = importPretalk(
-      OPEN_INFRA_PRETALK_API,
-      OPEN_INFRA_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
-          return null;
-        }
-        if (session.location.label_de.match(/(Thementisch|presentation desk)/i)) {
-          return null;
-        }
-        const mutableSession = session;
-        mutableSession.url = `${OPEN_INFRA_PRETALK_SHARE}/${talk.code}/`;
+    // const openInfraPromise = importPretalk(
+    //   OPEN_INFRA_PRETALK_API,
+    //   OPEN_INFRA_TRACK,
+    //   EVENT_ID,
+    //   null,
+    //   (session, talk) => {
+    //     if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+    //       return null;
+    //     }
+    //     if (session.location.label_de.match(/(Thementisch|presentation desk)/i)) {
+    //       return null;
+    //     }
+    //     const mutableSession = session;
+    //     mutableSession.url = `${OPEN_INFRA_PRETALK_SHARE}/${talk.code}/`;
         
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
-        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
-        if (liveStream) {
-          const enclosure = {
-            url: liveStream.streamUrl,
-            mimetype: 'video/mp4',
-            type: 'livestream',
-          };
-          mutableSession.enclosures.push(enclosure);
-        }
-        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
-        if (navLinkUrl) {
-          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
-          session.links.push(navLink.JSON);
-        }
-        return mutableSession;
-      },
-    );
+    //     if (mutableSession.begin) {
+    //       const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+    //       mutableSession.day = allDays[dayKey];
+    //     }
+    //     const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+    //     if (liveStream) {
+    //       const enclosure = {
+    //         url: liveStream.streamUrl,
+    //         mimetype: 'video/mp4',
+    //         type: 'livestream',
+    //       };
+    //       mutableSession.enclosures.push(enclosure);
+    //     }
+    //     const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+    //     if (navLinkUrl) {
+    //       const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+    //       session.links.push(navLink.JSON);
+    //     }
+    //     return mutableSession;
+    //   },
+    // );
     // loadingPromises.push(openInfraPromise);
 
     // Sendezentrum
-    log.info('Importing Sendezentrum data');
-    const SENDEZENTRUM_PRETALK_API = 'https://35c3.studio-link.de/api/events/35c3';
-    const SENDEZENTRUM_PRETALK_SHARE = 'https://35c3.studio-link.de/35c3/talk';
-    const SENDEZENTRUM_TRACK = {
-      id: mkID('Sendezentrum'),
-      label_de: 'Sendezentrum @ 35C3',
-      label_en: 'Sendezentrum @ 35C3',
-      color: [159.0, 75.0, 208.0, 1.0],
-    };
-    const SENDEZENTRUM_SUBCONF = {
-      id: '35c3-sendezentrum',
-      label: 'Sendezentrum',
-    };
-    allSubconferences[SENDEZENTRUM_SUBCONF.id] = SENDEZENTRUM_SUBCONF;
+    // log.info('Importing Sendezentrum data');
+    // const SENDEZENTRUM_PRETALK_API = 'https://35c3.studio-link.de/api/events/35c3';
+    // const SENDEZENTRUM_PRETALK_SHARE = 'https://35c3.studio-link.de/35c3/talk';
+    // const SENDEZENTRUM_TRACK = {
+    //   id: mkID('Sendezentrum'),
+    //   label_de: 'Sendezentrum @ 35C3',
+    //   label_en: 'Sendezentrum @ 35C3',
+    //   color: [159.0, 75.0, 208.0, 1.0],
+    // };
+    // const SENDEZENTRUM_SUBCONF = {
+    //   id: '35c3-sendezentrum',
+    //   label: 'Sendezentrum',
+    // };
+    // allSubconferences[SENDEZENTRUM_SUBCONF.id] = SENDEZENTRUM_SUBCONF;
     
-    // MP3 stream urls added to sendezentrum
-    const SENDEZENTRUM_STREAM_URLS = {
-      '35c3-sendezentrum-b-hne': 'https://stream-master.studio-link.de/35c3buehne.mp3',
-      '35c3-sendezentrum-sendetisch': 'https://stream-master.studio-link.de/35c3sendetisch.mp3',
-    };
+    // // MP3 stream urls added to sendezentrum
+    // const SENDEZENTRUM_STREAM_URLS = {
+    //   '35c3-sendezentrum-b-hne': 'https://stream-master.studio-link.de/35c3buehne.mp3',
+    //   '35c3-sendezentrum-sendetisch': 'https://stream-master.studio-link.de/35c3sendetisch.mp3',
+    // };
 
 
-    const sendezentrumPromise = importPretalk(
-      SENDEZENTRUM_PRETALK_API,
-      SENDEZENTRUM_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        const mutableSession = session;
-        mutableSession.url = `${SENDEZENTRUM_PRETALK_SHARE}/${talk.code}/`;
-        mutableSession.subconference = SENDEZENTRUM_SUBCONF;
+    // const sendezentrumPromise = importPretalk(
+    //   SENDEZENTRUM_PRETALK_API,
+    //   SENDEZENTRUM_TRACK,
+    //   EVENT_ID,
+    //   null,
+    //   (session, talk) => {
+    //     const mutableSession = session;
+    //     mutableSession.url = `${SENDEZENTRUM_PRETALK_SHARE}/${talk.code}/`;
+    //     mutableSession.subconference = SENDEZENTRUM_SUBCONF;
 
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
+    //     if (mutableSession.begin) {
+    //       const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+    //       mutableSession.day = allDays[dayKey];
+    //     }
 
-        // Sendezentrum audio only streams
-        const mp3StreamUrl = SENDEZENTRUM_STREAM_URLS[session.location.id];
-        if (mp3StreamUrl) {
-          const enclosure = {
-            url: mp3StreamUrl,
-            mimetype: 'audio/mp3',
-            type: 'livestream',
-          };
-          mutableSession.enclosures.push(enclosure);
-        }
-        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
-        if (navLinkUrl) {
-          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
-          session.links.push(navLink.JSON);
-        }
-        return mutableSession;
-      },
-    );
-    loadingPromises.push(sendezentrumPromise);
+    //     // Sendezentrum audio only streams
+    //     const mp3StreamUrl = SENDEZENTRUM_STREAM_URLS[session.location.id];
+    //     if (mp3StreamUrl) {
+    //       const enclosure = {
+    //         url: mp3StreamUrl,
+    //         mimetype: 'audio/mp3',
+    //         type: 'livestream',
+    //       };
+    //       mutableSession.enclosures.push(enclosure);
+    //     }
+    //     const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+    //     if (navLinkUrl) {
+    //       const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+    //       session.links.push(navLink.JSON);
+    //     }
+    //     return mutableSession;
+    //   },
+    // );
+    // loadingPromises.push(sendezentrumPromise);
 
     // WikiPaka
     log.info('Importing WikiPaka data');
@@ -1229,93 +1229,93 @@ exports.scrape = (callback) => {
     loadingPromises.push(wikipakaPromise);
 
     // ChaosZone
-    log.info('Importing ChaosZone data');
-    const CHAOSZONE_PRETALK_API = 'https://cfp.chaoszone.cz/api/events/35c3';
-    const CHAOSZONE_PRETALK_SHARE = 'https://cfp.chaoszone.cz/35c3/talk';
-    const CHAOSZONE_TRACK = {
-      id: mkID('ChaosZone'),
-      label_de: 'ChaosZone',
-      label_en: 'ChaosZone',
-      color: [153, 49, 41, 1],
-    };
+    // log.info('Importing ChaosZone data');
+    // const CHAOSZONE_PRETALK_API = 'https://cfp.chaoszone.cz/api/events/35c3';
+    // const CHAOSZONE_PRETALK_SHARE = 'https://cfp.chaoszone.cz/35c3/talk';
+    // const CHAOSZONE_TRACK = {
+    //   id: mkID('ChaosZone'),
+    //   label_de: 'ChaosZone',
+    //   label_en: 'ChaosZone',
+    //   color: [153, 49, 41, 1],
+    // };
     
-    const chaoszonePromise = importPretalk(
-      CHAOSZONE_PRETALK_API,
-      CHAOSZONE_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
-          return null;
-        }
-        const mutableSession = session;
-        mutableSession.url = `${CHAOSZONE_PRETALK_SHARE}/${talk.code}/`;
+    // const chaoszonePromise = importPretalk(
+    //   CHAOSZONE_PRETALK_API,
+    //   CHAOSZONE_TRACK,
+    //   EVENT_ID,
+    //   null,
+    //   (session, talk) => {
+    //     if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+    //       return null;
+    //     }
+    //     const mutableSession = session;
+    //     mutableSession.url = `${CHAOSZONE_PRETALK_SHARE}/${talk.code}/`;
 
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
-        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
-        if (liveStream) {
-          const enclosure = {
-            url: liveStream.streamUrl,
-            mimetype: 'video/mp4',
-            type: 'livestream',
-          };
-          mutableSession.enclosures.push(enclosure);
-        }
-        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
-        if (navLinkUrl) {
-          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
-          session.links.push(navLink.JSON);
-        }
-        return mutableSession;
-      },
-    );
+    //     if (mutableSession.begin) {
+    //       const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+    //       mutableSession.day = allDays[dayKey];
+    //     }
+    //     const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+    //     if (liveStream) {
+    //       const enclosure = {
+    //         url: liveStream.streamUrl,
+    //         mimetype: 'video/mp4',
+    //         type: 'livestream',
+    //       };
+    //       mutableSession.enclosures.push(enclosure);
+    //     }
+    //     const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+    //     if (navLinkUrl) {
+    //       const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+    //       session.links.push(navLink.JSON);
+    //     }
+    //     return mutableSession;
+    //   },
+    // );
     // loadingPromises.push(chaoszonePromise);
 
-    log.info('Importing KOMONA data');
-    const KOMONA_PRETALK_API = 'https://talks.komona.org/api/events/35c3';
-    const KOMONA_PRETALK_SHARE = 'https://talks.komona.org/35c3/talk';
-    const KOMONA_TRACK = {
-      id: mkID('Komona'),
-      label_de: 'Komona',
-      label_en: 'Komona',
-      color: [128, 72, 230, 1],
-    };
-    const komonaPromise = importPretalk(
-      KOMONA_PRETALK_API,
-      KOMONA_TRACK,
-      EVENT_ID,
-      null,
-      (session, talk) => {
-        if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
-          return null;
-        }
-        const mutableSession = session;
-        mutableSession.url = `${KOMONA_PRETALK_SHARE}/${talk.code}/`;
+    // log.info('Importing KOMONA data');
+    // const KOMONA_PRETALK_API = 'https://talks.komona.org/api/events/35c3';
+    // const KOMONA_PRETALK_SHARE = 'https://talks.komona.org/35c3/talk';
+    // const KOMONA_TRACK = {
+    //   id: mkID('Komona'),
+    //   label_de: 'Komona',
+    //   label_en: 'Komona',
+    //   color: [128, 72, 230, 1],
+    // };
+    // const komonaPromise = importPretalk(
+    //   KOMONA_PRETALK_API,
+    //   KOMONA_TRACK,
+    //   EVENT_ID,
+    //   null,
+    //   (session, talk) => {
+    //     if (INVALID_SESSION_NAMES.find(name => session.title.match(new RegExp(name)))) {
+    //       return null;
+    //     }
+    //     const mutableSession = session;
+    //     mutableSession.url = `${KOMONA_PRETALK_SHARE}/${talk.code}/`;
 
-        if (mutableSession.begin) {
-          const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
-          mutableSession.day = allDays[dayKey];
-        }
-        const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
-        if (liveStream) {
-          const enclosure = {
-            url: liveStream.streamUrl,
-            mimetype: 'video/mp4',
-            type: 'livestream',
-          };
-          mutableSession.enclosures.push(enclosure);
-        }
-        const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
-        if (navLinkUrl) {
-          const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
-          session.links.push(navLink.JSON);
-        }
-        return mutableSession;
-      },
-    );
+    //     if (mutableSession.begin) {
+    //       const { dayKey } = dayKeyAndBeginEndTimeFromBeginDateString(mutableSession.begin, mutableSession.end);
+    //       mutableSession.day = allDays[dayKey];
+    //     }
+    //     const liveStream = liveStreams.find(stream => session.location.id === vocSlugToLocatonID[stream.roomSlug]);
+    //     if (liveStream) {
+    //       const enclosure = {
+    //         url: liveStream.streamUrl,
+    //         mimetype: 'video/mp4',
+    //         type: 'livestream',
+    //       };
+    //       mutableSession.enclosures.push(enclosure);
+    //     }
+    //     const navLinkUrl = LOCATION_ID_TO_C3NAV_URL[session.location.id];
+    //     if (navLinkUrl) {
+    //       const navLink = new Link(navLinkUrl, 'session-link', `c3nav → ${session.location.label_en}`);
+    //       session.links.push(navLink.JSON);
+    //     }
+    //     return mutableSession;
+    //   },
+    // );
     // loadingPromises.push(komonaPromise);
 
     // Self organized sessions
@@ -1324,8 +1324,14 @@ exports.scrape = (callback) => {
     loadingPromises.push(selfOrganizedPromise);
 
     // Load all the things
-    const result = await Promise.all(loadingPromises);
-    const [lounge, chaosWest, sendezentrum, wikipaka, selfOrganizedJson] = result;
+    let result = [];
+    try {
+      result = await Promise.all(loadingPromises.map(s => s.catch(error => error)));
+    } catch (error) {
+      log.error('Error', error.name, error.message);
+    }
+    
+    const [lounge, chaosWest, wikipaka, selfOrganizedJson] = result;
 
     lounge.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     lounge.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1336,14 +1342,16 @@ exports.scrape = (callback) => {
       if (!allTracks[track.id]) allTracks[track.id] = track;
     });
 
-    chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
-    chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
-    chaosWest.locations.forEach((location) => {
-      if (!allRooms[location.id]) allRooms[location.id] = location;
-    });
-    chaosWest.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    if (!chaosWest.error) {
+      chaosWest.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
+      chaosWest.speakers.forEach(speaker => addEntry('speaker', speaker));
+      chaosWest.locations.forEach((location) => {
+        if (!allRooms[location.id]) allRooms[location.id] = location;
+      });
+      chaosWest.tracks.forEach((track) => {
+        if (!allTracks[track.id]) allTracks[track.id] = track;
+      });
+    }
 
     // openInfra.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
     // openInfra.speakers.forEach(speaker => addEntry('speaker', speaker));
@@ -1354,28 +1362,28 @@ exports.scrape = (callback) => {
     //   if (!allTracks[track.id]) allTracks[track.id] = track;
     // });
 
-    sendezentrum.sessions.filter(s => s !== null).forEach((session) => {
-      const sendezentrumSession = session;
-      if (sendezentrumSession.location && sendezentrumSession.location.id === '35c3-sendezentrum-b-hne') {
-        sendezentrumSession.location.label_de = 'Sendezentrum';
-        sendezentrumSession.location.label_en = sendezentrumSession.location.label_de;
-      }
-      addEntry('session', sendezentrumSession);
-    });
-    sendezentrum.speakers.forEach(speaker => addEntry('speaker', speaker));
-    sendezentrum.locations.forEach((location) => {
-      const sendezentrumLocation = location;
-      if (sendezentrumLocation.id === '35c3-sendezentrum-b-hne') {
-        sendezentrumLocation.label_de = 'Bühne Sendezentrum & DLF';
-        sendezentrumLocation.label_en = sendezentrumLocation.label_de;
-      }
-      if (!allRooms[sendezentrumLocation.id]) {
-        allRooms[sendezentrumLocation.id] = sendezentrumLocation;
-      }
-    });
-    sendezentrum.tracks.forEach((track) => {
-      if (!allTracks[track.id]) allTracks[track.id] = track;
-    });
+    // sendezentrum.sessions.filter(s => s !== null).forEach((session) => {
+    //   const sendezentrumSession = session;
+    //   if (sendezentrumSession.location && sendezentrumSession.location.id === '35c3-sendezentrum-b-hne') {
+    //     sendezentrumSession.location.label_de = 'Sendezentrum';
+    //     sendezentrumSession.location.label_en = sendezentrumSession.location.label_de;
+    //   }
+    //   addEntry('session', sendezentrumSession);
+    // });
+    // sendezentrum.speakers.forEach(speaker => addEntry('speaker', speaker));
+    // sendezentrum.locations.forEach((location) => {
+    //   const sendezentrumLocation = location;
+    //   if (sendezentrumLocation.id === '35c3-sendezentrum-b-hne') {
+    //     sendezentrumLocation.label_de = 'Bühne Sendezentrum & DLF';
+    //     sendezentrumLocation.label_en = sendezentrumLocation.label_de;
+    //   }
+    //   if (!allRooms[sendezentrumLocation.id]) {
+    //     allRooms[sendezentrumLocation.id] = sendezentrumLocation;
+    //   }
+    // });
+    // sendezentrum.tracks.forEach((track) => {
+    //   if (!allTracks[track.id]) allTracks[track.id] = track;
+    // });
 
 
     wikipaka.sessions.filter(s => s !== null).forEach(session => addEntry('session', session));
