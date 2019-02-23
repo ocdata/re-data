@@ -4,9 +4,10 @@ const { Language, Format, Level } = require('./mappings');
 const Link = require('./link');
 
 class Session {
-  constructor(json, urlFunction = undefined, timezone = 'Etc/UTC') {
+  constructor(json, urlFunction = undefined, subconferenceFunction = undefined, timezone = 'Etc/UTC') {
     this.source = json;
     this.urlFunction = urlFunction;
+    this.subconferenceFunction = subconferenceFunction;
     this.timezone = timezone;
   }
   
@@ -102,7 +103,9 @@ class Session {
   }
 
   get begin() {
-    const beginStr = Helpers.nullIfEmpty(this.source.datetime_start);
+    if (!this.source.datetime_start) return null;
+    const [firstDateTime] = this.source.datetime_start.split(',');
+    const beginStr = Helpers.nullIfEmpty(firstDateTime);
     if (beginStr) {
       const begin = moment(`${beginStr}Z`, moment.ISO_8601);
       return begin.isValid() ? begin : null;
@@ -111,7 +114,9 @@ class Session {
   }
 
   get end() {
-    const endStr = Helpers.nullIfEmpty(this.source.datetime_end);
+    if (!this.source.datetime_end) return null;
+    const [firstDateTime] = this.source.datetime_end.split(',');
+    const endStr = Helpers.nullIfEmpty(firstDateTime);
     if (endStr) {
       const end = moment(`${endStr}Z`, moment.ISO_8601);
       return end.isValid() ? end : null;
@@ -190,6 +195,11 @@ class Session {
     if (this.urlFunction) {
       json.url = this.urlFunction(this);
     }
+
+    if (this.subconferenceFunction) {
+      json.subconference = this.subconferenceFunction(this, this.source);
+    }
+    
     return json;
   }
 }

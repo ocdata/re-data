@@ -287,5 +287,27 @@
 		}],
 		 "hashtag": "toa",
 		"url": "http://toa.berlin/"
+	},
+	{
+		"type": "event",
+		"id": "rp19",
+		"label": "re:publica 19",
+		"title": "re:publica 19 tl;dr",
+		"date": [
+			"2019-05-06",
+			"2019-05-08"
+		],
+		"locations": [
+			{
+				"label": "Station Berlin",
+				"coords": [
+					52.49814,
+					13.374538
+				],
+				"timezone": "Europe/Berlin"
+			}
+		],
+		"url": "https://19.re-publica.com/",
+		"hashtag": "rp19"
 	}
 ]

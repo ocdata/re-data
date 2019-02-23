@@ -32,6 +32,7 @@ class RPNewImporter {
     this.source.locationStreamLinks = options.locationStreamLinks;
     this.source.locationLiveEnclosureUrls = options.locationLiveEnclosureUrls;
     this.source.ytrecordings = options.ytrecordings;
+    this.source.subconferenceFunction = options.subconferenceFunction;
 
     this.tracks = {};
     this.locations = {};
@@ -125,7 +126,7 @@ class RPNewImporter {
           return `${this.source.sessionUrlPrefix}${session.slug}`;
         };
       }
-      const session = new Session(sessionJSON, urlFunction);
+      const session = new Session(sessionJSON, urlFunction, this.source.subconferenceFunction);
       if (session.location && this.source.recordedLocationIds) {
         session.willBeRecorded = this.source.recordedLocationIds.includes(session.location.id);
       }
