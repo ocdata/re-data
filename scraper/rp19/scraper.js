@@ -12,7 +12,7 @@ const EVENT_ID = 'rp19';
 const SUBCONFERENCES = {
   sideevents: {
     id: `${EVENT_ID}-sideevents`,
-    label: 'Sideevents',
+    label: 'Side Events',
     type: 'subconference',
     event: EVENT_ID,
   },
@@ -24,7 +24,7 @@ const SUBCONFERENCES = {
   },
   mediaconvention: {
     id: `${EVENT_ID}-mediaconvention`,
-    label: 'Media Convention',
+    label: 'Media Convention Berlin',
     type: 'subconference',
     event: EVENT_ID,
   },
